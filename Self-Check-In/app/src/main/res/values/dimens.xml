@@ -1,0 +1,9 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="normal_margin">16dp</dimen>
+    <dimen name="normal_padding">16dp</dimen>
+
+  <dimen name="first_key_line">48dp</dimen>
+  <dimen name="second_key_line">96dp</dimen>
+  <dimen name="third_key_line">144dp</dimen>
+</resources>
