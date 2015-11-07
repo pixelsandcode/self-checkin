@@ -14,4 +14,19 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     Timber.d("Created");
   }
+
+  @Override protected void onPause() {
+    super.onPause();
+    Timber.d("Paused");
+  }
+
+  @Override protected void onResume() {
+    super.onResume();
+    Timber.d("Resumed");
+  }
+
+  @Override protected void onStop() {
+    super.onStop();
+    Timber.d("Stopped");
+  }
 }
