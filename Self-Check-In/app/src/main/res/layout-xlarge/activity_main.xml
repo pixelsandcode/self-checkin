@@ -24,7 +24,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/first_key_line"
+      android:layout_marginTop="@dimen/second_key_line"
       android:scaleType="fitCenter"
       android:src="@drawable/tipi_logo"/>
 

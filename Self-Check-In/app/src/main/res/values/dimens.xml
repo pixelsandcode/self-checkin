@@ -6,4 +6,6 @@
   <dimen name="first_key_line">48dp</dimen>
   <dimen name="second_key_line">96dp</dimen>
   <dimen name="third_key_line">144dp</dimen>
+
+  <dimen name="font_large">24sp</dimen>
 </resources>
