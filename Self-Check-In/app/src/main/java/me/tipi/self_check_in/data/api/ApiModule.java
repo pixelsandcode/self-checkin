@@ -36,6 +36,11 @@ public final class ApiModule {
         .build();
   }
 
+  @Provides @Singleton
+  AuthenticationService provideAuthenticationService(Retrofit retrofit) {
+    return retrofit.create(AuthenticationService.class);
+  }
+
   static OkHttpClient createApiClient(OkHttpClient client, LoggingInterceptor loggingInterceptor) {
     client = client.clone();
     client.interceptors().add(loggingInterceptor);
