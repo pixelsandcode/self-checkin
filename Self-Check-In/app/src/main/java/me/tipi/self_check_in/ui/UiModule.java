@@ -4,10 +4,12 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import me.tipi.self_check_in.ui.fragments.LoginFragment;
 
 @Module(
     injects = {
-        MainActivity.class
+        MainActivity.class,
+        LoginFragment.class
     },
 
     complete = false,

@@ -26,6 +26,7 @@
       android:layout_centerInParent="true">
 
     <TextView
+        android:id="@+id/main_logo"
         android:layout_marginBottom="288dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

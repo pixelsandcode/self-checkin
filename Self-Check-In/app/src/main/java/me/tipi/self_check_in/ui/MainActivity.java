@@ -1,13 +1,17 @@
 package me.tipi.self_check_in.ui;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
 
 import com.f2prateek.rx.preferences.Preference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
@@ -15,6 +19,7 @@ import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.ApiResponse;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
+import me.tipi.self_check_in.ui.fragments.LoginFragment;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -26,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
   @Inject AuthenticationService authenticationService;
   @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
+  @Inject AppContainer appContainer;
+
+  @Bind(R.id.main_logo) TextView mainLogoView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +42,11 @@ public class MainActivity extends AppCompatActivity {
     ButterKnife.bind(this);
     SelfCheckInApp.get(this).inject(this);
     Timber.d("Created");
-    this.login();
-    /*getFragmentManager().beginTransaction().replace(R.id.container, new LoginFragment()).commit();*/
+    if (username.isSet() && password.isSet()) {
+      this.login();
+    } else {
+      showLoginFragment();
+    }
   }
 
   @Override protected void onPause() {
@@ -53,14 +64,22 @@ public class MainActivity extends AppCompatActivity {
     Timber.d("Stopped");
   }
 
+  public void showLoginFragment() {
+    mainLogoView.setVisibility(View.INVISIBLE);
+    getFragmentManager().beginTransaction().replace(R.id.container, LoginFragment.newInstance(this)).commit();
+  }
+
   public void login() {
-    Call<ApiResponse> call = authenticationService.login(new LoginRequest("admin@matchbox.com", "adminadmin"));
+    Call<ApiResponse> call = authenticationService.login(new LoginRequest(username.get(), password.get()));
+
     call.enqueue(new Callback<ApiResponse>() {
       @Override public void onResponse(Response<ApiResponse> response, Retrofit retrofit) {
         if (response.isSuccess()) {
           Timber.d("LoggedIn", response.body());
         } else {
           Timber.d("Response", response.body());
+          showLoginFragment();
+          Snackbar.make(appContainer.bind(MainActivity.this), "Authentication failed", Snackbar.LENGTH_LONG).show();
         }
       }
 
