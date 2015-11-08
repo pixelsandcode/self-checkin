@@ -8,5 +8,5 @@
   <dimen name="second_key_line">96dp</dimen>
   <dimen name="third_key_line">144dp</dimen>
 
-  <dimen name="font_large">24sp</dimen>
+  <dimen name="font_large">32sp</dimen>
 </resources>
