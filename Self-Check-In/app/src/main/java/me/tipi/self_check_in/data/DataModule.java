@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.squareup.moshi.Moshi;
 import com.squareup.okhttp.Cache;
@@ -15,10 +16,12 @@ import org.threeten.bp.Clock;
 
 import java.io.File;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.ApiModule;
 import timber.log.Timber;
 
@@ -40,6 +43,16 @@ public final class DataModule {
 
   @Provides @Singleton RxSharedPreferences provideRxSharedPreferences(SharedPreferences prefs) {
     return RxSharedPreferences.create(prefs);
+  }
+
+  @Provides @Singleton @Named(ApiConstants.USER_NAME)
+  Preference<String> provideUsername(RxSharedPreferences prefs) {
+    return prefs.getString(ApiConstants.USER_NAME);
+  }
+
+  @Provides @Singleton @Named(ApiConstants.PASSWORD)
+  Preference<String> providePassword(RxSharedPreferences prefs) {
+    return prefs.getString(ApiConstants.PASSWORD);
   }
 
   @Provides @Singleton Moshi provideMoshi() {

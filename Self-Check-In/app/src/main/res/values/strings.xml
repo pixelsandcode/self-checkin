@@ -1,4 +1,11 @@
 <resources>
   <string name="app_name">Tipi</string>
   <string name="app_description">Mobile Check-in for Travellers</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+  <string name="login_title">Log Into Your Tipi Account</string>
+  <string name="email">email</string>
+  <string name="password">password</string>
+  <string name="login">Login</string>
 </resources>

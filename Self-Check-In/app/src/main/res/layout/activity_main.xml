@@ -19,23 +19,24 @@
       android:layout_height="match_parent"
       android:background="@color/main_overlay"/>
 
-  <ImageView
-      android:id="@+id/logo"
+  <FrameLayout
+      android:id="@+id/container"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/first_key_line"
-      android:scaleType="fitCenter"
-      android:src="@drawable/tipi_logo"/>
+      android:layout_centerInParent="true">
 
-  <TextView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/logo"
-      android:layout_centerHorizontal="true"
-      android:gravity="center_horizontal"
-      android:padding="@dimen/normal_padding"
-      android:textSize="@dimen/font_large"
-      android:text="@string/app_description"/>
+    <TextView
+        android:layout_marginBottom="288dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:drawablePadding="@dimen/normal_margin"
+        android:drawableTop="@drawable/tipi_logo"
+        android:gravity="center_horizontal"
+        android:text="@string/app_description"
+        android:textSize="@dimen/font_large"/>
+
+  </FrameLayout>
+
 
 </RelativeLayout>

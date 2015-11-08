@@ -17,4 +17,8 @@ public class ApiConstants {
   public static final String ACTIVITY_IMAGE_URL = "/activity/%s/";
   public static final String HOSTEL_IMAGE_URL = "/hostel/%s/";
   public static final String APP_SHARE_LINK = "http://www.tipi.me";
+
+  // Prefs
+  public static final String USER_NAME = "username";
+  public static final String PASSWORD = "password";
 }

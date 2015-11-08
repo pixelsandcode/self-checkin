@@ -3,9 +3,14 @@
     <dimen name="normal_margin">16dp</dimen>
     <dimen name="normal_padding">16dp</dimen>
 
-  <dimen name="first_key_line">48dp</dimen>
-  <dimen name="second_key_line">96dp</dimen>
-  <dimen name="third_key_line">144dp</dimen>
+  <dimen name="first_key_line">24dp</dimen>
+  <dimen name="second_key_line">48dp</dimen>
+  <dimen name="third_key_line">72dp</dimen>
 
   <dimen name="font_large">24sp</dimen>
+  <dimen name="font_normal">18sp</dimen>
+
+  <dimen name="logo_size">72dp</dimen>
+
+  <dimen name="main_frame">480dp</dimen>
 </resources>
