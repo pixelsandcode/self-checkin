@@ -11,10 +11,6 @@ public final class Strings {
     return (string == null || string.toString().trim().length() == 0);
   }
 
-  public static String valueOrDefault(String string, String defaultString) {
-    return isBlank(string) ? defaultString : string;
-  }
-
   public static String truncateAt(String string, int length) {
     return string.length() > length ? string.substring(0, length) : string;
   }
@@ -31,11 +27,6 @@ public final class Strings {
   public static String getPreStringSplit(String value, String splitter) {
     String[] parts = value.split(splitter);
     return parts[0];
-  }
-
-  public static String getPinCode(String data) {
-    String[] parts = data.split("/");
-    return parts[parts.length - 1];
   }
 
   public static String getPostStringSplit(String value, String splitter) {

@@ -5,6 +5,7 @@ package me.tipi.self_check_in.data.api.models;
  * Created by Ashkan Hesaraki.
  * Ashkan@tipi.me
  */
+
 public class LoginRequest {
 
   public final String email;

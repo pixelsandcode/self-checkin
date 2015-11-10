@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name">Tipi</string>
+  <string name="app_name">Tipi Self Check-In</string>
   <string name="app_description">Mobile Check-in for Travellers</string>
 
   <string name="login_title">Log Into Your Tipi Account</string>

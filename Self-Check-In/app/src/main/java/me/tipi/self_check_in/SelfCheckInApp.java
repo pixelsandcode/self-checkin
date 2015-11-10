@@ -18,10 +18,10 @@ public final class SelfCheckInApp extends Application {
 
     if (BuildConfig.DEBUG) {
       Timber.plant(new Timber.DebugTree());
-    } else {
+    } /*else {
       // TODO Crashlytics.start(this);
       // TODO Timber.plant(new CrashlyticsTree());
-    }
+    }*/
 
     objectGraph = ObjectGraph.create(new SelfCheckInModule(this));
     objectGraph.inject(this);

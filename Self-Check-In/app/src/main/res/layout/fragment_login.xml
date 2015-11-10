@@ -24,7 +24,8 @@
           android:layout_height="@dimen/logo_size"
           android:layout_centerHorizontal="true"
           android:scaleType="fitCenter"
-          android:src="@drawable/logo"/>
+          android:src="@drawable/logo"
+          android:contentDescription="@string/app_name"/>
 
       <TextView
           android:id="@+id/title"

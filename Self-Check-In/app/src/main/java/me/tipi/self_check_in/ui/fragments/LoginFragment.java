@@ -33,8 +33,6 @@ public class LoginFragment extends Fragment {
   @Bind(R.id.email) EditText emailText;
   @Bind(R.id.password) EditText passwordText;
 
-  private View rootView;
-
   public LoginFragment() {
     // Required empty public constructor
   }
@@ -48,7 +46,7 @@ public class LoginFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
-    rootView = inflater.inflate(R.layout.fragment_login, container, false);
+    View rootView = inflater.inflate(R.layout.fragment_login, container, false);
     ButterKnife.bind(this, rootView);
 
     if (username.isSet() && password.isSet()) {
