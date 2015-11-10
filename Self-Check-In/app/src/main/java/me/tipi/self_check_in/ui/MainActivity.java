@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
   public void login() {
     Call<ApiResponse> call = authenticationService.login(new LoginRequest(username.get(), password.get()));
-
     call.enqueue(new Callback<ApiResponse>() {
       @Override public void onResponse(Response<ApiResponse> response, Retrofit retrofit) {
         if (response.isSuccess()) {
@@ -88,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
 
       @Override public void onFailure(Throwable t) {
         Timber.d("Login Failed", t.getMessage());
+        Snackbar.make(appContainer.bind(MainActivity.this), "Sorry, Network problem", Snackbar.LENGTH_INDEFINITE)
+            .setAction("Retry", new View.OnClickListener() {
+              @Override public void onClick(View v) {
+                login();
+              }
+            }).show();
       }
     });
   }
