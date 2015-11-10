@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="me.tipi.self_check_in"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.tipi.self_check_in" >
 
-  <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
-  <supports-screens
-      android:largeScreens="true"
-      android:normalScreens="false"
-      android:requiresSmallestWidthDp="600"
-      android:smallScreens="false"
-      android:xlargeScreens="true"/>
+    <supports-screens
+        android:largeScreens="true"
+        android:normalScreens="false"
+        android:requiresSmallestWidthDp="600"
+        android:smallScreens="false"
+        android:xlargeScreens="true" />
 
-  <application
-      android:name=".SelfCheckInApp"
-      android:allowBackup="true"
-      android:icon="@mipmap/ic_launcher"
-      android:label="@string/app_name"
-      android:theme="@style/Theme.Tipi">
-    <activity
-        android:name=".ui.MainActivity"
-        android:configChanges="screenSize|orientation"
-        android:windowSoftInputMode="adjustPan">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
+    <application
+        android:name=".SelfCheckInApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Tipi" >
+        <activity
+            android:name=".ui.MainActivity"
+            android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="adjustPan" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
-    </activity>
-  </application>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.SignUpActivity" >
+        </activity>
+    </application>
 
 </manifest>

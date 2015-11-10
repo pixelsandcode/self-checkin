@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name">Tipi Self Check-In</string>
+  <string name="app_name">Tipi Self-Check-In</string>
   <string name="app_description">Mobile Check-in for Travellers</string>
 
   <string name="login_title">Log Into Your Tipi Account</string>
@@ -9,4 +9,8 @@
   <string name="error_invalid_email">This email address is invalid</string>
   <string name="error_incorrect_password">This password is incorrect</string>
   <string name="error_field_required">This field is required</string>
+  <string name="reset">Reset</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

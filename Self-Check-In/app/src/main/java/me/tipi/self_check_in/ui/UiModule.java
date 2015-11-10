@@ -9,6 +9,7 @@ import me.tipi.self_check_in.ui.fragments.LoginFragment;
 @Module(
     injects = {
         MainActivity.class,
+        SignUpActivity.class,
         LoginFragment.class
     },
 

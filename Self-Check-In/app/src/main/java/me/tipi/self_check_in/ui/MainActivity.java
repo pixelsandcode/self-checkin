@@ -1,5 +1,6 @@
 package me.tipi.self_check_in.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -76,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
       @Override public void onResponse(Response<ApiResponse> response, Retrofit retrofit) {
         if (response.isSuccess()) {
           Timber.d("LoggedIn", response.body());
+          startActivity(new Intent(MainActivity.this, SignUpActivity.class));
+          finish();
         } else {
           Timber.d("Response", response.body());
           showLoginFragment();
