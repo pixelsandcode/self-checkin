@@ -25,7 +25,7 @@ public class SignUpActivity extends AppCompatActivity {
     SelfCheckInApp.get(this).inject(this);
     ButterKnife.bind(this);
 
-    viewPager.setAdapter(new SignUpAdapter(getSupportFragmentManager()));
+    viewPager.setAdapter(new SignUpAdapter(getSupportFragmentManager(), this));
     indicator.setViewPager(viewPager);
   }
 

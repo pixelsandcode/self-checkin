@@ -55,6 +55,11 @@ public final class DataModule {
     return prefs.getString(ApiConstants.PASSWORD);
   }
 
+  @Provides @Singleton @Named(ApiConstants.AVATAR)
+  Preference<String> provideAvatar(RxSharedPreferences prefs) {
+    return prefs.getString(ApiConstants.AVATAR);
+  }
+
   @Provides @Singleton Moshi provideMoshi() {
     return new Moshi.Builder()
         .add(new InstantAdapter())

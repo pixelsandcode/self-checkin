@@ -3,14 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/second_key_line"
     android:background="@color/white"
-    tools:context="me.tipi.self_check_in.ui.fragments.AvatarFragment">
+    tools:context="me.tipi.self_check_in.ui.fragments.AvatarFragment"
+    tools:ignore="ContentDescription">
 
   <ImageView
       android:id="@+id/avatar"
       android:layout_width="250dp"
       android:layout_height="250dp"
+      android:layout_marginTop="@dimen/first_key_line"
       android:layout_centerHorizontal="true"
       android:scaleType="centerCrop"
       android:src="@drawable/placeholder_500"/>
@@ -21,11 +22,13 @@
       android:layout_height="wrap_content"
       android:layout_below="@+id/avatar"
       android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/first_key_line"
       android:textColor="@color/black"
       android:textSize="@dimen/font_normal"
       android:text="@string/smile"/>
 
   <ImageButton
+      android:id="@+id/captureBtn"
       android:layout_width="72dp"
       android:layout_height="72dp"
       android:background="@drawable/button_round"
