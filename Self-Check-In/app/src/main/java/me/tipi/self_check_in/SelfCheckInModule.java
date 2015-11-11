@@ -2,6 +2,9 @@ package me.tipi.self_check_in;
 
 import android.app.Application;
 
+import com.squareup.otto.Bus;
+import com.squareup.otto.ThreadEnforcer;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -28,5 +31,9 @@ public final class SelfCheckInModule {
 
   @Provides @Singleton Application provideApplication() {
     return app;
+  }
+
+  @Provides @Singleton Bus provideBus() {
+    return new Bus(ThreadEnforcer.ANY);
   }
 }

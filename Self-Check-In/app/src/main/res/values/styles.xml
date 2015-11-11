@@ -1,11 +1,15 @@
 <resources>
 
   <!-- Base application theme. -->
-  <style name="Theme.Tipi" parent="Theme.AppCompat.NoActionBar">
+  <style name="Theme.Tipi" parent="Theme.AppCompat.Light.NoActionBar">
     <!-- Customize your theme here. -->
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <item name="android:editTextColor">@color/main_text</item>
+    <item name="android:textColorHint">@color/primary_trans</item>
+    <item name="colorControlNormal">#D8D8D8</item>
+    <item name="colorControlActivated">@color/colorAccent</item>
   </style>
 
 </resources>

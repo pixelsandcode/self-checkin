@@ -32,24 +32,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:drawablePadding="@dimen/normal_margin"
+        android:textColor="@color/white"
         android:drawableTop="@drawable/tipi_logo"
         android:gravity="center_horizontal"
         android:text="@string/app_description"
         android:textSize="@dimen/font_large"/>
 
   </FrameLayout>
-
-  <TextView
-      android:id="@+id/resetBtn"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignParentRight="true"
-      android:layout_alignParentEnd="true"
-      android:padding="24dp"
-      android:text="@string/reset"
-      android:clickable="true"
-      android:background="@color/transparent"
-      android:visibility="gone"/>
 
 
 </RelativeLayout>

@@ -2,9 +2,11 @@ package me.tipi.self_check_in.util;
 
 import android.graphics.Bitmap;
 
+import java.io.File;
+
 public class Helpers {
-  public static class BitmapScaler
-  {
+
+  public static String fileName = "avatar.jpg";
     // Scale and maintain aspect ratio given a desired width
     // BitmapScaler.scaleToFitWidth(bitmap, 100);
     public static Bitmap scaleToFitWidth(Bitmap b, int width)
@@ -22,6 +24,7 @@ public class Helpers {
       return Bitmap.createScaledBitmap(b, (int) (b.getWidth() * factor), height, true);
     }
 
-    // ...
-  }
+    public static File makeFileFromPath(String path) {
+      return new File(path + File.separator + fileName);
+    }
 }

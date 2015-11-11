@@ -7,6 +7,7 @@ public class ApiConstants {
 
   // Routes
   public static final String LOGIN = "dashboard/login";
+  public static final String HOME_TOWN = "countries/suggest";
 
   // Prefs
   public static final String USER_NAME = "username";

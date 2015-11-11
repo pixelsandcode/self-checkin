@@ -12,9 +12,12 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import okio.Buffer;
 import timber.log.Timber;
 
-/** Verbose logging of network calls, which includes path, headers, and times. */
+/**
+ * Verbose logging of network calls, which includes path, headers, and times.
+ */
 @Singleton
 public final class LoggingInterceptor implements Interceptor {
   private final Clock clock;
@@ -28,6 +31,7 @@ public final class LoggingInterceptor implements Interceptor {
 
     long startMs = clock.millis();
     Timber.v("Sending request %s%s", request.url(), prettyHeaders(request.headers()));
+    Timber.v("Request log %s", bodyToString(request));
 
     Response response = chain.proceed(request);
 
@@ -50,4 +54,20 @@ public final class LoggingInterceptor implements Interceptor {
 
     return builder.toString();
   }
+
+  private static String bodyToString(final Request request) {
+
+    try {
+      final Request copy = request.newBuilder().build();
+      final Buffer buffer = new Buffer();
+      if (copy.body() != null) {
+        copy.body().writeTo(buffer);
+      }
+
+      return buffer.readUtf8();
+    } catch (final IOException e) {
+      return "did not work";
+    }
+  }
+
 }

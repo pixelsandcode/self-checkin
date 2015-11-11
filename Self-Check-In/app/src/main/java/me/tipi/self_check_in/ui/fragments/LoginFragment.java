@@ -76,6 +76,7 @@ public class LoginFragment extends Fragment {
   @OnClick(R.id.submit_btn)
   public void login() {
     emailText.setError(null);
+    passwordText.setError(null);
     boolean cancel = false;
     View focusView = null;
 

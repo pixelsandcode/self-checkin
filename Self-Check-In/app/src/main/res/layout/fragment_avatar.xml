@@ -35,6 +35,18 @@
       android:layout_centerHorizontal="true"
       android:layout_below="@+id/smile"
       android:layout_marginTop="@dimen/first_key_line"
-      android:src="@drawable/ic_camera_alt_white_48dp" />
+      android:src="@drawable/ic_camera" />
+
+  <Button
+      android:id="@+id/continue_btn"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/captureBtn"
+      android:layout_margin="@dimen/second_key_line"
+      android:background="@color/colorAccent"
+      android:textColor="@color/white"
+      android:textSize="@dimen/font_normal"
+      android:padding="@dimen/normal_padding"
+      android:text="@string/continue_text"/>
 
 </RelativeLayout>

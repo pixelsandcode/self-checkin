@@ -1,15 +1,21 @@
 package me.tipi.self_check_in.data.api;
 
 import me.tipi.self_check_in.data.api.models.ApiResponse;
+import me.tipi.self_check_in.data.api.models.CountryResponse;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
 import retrofit.Call;
 import retrofit.http.Body;
+import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.Query;
 
 public interface AuthenticationService {
 
   @POST(ApiConstants.LOGIN)
   Call<ApiResponse> login(@Body LoginRequest userRequest);
+
+  @GET(ApiConstants.HOME_TOWN)
+  Call<CountryResponse> getSuggestedCountries(@Query("q") String query);
 
   /*@Multipart
   @POST(ApiConstants.SIGN_UP)

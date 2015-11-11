@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import me.tipi.self_check_in.ui.fragments.AvatarFragment;
+import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 
 public class SignUpAdapter extends FragmentStatePagerAdapter {
 
@@ -19,9 +20,11 @@ public class SignUpAdapter extends FragmentStatePagerAdapter {
   @Override public Fragment getItem(int position) {
     switch (position) {
       case 0:
-      case 1:
-      case 2:
         return AvatarFragment.newInstance(context);
+      case 1:
+        return IdentityFragment.newInstance(context);
+      case 2:
+        return IdentityFragment.newInstance(context);
       default:
         return null;
     }

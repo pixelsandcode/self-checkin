@@ -89,6 +89,7 @@
           android:layout_below="@+id/password"
           android:layout_marginTop="@dimen/first_key_line"
           android:background="@color/colorAccent"
+          android:textColor="@color/white"
           android:textSize="@dimen/font_normal"
           android:padding="@dimen/normal_padding"
           android:text="@string/login"/>

@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
   @Inject AuthenticationService authenticationService;
   @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
+  @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject AppContainer appContainer;
 
   @Bind(R.id.main_logo) TextView mainLogoView;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
       @Override public void onResponse(Response<ApiResponse> response, Retrofit retrofit) {
         if (response.isSuccess()) {
           Timber.d("LoggedIn", response.body());
+          avatarPath.delete();
           startActivity(new Intent(MainActivity.this, SignUpActivity.class));
           finish();
         } else {
