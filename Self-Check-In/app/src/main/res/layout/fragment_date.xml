@@ -1,0 +1,33 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/second_key_line"
+    tools:context="me.tipi.self_check_in.ui.fragments.DateFragment"
+    tools:ignore="ContentDescription">
+
+  <ImageView
+      android:id="@+id/taken_avatar"
+      android:layout_width="@dimen/logo_size"
+      android:layout_height="@dimen/logo_size"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:scaleType="centerCrop"
+      android:src="@drawable/avatar_placeholder"
+      />
+
+  <EditText
+      android:id="@+id/check_in_date"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/taken_avatar"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:gravity="center"
+      android:hint="@string/birthday"
+      android:imeOptions="actionNext"
+      android:inputType="date"/>
+
+
+</RelativeLayout>

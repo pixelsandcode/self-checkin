@@ -6,6 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.fragments.AvatarFragment;
+import me.tipi.self_check_in.ui.fragments.DateFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LoginFragment;
 
@@ -16,6 +17,7 @@ import me.tipi.self_check_in.ui.fragments.LoginFragment;
         LoginFragment.class,
         AvatarFragment.class,
         IdentityFragment.class,
+        DateFragment.class,
         HomeTownAutoCompleteAdapter.class
     },
 

@@ -32,7 +32,6 @@ import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.SignUpActivity;
-import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.util.Helpers;
 import timber.log.Timber;
 
@@ -126,14 +125,15 @@ public class AvatarFragment extends Fragment {
     return null;
   }
 
-  @OnClick(R.id.continue_btn)
+  /*@OnClick(R.id.continue_btn)
   public void continueToIdentity() {
     if (avatarPath.isSet()) {
+      Timber.v(avatarPath.get());
       bus.post(new PagerChangeEvent(1));
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Avatar is required!", Snackbar.LENGTH_LONG).show();
     }
-  }
+  }*/
 
   private boolean isExternalStorageAvailable() {
     String state = Environment.getExternalStorageState();

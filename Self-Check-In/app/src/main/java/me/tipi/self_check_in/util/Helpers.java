@@ -3,6 +3,7 @@ package me.tipi.self_check_in.util;
 import android.graphics.Bitmap;
 
 import java.io.File;
+import java.util.Date;
 
 public class Helpers {
 
@@ -25,6 +26,6 @@ public class Helpers {
     }
 
     public static File makeFileFromPath(String path) {
-      return new File(path + File.separator + fileName);
+      return new File(path + File.separator + new Date().getTime() + File.separator + fileName);
     }
 }
