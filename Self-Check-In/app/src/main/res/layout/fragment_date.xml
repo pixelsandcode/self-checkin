@@ -23,11 +23,41 @@
       android:layout_height="wrap_content"
       android:layout_below="@+id/taken_avatar"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/first_key_line"
+      android:layout_marginTop="@dimen/third_key_line"
       android:gravity="center"
-      android:hint="@string/birthday"
+      android:drawableRight="@drawable/ic_calendar"
+      android:drawableEnd="@drawable/ic_calendar"
+      android:drawablePadding="8dp"
+      android:hint="@string/check_in"
       android:imeOptions="actionNext"
       android:inputType="date"/>
+
+  <EditText
+      android:id="@+id/check_out_date"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/check_in_date"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:gravity="center"
+      android:drawableRight="@drawable/ic_calendar"
+      android:drawableEnd="@drawable/ic_calendar"
+      android:drawablePadding="8dp"
+      android:hint="@string/check_out"
+      android:imeOptions="actionDone"
+      android:inputType="date"/>
+
+  <Button
+      android:id="@+id/submit_btn"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/first_key_line"
+      android:background="@color/colorAccent"
+      android:textColor="@color/white"
+      android:textSize="@dimen/font_normal"
+      android:padding="@dimen/normal_padding"
+      android:layout_alignParentBottom="true"
+      android:text="@string/submit"/>
 
 
 </RelativeLayout>

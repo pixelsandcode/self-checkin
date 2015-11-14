@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import me.tipi.self_check_in.data.api.models.Guest;
 import retrofit.MoshiConverterFactory;
 import retrofit.Retrofit;
 
@@ -39,6 +40,11 @@ public final class ApiModule {
   @Provides @Singleton
   AuthenticationService provideAuthenticationService(Retrofit retrofit) {
     return retrofit.create(AuthenticationService.class);
+  }
+
+  @Provides @Singleton
+  Guest provideGuest() {
+    return new Guest();
   }
 
   static OkHttpClient createApiClient(OkHttpClient client, LoggingInterceptor loggingInterceptor) {

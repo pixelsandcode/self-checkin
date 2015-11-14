@@ -22,4 +22,11 @@
   <string name="continue_text">Continue</string>
   <string name="reference_code">Reference Code</string>
   <string name="birthday_error">You haven\'t born yet?!!</string>
+  <string name="choose_another_photo_text">Picture wasn\'t taken!</string>
+  <string name="check_in">Check-in</string>
+  <string name="check_out">Check-out</string>
+  <string name="submit">Submit</string>
+  <string name="error_less_than_today">Check-in date must be after today</string>
+  <string name="error_check_out_before_check_in">Check-out must be after check-in</string>
+  <string name="back">Back</string>
 </resources>

@@ -31,10 +31,11 @@ import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
+import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
+import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
-import me.tipi.self_check_in.util.Helpers;
 import me.tipi.self_check_in.util.Strings;
 
 public class IdentityFragment extends Fragment implements DatePickerDialogFragment.DatePickerDialogHandler {
@@ -42,6 +43,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   @Inject Picasso picasso;
   @Inject Bus bus;
   @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
+  @Inject Guest guest;
 
   @Bind(R.id.taken_avatar) ImageView avatarTakenView;
   @Bind(R.id.full_name) EditText fullNameTextView;
@@ -52,6 +54,11 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   @Bind(R.id.passport) EditText passportTextView;
 
   public Date dob = null;
+  public String enteredEmail;
+  public String enteredFullName;
+  public String enteredReference;
+  public String enteredPassportNumber;
+  public String enteredHomeTown;
 
 
   public IdentityFragment() {
@@ -73,7 +80,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
 
 
     if (avatarPath.isSet() && avatarPath.get() != null) {
-      picasso.invalidate(Helpers.makeFileFromPath(avatarPath.get()));
+      picasso.invalidate(avatarPath.get());
     }
 
     birthDayPickerView.setInputType(InputType.TYPE_NULL);
@@ -105,8 +112,9 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
+      bus.post(new BackShouldShowEvent(true));
       if (avatarPath.isSet() && avatarPath.get() != null) {
-        picasso.load(Helpers.makeFileFromPath(avatarPath.get())).resize(200, 200).centerCrop()
+        picasso.load(avatarPath.get()).resize(200, 200).centerCrop()
             .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
             .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
       }
@@ -116,6 +124,20 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   @OnClick(R.id.continue_btn)
   public void continueToDate() {
     if (!isError()) {
+      guest.name = enteredFullName;
+      guest.email = enteredEmail;
+      guest.referenceCode = enteredReference;
+      guest.passportNumber = enteredPassportNumber;
+
+      if (TextUtils.isEmpty(enteredHomeTown)) {
+        guest.city = Strings.getPreStringSplit(enteredHomeTown, "-");
+        guest.country = Strings.getPostStringSplit(enteredHomeTown, "-");
+      }
+
+      if (dob != null) {
+        guest.dob= dob;
+      }
+
       bus.post(new PagerChangeEvent(2));
     }
   }
@@ -131,10 +153,11 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     boolean cancel = false;
     View focusView = null;
 
-    String enteredEmail = emailTextView.getText().toString();
-    String enteredFullName = fullNameTextView.getText().toString();
-    String enteredReference = referenceTextView.getText().toString();
-    String enteredPassportNumber = passportTextView.getText().toString();
+    enteredEmail = emailTextView.getText().toString();
+    enteredFullName = fullNameTextView.getText().toString();
+    enteredReference = referenceTextView.getText().toString();
+    enteredPassportNumber = passportTextView.getText().toString();
+    enteredHomeTown = homeTownACView.getText().toString();
 
     // Check for validation
      if (TextUtils.isEmpty(enteredFullName)) {
