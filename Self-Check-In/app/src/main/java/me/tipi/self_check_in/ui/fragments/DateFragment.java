@@ -16,6 +16,7 @@ import com.f2prateek.rx.preferences.Preference;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -124,34 +125,23 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     checkOutDateView.setError(null);
 
     boolean cancel = false;
-    View focusView = null;
 
     if (checkInDate == null) {
       checkInDateView.setError(getString(R.string.error_field_required));
-      focusView = checkInDateView;
       cancel = true;
       checkInDate = null;
     } else if (checkOutDate == null) {
       checkOutDateView.setError(getString(R.string.error_field_required));
-      focusView = checkOutDateView;
       cancel = true;
       checkOutDate = null;
     } else if (checkInDate.before(new Date())) {
       checkInDateView.setError(getString(R.string.error_less_than_today));
-      focusView = checkInDateView;
       cancel = true;
       checkInDate = null;
     } else if (checkOutDate.equals(checkInDate) || checkOutDate.before(checkInDate)) {
       checkOutDateView.setError(getString(R.string.error_check_out_before_check_in));
-      focusView = checkOutDateView;
       cancel = true;
       checkOutDate = null;
-    }
-
-    if (cancel) {
-      if (focusView != null) {
-        focusView.requestFocus();
-      }
     }
 
     return cancel;
@@ -163,7 +153,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
 
       bus.post(new BackShouldShowEvent(true));
       if (avatarPath.isSet() && avatarPath.get() != null) {
-        picasso.load(avatarPath.get()).resize(200, 200).centerCrop()
+        picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
             .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
             .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
       }

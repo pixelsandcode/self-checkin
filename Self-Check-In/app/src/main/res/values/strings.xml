@@ -29,4 +29,7 @@
   <string name="error_less_than_today">Check-in date must be after today</string>
   <string name="error_check_out_before_check_in">Check-out must be after check-in</string>
   <string name="back">Back</string>
+  <string name="start_over">Start Over</string>
+  <string name="success">Success!</string>
+  <string name="success_description">You just checked-in like da boss man...</string>
 </resources>

@@ -84,7 +84,7 @@ public class AvatarFragment extends Fragment {
         try {
           File imageFile = FileHelper.getResizedFile(getActivity(), takenPhotoUri,
               Build.VERSION.SDK_INT, 500, 500);
-          picasso.load(imageFile).centerCrop().into(avatarView);
+          picasso.load(imageFile).resize(400,400).centerCrop().into(avatarView);
           // Save taken photo path to show later if not signed up
           avatarPath.set(imageFile.getPath());
 
@@ -101,9 +101,9 @@ public class AvatarFragment extends Fragment {
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
-      bus.post(new BackShouldShowEvent(true));
+      bus.post(new BackShouldShowEvent(false));
       if (avatarPath.isSet() && avatarPath.get() != null) {
-        picasso.load(avatarPath.get()).resize(400, 400).centerCrop()
+        picasso.load(new File(avatarPath.get())).resize(400, 400).centerCrop()
             .placeholder(R.drawable.avatar_placeholder).into(avatarView);
       }
     }

@@ -104,7 +104,6 @@
         android:background="@color/colorAccent"
         android:textColor="@color/white"
         android:textSize="@dimen/font_normal"
-        android:padding="@dimen/normal_padding"
         android:text="@string/continue_text"/>
 
   </RelativeLayout>

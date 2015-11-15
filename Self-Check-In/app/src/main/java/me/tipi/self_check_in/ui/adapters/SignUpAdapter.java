@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import me.tipi.self_check_in.ui.fragments.AvatarFragment;
 import me.tipi.self_check_in.ui.fragments.DateFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
+import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
 
 public class SignUpAdapter extends FragmentStatePagerAdapter {
 
@@ -26,12 +27,14 @@ public class SignUpAdapter extends FragmentStatePagerAdapter {
         return IdentityFragment.newInstance(context);
       case 2:
         return DateFragment.newInstance(context);
+      case 3:
+        return SuccessSignUpFragment.newInstance(context);
       default:
         return null;
     }
   }
 
   @Override public int getCount() {
-    return 3;
+    return 4;
   }
 }

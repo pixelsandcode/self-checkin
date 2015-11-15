@@ -9,6 +9,7 @@ import me.tipi.self_check_in.ui.fragments.AvatarFragment;
 import me.tipi.self_check_in.ui.fragments.DateFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LoginFragment;
+import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
 
 @Module(
     injects = {
@@ -18,6 +19,7 @@ import me.tipi.self_check_in.ui.fragments.LoginFragment;
         AvatarFragment.class,
         IdentityFragment.class,
         DateFragment.class,
+        SuccessSignUpFragment.class,
         HomeTownAutoCompleteAdapter.class
     },
 

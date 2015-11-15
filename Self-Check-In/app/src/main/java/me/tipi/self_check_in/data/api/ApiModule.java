@@ -1,6 +1,5 @@
 package me.tipi.self_check_in.data.api;
 
-import com.squareup.moshi.Moshi;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 
@@ -10,7 +9,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import me.tipi.self_check_in.data.api.models.Guest;
-import retrofit.MoshiConverterFactory;
+import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 
 @Module(
@@ -29,11 +28,11 @@ public final class ApiModule {
   }
 
   @Provides @Singleton
-  Retrofit provideRetrofit(HttpUrl baseUrl, @Named("Api") OkHttpClient client, Moshi moshi) {
+  Retrofit provideRetrofit(HttpUrl baseUrl, @Named("Api") OkHttpClient client) {
     return new Retrofit.Builder() //
         .client(client) //
         .baseUrl(baseUrl) //
-        .addConverterFactory(MoshiConverterFactory.create(moshi)) //
+        .addConverterFactory(GsonConverterFactory.create()) //
         .build();
   }
 

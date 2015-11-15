@@ -19,6 +19,7 @@ import com.f2prateek.rx.preferences.Preference;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -114,7 +115,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(true));
       if (avatarPath.isSet() && avatarPath.get() != null) {
-        picasso.load(avatarPath.get()).resize(200, 200).centerCrop()
+        picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
             .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
             .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
       }

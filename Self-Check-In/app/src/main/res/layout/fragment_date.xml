@@ -23,7 +23,7 @@
       android:layout_height="wrap_content"
       android:layout_below="@+id/taken_avatar"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/third_key_line"
+      android:layout_marginTop="@dimen/first_key_line"
       android:gravity="center"
       android:drawableRight="@drawable/ic_calendar"
       android:drawableEnd="@drawable/ic_calendar"
@@ -55,7 +55,6 @@
       android:background="@color/colorAccent"
       android:textColor="@color/white"
       android:textSize="@dimen/font_normal"
-      android:padding="@dimen/normal_padding"
       android:layout_alignParentBottom="true"
       android:text="@string/submit"/>
 

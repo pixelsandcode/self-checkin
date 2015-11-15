@@ -9,8 +9,8 @@
 
   <ImageView
       android:id="@+id/avatar"
-      android:layout_width="250dp"
-      android:layout_height="250dp"
+      android:layout_width="200dp"
+      android:layout_height="200dp"
       android:layout_marginTop="@dimen/first_key_line"
       android:layout_centerHorizontal="true"
       android:scaleType="centerCrop"
@@ -41,12 +41,13 @@
       android:id="@+id/continue_btn"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/captureBtn"
-      android:layout_marginTop="@dimen/first_key_line"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="@dimen/first_key_line"
+      android:layout_marginRight="@dimen/second_key_line"
+      android:layout_marginLeft="@dimen/second_key_line"
       android:background="@color/colorAccent"
       android:textColor="@color/white"
       android:textSize="@dimen/font_normal"
-      android:padding="@dimen/normal_padding"
       android:text="@string/continue_text"/>
 
 </RelativeLayout>

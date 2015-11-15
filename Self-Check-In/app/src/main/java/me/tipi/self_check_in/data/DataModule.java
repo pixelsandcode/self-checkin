@@ -15,6 +15,8 @@ import com.squareup.picasso.Picasso;
 import org.threeten.bp.Clock;
 
 import java.io.File;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -87,9 +89,13 @@ public final class DataModule {
 
   static OkHttpClient createOkHttpClient(Application app) {
     OkHttpClient client = new OkHttpClient();
-    client.setConnectTimeout(10, SECONDS);
-    client.setReadTimeout(10, SECONDS);
-    client.setWriteTimeout(10, SECONDS);
+
+    CookieManager cookieManager = new CookieManager();
+    cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+    client.setCookieHandler(cookieManager);
+    client.setConnectTimeout(30, SECONDS);
+    client.setReadTimeout(30, SECONDS);
+    client.setWriteTimeout(30, SECONDS);
 
     // Install an HTTP cache in the application cache directory.
     File cacheDir = new File(app.getCacheDir(), "http");
