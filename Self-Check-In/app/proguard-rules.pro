@@ -34,12 +34,26 @@
 }
 
 # Butterknife
+-keep class butterknife.** { *; }
 -dontwarn butterknife.internal.**
--keep class **$$ViewInjector { *; }
--keepnames class * { @butterknife.InjectView *;}
+-keep class **$$ViewBinder { *; }
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
+
+# Otto
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @com.squareup.otto.Subscribe public *;
+    @com.squareup.otto.Produce public *;
+}
 
 # Dagger
-
 -keepattributes *Annotation*
 -keepclassmembers,allowobfuscation class * {
   @javax.inject.* *;
@@ -49,11 +63,16 @@
 -keep class **$$ModuleAdapter
 -keep class **$$InjectAdapter
 -keep class **$$StaticInjection
--keepnames !abstract class com.example.mypackage.**
+-keepnames !abstract class me.tipi.self_check_in.**
 -keepnames class dagger.Lazy
 # Gradle includes dagger-compiler and javawriter in the final package
 -dontwarn dagger.internal.codegen.**
 -dontwarn com.squareup.javawriter.**
+-keep class dagger.* { *; }
+-keep class javax.inject.* { *; }
+-keep class * extends dagger.internal.Binding
+-keep class * extends dagger.internal.ModuleAdapter
+-keep class * extends dagger.internal.StaticInjection
 
 # Obfuscation parameters:
 #-dontobfuscate
@@ -80,6 +99,7 @@
 
 # Keep the pojos used by GSON
 -keep class me.tipi.self_check_in.data.api.models.** { *; }
+-keep class me.tipi.self_check_in.data.api.** { *; }
 
 # Keep GSON stuff
 -keep class sun.misc.Unsafe { *; }

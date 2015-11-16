@@ -15,8 +15,8 @@ android {
         applicationId "me.tipi.self_check_in"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
         setProperty("archivesBaseName", "tipi-check-in-$versionName")
     }
     buildTypes {
@@ -39,12 +39,20 @@ android {
             }
         }
     }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
     packagingOptions {
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/LICENSE.txt'
+        exclude 'README.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
         exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/MANIFEST.MF'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
