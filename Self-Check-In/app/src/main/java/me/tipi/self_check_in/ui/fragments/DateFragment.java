@@ -18,7 +18,6 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,8 +44,9 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   @Bind(R.id.check_in_date) EditText checkInDateView;
   @Bind(R.id.check_out_date) EditText checkOutDateView;
 
-  public Date checkInDate = null;
-  public Date checkOutDate = null;
+  public Calendar checkInDate = null;
+  public Calendar  checkOutDate = null;
+  public String dateString;
 
   public DateFragment() {
     // Required empty public constructor
@@ -72,15 +72,20 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     checkInDateView.setInputType(InputType.TYPE_NULL);
     checkOutDateView.setInputType(InputType.TYPE_NULL);
 
+    Calendar today = Calendar.getInstance();
+    checkInDate = today;
+    dateString = String.format("%d - %d - %d", today.get(Calendar.DAY_OF_MONTH), today.get(Calendar.MONTH) + 1, today.get(Calendar.YEAR));
+    checkInDateView.setText(dateString);
+
     checkInDateView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        DatePickerBuilder dpb = new DatePickerBuilder()
+        DatePickerBuilder fromDb = new DatePickerBuilder()
             .setFragmentManager(getChildFragmentManager())
             .setStyleResId(R.style.BetterPickersDialogFragment)
             .setTargetFragment(DateFragment.this)
             .setReference(10);
-        dpb.show();
+        fromDb.show();
       }
     });
 
@@ -95,6 +100,8 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
         dpb.show();
       }
     });
+
+    checkOutDateView.requestFocus();
 
     return rootView;
   }
@@ -112,8 +119,8 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   @OnClick(R.id.submit_btn)
   public void dateSubmitClicked() {
     if (!isError()) {
-      guest.checkInDate = checkInDate;
-      guest.checkOutDate = checkOutDate;
+      guest.checkInDate = checkInDate.getTime();
+      guest.checkOutDate = checkOutDate.getTime();
 
       bus.post(new SubmitEvent());
     }
@@ -125,6 +132,8 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     checkOutDateView.setError(null);
 
     boolean cancel = false;
+    Calendar compare = Calendar.getInstance();
+    compare.add(Calendar.HOUR, -1);
 
     if (checkInDate == null) {
       checkInDateView.setError(getString(R.string.error_field_required));
@@ -134,7 +143,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       checkOutDateView.setError(getString(R.string.error_field_required));
       cancel = true;
       checkOutDate = null;
-    } else if (checkInDate.before(new Date())) {
+    } else if (checkInDate.before(compare)) {
       checkInDateView.setError(getString(R.string.error_less_than_today));
       cancel = true;
       checkInDate = null;
@@ -162,14 +171,14 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
 
   @Override public void onDialogDateSet(int reference, int year, int monthOfYear, int dayOfMonth) {
     Calendar calendar = Calendar.getInstance();
-    String dateString = String.format("%d - %d - %d", dayOfMonth, monthOfYear, year);
     calendar.set(year, monthOfYear, dayOfMonth);
+    dateString = String.format("%d - %d - %d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
     if (reference == 10) {
       checkInDateView.setText(dateString);
-      checkInDate = calendar.getTime();
+      checkInDate = calendar;
     } else if (reference == 20) {
       checkOutDateView.setText(dateString);
-      checkOutDate = calendar.getTime();
+      checkOutDate = calendar;
     }
   }
 }

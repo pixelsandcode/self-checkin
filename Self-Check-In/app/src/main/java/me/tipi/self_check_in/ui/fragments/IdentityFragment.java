@@ -17,6 +17,7 @@ import com.codetroopers.betterpickers.datepicker.DatePickerBuilder;
 import com.codetroopers.betterpickers.datepicker.DatePickerDialogFragment;
 import com.f2prateek.rx.preferences.Preference;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -35,6 +36,7 @@ import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
+import me.tipi.self_check_in.ui.events.EmailConflictEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.Strings;
@@ -80,7 +82,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     ButterKnife.bind(this, rootView);
 
 
-    if (avatarPath.isSet() && avatarPath.get() != null) {
+    if (avatarPath != null && avatarPath.isSet() && avatarPath.get() != null) {
       picasso.invalidate(avatarPath.get());
     }
 
@@ -201,8 +203,14 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
 
   @Override public void onDialogDateSet(int reference, int year, int monthOfYear, int dayOfMonth) {
     Calendar calendar = Calendar.getInstance();
-    birthDayPickerView.setText(String.format("%d - %d - %d", dayOfMonth, monthOfYear, year));
+    birthDayPickerView.setText(String.format("%d - %d - %d", dayOfMonth, monthOfYear + 1, year));
     calendar.set(year, monthOfYear, dayOfMonth);
     dob = calendar.getTime();
+  }
+
+  @Subscribe
+  public void onEmailConflict(EmailConflictEvent event) {
+    emailTextView.requestFocus();
+    emailTextView.setError(getString(R.string.error_conflict_email));
   }
 }

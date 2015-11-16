@@ -9,6 +9,7 @@
   <string name="error_invalid_email">This email address is invalid</string>
   <string name="error_incorrect_password">This password is incorrect</string>
   <string name="error_field_required">This field is required</string>
+  <string name="error_conflict_email">This booking email is used already!</string>
   <string name="reset">Reset</string>
   <string name="smile">Smile!</string>
 

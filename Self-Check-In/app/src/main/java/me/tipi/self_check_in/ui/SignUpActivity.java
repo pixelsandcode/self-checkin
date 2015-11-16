@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.f2prateek.rx.preferences.Preference;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
@@ -32,6 +33,7 @@ import me.tipi.self_check_in.data.api.models.ApiResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.adapters.SignUpAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
+import me.tipi.self_check_in.ui.events.EmailConflictEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.ui.misc.ChangeSwipeViewPager;
@@ -51,6 +53,8 @@ public class SignUpActivity extends AppCompatActivity {
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
   @Bind(R.id.backBtn) TextView backButtonView;
 
+  MaterialDialog loading;
+
   public SignUpAdapter adapter;
 
   @Override
@@ -59,6 +63,12 @@ public class SignUpActivity extends AppCompatActivity {
     setContentView(R.layout.activity_sign_up);
     SelfCheckInApp.get(this).inject(this);
     ButterKnife.bind(this);
+
+    loading = new MaterialDialog.Builder(this)
+        .content("Submitting")
+        .cancelable(false)
+        .progress(true, 0)
+        .build();
 
     adapter = new SignUpAdapter(getSupportFragmentManager(), this);
     viewPager.setAdapter(adapter);
@@ -132,18 +142,25 @@ public class SignUpActivity extends AppCompatActivity {
           requestBody
       );
 
+      loading.show();
       call.enqueue(new Callback<ApiResponse>() {
         @Override public void onResponse(Response<ApiResponse> response, Retrofit retrofit) {
+          loading.dismiss();
           if (response.isSuccess()) {
             Timber.d("Good");
             viewPager.setCurrentItem(3, true);
           } else {
             Timber.d(response.raw().message());
+            if (response.raw().code() == 409) {
+              viewPager.setCurrentItem(1, true);
+              bus.post(new EmailConflictEvent());
+            }
           }
         }
 
         @Override public void onFailure(Throwable t) {
           Timber.e(t, "failed");
+          loading.dismiss();
         }
       });
     }

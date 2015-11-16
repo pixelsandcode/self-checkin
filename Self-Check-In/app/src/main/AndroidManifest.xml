@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="me.tipi.self_check_in"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="me.tipi.self_check_in"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -35,7 +36,9 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
-    <activity android:name=".ui.SignUpActivity">
+    <activity
+        android:name=".ui.SignUpActivity"
+        android:configChanges="screenSize|orientation">
     </activity>
   </application>
 

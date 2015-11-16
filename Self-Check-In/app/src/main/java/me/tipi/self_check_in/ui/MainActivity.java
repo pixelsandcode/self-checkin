@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.f2prateek.rx.preferences.Preference;
 
 import javax.inject.Inject;
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
   @Bind(R.id.main_logo) TextView mainLogoView;
 
+  MaterialDialog loading;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -44,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
     ButterKnife.bind(this);
     SelfCheckInApp.get(this).inject(this);
     Timber.d("Created");
+    loading = new MaterialDialog.Builder(this)
+        .content("Loading")
+        .cancelable(false)
+        .progress(true, 0)
+        .build();
     if (username.isSet() && password.isSet()) {
       this.login();
     } else {
@@ -73,8 +81,11 @@ public class MainActivity extends AppCompatActivity {
 
   public void login() {
     Call<ApiResponse> call = authenticationService.login(new LoginRequest(username.get(), password.get()));
+
+    loading.show();
     call.enqueue(new Callback<ApiResponse>() {
       @Override public void onResponse(Response<ApiResponse> response, Retrofit retrofit) {
+        loading.dismiss();
         if (response.isSuccess()) {
           Timber.d("LoggedIn", response.body());
           avatarPath.delete();
@@ -88,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
       }
 
       @Override public void onFailure(Throwable t) {
+        loading.dismiss();
         Timber.d("Login Failed", t.getMessage());
         Snackbar.make(appContainer.bind(MainActivity.this), "Sorry, Network problem", Snackbar.LENGTH_INDEFINITE)
             .setAction("Retry", new View.OnClickListener() {
