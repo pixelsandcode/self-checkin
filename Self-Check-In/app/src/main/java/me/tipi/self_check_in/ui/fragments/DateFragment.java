@@ -1,3 +1,11 @@
+/*
+ * *
+ *  * Copyright (c) 2015-2016 www.Tipi.me.
+ *  * Created by Ashkan Hesaraki.
+ *  * Ashkan.Hesaraki@gmail.com
+ *
+ */
+
 package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
@@ -48,10 +56,19 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   public Calendar  checkOutDate = null;
   public String dateString;
 
+  /**
+   * Instantiates a new Date fragment.
+   */
   public DateFragment() {
     // Required empty public constructor
   }
 
+  /**
+   * New instance date fragment.
+   *
+   * @param context the context
+   * @return the date fragment
+   */
   public static DateFragment newInstance(Context context) {
     DateFragment fragment = new DateFragment();
     SelfCheckInApp.get(context).inject(fragment);
@@ -116,6 +133,9 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     bus.unregister(this);
   }
 
+  /**
+   * Date submit clicked.
+   */
   @OnClick(R.id.submit_btn)
   public void dateSubmitClicked() {
     if (!isError()) {
@@ -126,6 +146,11 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     }
   }
 
+  /**
+   * Is error boolean.
+   *
+   * @return the boolean
+   */
   private boolean isError() {
 
     checkInDateView.setError(null);

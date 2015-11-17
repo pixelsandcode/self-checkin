@@ -1,5 +1,12 @@
-package me.tipi.self_check_in.ui.fragments;
+/*
+ * *
+ *  * Copyright (c) 2015-2016 www.Tipi.me.
+ *  * Created by Ashkan Hesaraki.
+ *  * Ashkan.Hesaraki@gmail.com
+ *
+ */
 
+package me.tipi.self_check_in.ui.fragments;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -33,10 +40,19 @@ public class LoginFragment extends Fragment {
   @Bind(R.id.email) EditText emailText;
   @Bind(R.id.password) EditText passwordText;
 
+  /**
+   * Instantiates a new Login fragment.
+   */
   public LoginFragment() {
     // Required empty public constructor
   }
 
+  /**
+   * New instance login fragment.
+   *
+   * @param context the context
+   * @return the login fragment
+   */
   public static LoginFragment newInstance(Context context) {
     LoginFragment fragment = new LoginFragment();
     SelfCheckInApp.get(context).inject(fragment);
@@ -73,6 +89,9 @@ public class LoginFragment extends Fragment {
     Timber.d("Stopped");
   }
 
+  /**
+   * Login.
+   */
   @OnClick(R.id.submit_btn)
   public void login() {
     emailText.setError(null);

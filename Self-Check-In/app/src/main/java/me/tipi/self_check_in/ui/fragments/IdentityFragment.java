@@ -1,3 +1,11 @@
+/*
+ * *
+ *  * Copyright (c) 2015-2016 www.Tipi.me.
+ *  * Created by Ashkan Hesaraki.
+ *  * Ashkan.Hesaraki@gmail.com
+ *
+ */
+
 package me.tipi.self_check_in.ui.fragments;
 
 
@@ -64,10 +72,19 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   public String enteredHomeTown;
 
 
+  /**
+   * Instantiates a new Identity fragment.
+   */
   public IdentityFragment() {
     // Required empty public constructor
   }
 
+  /**
+   * New instance identity fragment.
+   *
+   * @param context the context
+   * @return the identity fragment
+   */
   public static IdentityFragment newInstance(Context context) {
     IdentityFragment fragment = new IdentityFragment();
     SelfCheckInApp.get(context).inject(fragment);
@@ -124,6 +141,9 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     }
   }
 
+  /**
+   * Continue to date.
+   */
   @OnClick(R.id.continue_btn)
   public void continueToDate() {
     if (!isError()) {
@@ -145,6 +165,11 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     }
   }
 
+  /**
+   * Is error boolean.
+   *
+   * @return the boolean
+   */
   private boolean isError() {
 
     fullNameTextView.setError(null);
@@ -208,6 +233,11 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     dob = calendar.getTime();
   }
 
+  /**
+   * On email conflict.
+   *
+   * @param event the event
+   */
   @Subscribe
   public void onEmailConflict(EmailConflictEvent event) {
     emailTextView.requestFocus();

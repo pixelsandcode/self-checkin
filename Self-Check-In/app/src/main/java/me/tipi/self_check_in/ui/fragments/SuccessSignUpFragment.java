@@ -1,3 +1,11 @@
+/*
+ * *
+ *  * Copyright (c) 2015-2016 www.Tipi.me.
+ *  * Created by Ashkan Hesaraki.
+ *  * Ashkan.Hesaraki@gmail.com
+ *
+ */
+
 package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
@@ -20,10 +28,19 @@ public class SuccessSignUpFragment extends Fragment {
 
   @Inject Bus bus;
 
+  /**
+   * Instantiates a new Success sign up fragment.
+   */
   public SuccessSignUpFragment() {
     // Required empty public constructor
   }
 
+  /**
+   * New instance success sign up fragment.
+   *
+   * @param context the context
+   * @return the success sign up fragment
+   */
   public static SuccessSignUpFragment newInstance(Context context) {
     SuccessSignUpFragment fragment = new SuccessSignUpFragment();
     SelfCheckInApp.get(context).inject(fragment);

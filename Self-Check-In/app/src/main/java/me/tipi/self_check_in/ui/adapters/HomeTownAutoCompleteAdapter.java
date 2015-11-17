@@ -1,3 +1,11 @@
+/*
+ * *
+ *  * Copyright (c) 2015-2016 www.Tipi.me.
+ *  * Created by Ashkan Hesaraki.
+ *  * Ashkan.Hesaraki@gmail.com
+ *
+ */
+
 package me.tipi.self_check_in.ui.adapters;
 
 import android.content.Context;
@@ -30,6 +38,11 @@ public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements
   private LayoutInflater mInflater;
   private List<Country> countries = Collections.emptyList();
 
+  /**
+   * Instantiates a new Home town auto complete adapter.
+   *
+   * @param context the context
+   */
   public HomeTownAutoCompleteAdapter(final Context context) {
     super(context, -1);
     SelfCheckInApp.get(context).inject(this);

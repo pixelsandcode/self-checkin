@@ -1,3 +1,11 @@
+/*
+ * *
+ *  * Copyright (c) 2015-2016 www.Tipi.me.
+ *  * Created by Ashkan Hesaraki.
+ *  * Ashkan.Hesaraki@gmail.com
+ *
+ */
+
 package me.tipi.self_check_in.data.api;
 
 import com.squareup.okhttp.RequestBody;
@@ -15,12 +23,39 @@ import retrofit.http.Query;
 
 public interface AuthenticationService {
 
+  /**
+   * Login call.
+   *
+   * @param userRequest the user request
+   * @return the call
+   */
   @POST(ApiConstants.LOGIN)
   Call<ApiResponse> login(@Body LoginRequest userRequest);
 
+  /**
+   * Gets suggested countries.
+   *
+   * @param query the query
+   * @return the suggested countries
+   */
   @GET(ApiConstants.HOME_TOWN)
   Call<CountryResponse> getSuggestedCountries(@Query("q") String query);
 
+  /**
+   * Add guest call.
+   *
+   * @param email           the email
+   * @param name            the name
+   * @param city            the city
+   * @param country         the country
+   * @param passportNumber  the passport number
+   * @param dob             the dob
+   * @param referenceNumber the reference number
+   * @param from            the from
+   * @param to              the to
+   * @param avatar          the avatar
+   * @return the call
+   */
   @Multipart
   @POST(ApiConstants.SIGN_UP)
   Call<ApiResponse> addGuest(

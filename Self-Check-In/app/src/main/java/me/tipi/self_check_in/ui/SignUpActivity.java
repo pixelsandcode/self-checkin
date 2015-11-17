@@ -1,3 +1,11 @@
+/*
+ * *
+ *  * Copyright (c) 2015-2016 www.Tipi.me.
+ *  * Created by Ashkan Hesaraki.
+ *  * Ashkan.Hesaraki@gmail.com
+ *
+ */
+
 package me.tipi.self_check_in.ui;
 
 import android.content.Intent;
@@ -99,12 +107,18 @@ public class SignUpActivity extends AppCompatActivity {
     }
   }
 
+  /**
+   * Start over.
+   */
   @OnClick(R.id.resetBtn)
   public void startOver() {
     reset();
     bus.post(new PagerChangeEvent(0));
   }
 
+  /**
+   * Back clicked.
+   */
   @OnClick(R.id.backBtn)
   public void backClicked() {
     if (viewPager.getCurrentItem() != 0) {
@@ -112,16 +126,31 @@ public class SignUpActivity extends AppCompatActivity {
     }
   }
 
+  /**
+   * On pager change.
+   *
+   * @param event the event
+   */
   @Subscribe
   public void onPagerChange(PagerChangeEvent event) {
     viewPager.setCurrentItem(event.page, true);
   }
 
+  /**
+   * On back shown.
+   *
+   * @param event the event
+   */
   @Subscribe
   public void onBackShown(BackShouldShowEvent event) {
     backButtonView.setVisibility(event.show ? View.VISIBLE : View.GONE);
   }
 
+  /**
+   * On submit.
+   *
+   * @param event the event
+   */
   @Subscribe
   public void onSubmit(SubmitEvent event) {
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -167,6 +196,9 @@ public class SignUpActivity extends AppCompatActivity {
 
   }
 
+  /**
+   * Reset.
+   */
   private void reset() {
     avatarPath.delete();
     if (guest != null) {

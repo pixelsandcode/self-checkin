@@ -1,3 +1,11 @@
+/*
+ * *
+ *  * Copyright (c) 2015-2016 www.Tipi.me.
+ *  * Created by Ashkan Hesaraki.
+ *  * Ashkan.Hesaraki@gmail.com
+ *
+ */
+
 package me.tipi.self_check_in.ui;
 
 import android.content.Intent;
@@ -74,11 +82,17 @@ public class MainActivity extends AppCompatActivity {
     Timber.d("Stopped");
   }
 
+  /**
+   * Show login fragment.
+   */
   public void showLoginFragment() {
     mainLogoView.setVisibility(View.INVISIBLE);
     getFragmentManager().beginTransaction().replace(R.id.container, LoginFragment.newInstance(this)).commit();
   }
 
+  /**
+   * Login.
+   */
   public void login() {
     Call<ApiResponse> call = authenticationService.login(new LoginRequest(username.get(), password.get()));
 

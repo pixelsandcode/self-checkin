@@ -18,6 +18,13 @@ public class CircleStrokeTransformation implements Transformation {
   private final Paint strokePaint;
   private final int strokeColor;
 
+  /**
+   * Instantiates a new Circle stroke transformation.
+   *
+   * @param context       the context
+   * @param strokeColor   the stroke color
+   * @param strokeWidthDp the stroke width dp
+   */
   public CircleStrokeTransformation(Context context, int strokeColor, int strokeWidthDp) {
     this.strokeColor = strokeColor;
     this.strokeWidth = strokeWidthDp * context.getResources().getDisplayMetrics().density;

@@ -1,3 +1,11 @@
+/*
+ * *
+ *  * Copyright (c) 2015-2016 www.Tipi.me.
+ *  * Created by Ashkan Hesaraki.
+ *  * Ashkan.Hesaraki@gmail.com
+ *
+ */
+
 package me.tipi.self_check_in.ui.adapters;
 
 import android.content.Context;
@@ -14,6 +22,12 @@ public class SignUpAdapter extends FragmentStatePagerAdapter {
 
   private Context context;
 
+  /**
+   * Instantiates a new Sign up adapter.
+   *
+   * @param fm      the fm
+   * @param context the context
+   */
   public SignUpAdapter(FragmentManager fm, Context context) {
     super(fm);
     this.context = context;

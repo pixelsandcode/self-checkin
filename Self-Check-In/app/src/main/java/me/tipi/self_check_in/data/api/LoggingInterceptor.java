@@ -1,3 +1,11 @@
+/*
+ * *
+ *  * Copyright (c) 2015-2016 www.Tipi.me.
+ *  * Created by Ashkan Hesaraki.
+ *  * Ashkan.Hesaraki@gmail.com
+ *
+ */
+
 package me.tipi.self_check_in.data.api;
 
 import com.squareup.okhttp.Headers;
@@ -22,6 +30,11 @@ import timber.log.Timber;
 public final class LoggingInterceptor implements Interceptor {
   private final Clock clock;
 
+  /**
+   * Instantiates a new Logging interceptor.
+   *
+   * @param clock the clock
+   */
   @Inject public LoggingInterceptor(Clock clock) {
     this.clock = clock;
   }
@@ -42,6 +55,12 @@ public final class LoggingInterceptor implements Interceptor {
     return response;
   }
 
+  /**
+   * Pretty headers string.
+   *
+   * @param headers the headers
+   * @return the string
+   */
   private String prettyHeaders(Headers headers) {
     if (headers.size() == 0) return "";
 
@@ -55,6 +74,12 @@ public final class LoggingInterceptor implements Interceptor {
     return builder.toString();
   }
 
+  /**
+   * Body to string string.
+   *
+   * @param request the request
+   * @return the string
+   */
   private static String bodyToString(final Request request) {
 
     try {

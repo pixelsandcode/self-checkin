@@ -1,3 +1,11 @@
+/*
+ * *
+ *  * Copyright (c) 2015-2016 www.Tipi.me.
+ *  * Created by Ashkan Hesaraki.
+ *  * Ashkan.Hesaraki@gmail.com
+ *
+ */
+
 package me.tipi.self_check_in.ui.fragments;
 
 
@@ -46,10 +54,19 @@ public class AvatarFragment extends Fragment {
 
   @Bind(R.id.avatar) ImageView avatarView;
 
+  /**
+   * Instantiates a new Avatar fragment.
+   */
   public AvatarFragment() {
     // Required empty public constructor
   }
 
+  /**
+   * New instance avatar fragment.
+   *
+   * @param context the context
+   * @return the avatar fragment
+   */
   public static AvatarFragment newInstance(Context context) {
     AvatarFragment fragment = new AvatarFragment();
     SelfCheckInApp.get(context).inject(fragment);
@@ -109,6 +126,9 @@ public class AvatarFragment extends Fragment {
     }
   }
 
+  /**
+   * On launch camera.
+   */
   @OnClick(R.id.captureBtn)
   public void onLaunchCamera() {
     // create Intent to take a picture and return control to the calling application
@@ -117,6 +137,9 @@ public class AvatarFragment extends Fragment {
     startActivityForResult(intent, CAPTURE_IMAGE_REQUEST_CODE);
   }
 
+  /**
+   * Continue to identity.
+   */
   @OnClick(R.id.continue_btn)
   public void continueToIdentity() {
     if (avatarPath.isSet()) {
