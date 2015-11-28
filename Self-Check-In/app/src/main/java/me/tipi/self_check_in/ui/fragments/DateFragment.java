@@ -18,8 +18,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.codetroopers.betterpickers.datepicker.DatePickerBuilder;
-import com.codetroopers.betterpickers.datepicker.DatePickerDialogFragment;
+import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
+import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
 import com.f2prateek.rx.preferences.Preference;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
