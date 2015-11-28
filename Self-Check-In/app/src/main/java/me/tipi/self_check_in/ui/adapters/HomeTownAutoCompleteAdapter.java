@@ -26,10 +26,9 @@ import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.Country;
 import me.tipi.self_check_in.data.api.models.CountryResponse;
-import retrofit.Call;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
 
@@ -70,16 +69,12 @@ public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements
         final FilterResults filterResults = new FilterResults();
         if (constraint != null) {
           if (constraint.length() > 2) {
-            Call<CountryResponse> call = authenticationService.getSuggestedCountries(constraint.toString());
-            call.enqueue(new Callback<CountryResponse>() {
-              @Override
-              public void onResponse(Response<CountryResponse> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
-                  HomeTownAutoCompleteAdapter.this.countries = response.body().data;
-                }
+            authenticationService.getSuggestedCountries(constraint.toString(), new Callback<CountryResponse>() {
+              @Override public void success(CountryResponse countryResponse, Response response) {
+                HomeTownAutoCompleteAdapter.this.countries = countryResponse.data;
               }
 
-              @Override public void onFailure(Throwable t) {
+              @Override public void failure(RetrofitError error) {
 
               }
             });

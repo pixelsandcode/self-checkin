@@ -8,18 +8,18 @@
 
 package me.tipi.self_check_in.data.api;
 
-import com.squareup.okhttp.RequestBody;
-
 import me.tipi.self_check_in.data.api.models.ApiResponse;
 import me.tipi.self_check_in.data.api.models.CountryResponse;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
-import retrofit.Call;
+import retrofit.Callback;
+import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.Part;
 import retrofit.http.Query;
+import retrofit.mime.TypedFile;
 
 public interface AuthenticationService {
 
@@ -27,46 +27,32 @@ public interface AuthenticationService {
    * Login call.
    *
    * @param userRequest the user request
-   * @return the call
+   * @param cb          the cb
    */
   @POST(ApiConstants.LOGIN)
-  Call<ApiResponse> login(@Body LoginRequest userRequest);
+  void login(@Body LoginRequest userRequest, Callback<Response> cb);
 
   /**
    * Gets suggested countries.
    *
    * @param query the query
-   * @return the suggested countries
+   * @param cb    the cb
    */
   @GET(ApiConstants.HOME_TOWN)
-  Call<CountryResponse> getSuggestedCountries(@Query("q") String query);
+  void getSuggestedCountries(@Query("q") String query, Callback<CountryResponse> cb);
 
-  /**
-   * Add guest call.
-   *
-   * @param email           the email
-   * @param name            the name
-   * @param city            the city
-   * @param country         the country
-   * @param passportNumber  the passport number
-   * @param dob             the dob
-   * @param referenceNumber the reference number
-   * @param from            the from
-   * @param to              the to
-   * @param avatar          the avatar
-   * @return the call
-   */
   @Multipart
   @POST(ApiConstants.SIGN_UP)
-  Call<ApiResponse> addGuest(
-      @Part("email") RequestBody email,
-      @Part("name") RequestBody name,
-      @Part("city") RequestBody city,
-      @Part("country") RequestBody country,
-      @Part("passport[number]") RequestBody passportNumber,
-      @Part("dob") RequestBody dob,
-      @Part("booking[reference_number]") RequestBody referenceNumber,
-      @Part("booking[from]") RequestBody from,
-      @Part("booking[to]") RequestBody to,
-      @Part("avatar\"; filename=\"image.jpg\"") RequestBody avatar);
+  void addGuest(
+      @Part("avatar") TypedFile avatar,
+      @Part("email") String email,
+      @Part("name") String name,
+      @Part("city") String city,
+      @Part("country") String country,
+      @Part("passport[number]") String passportNumber,
+      @Part("dob") String dob,
+      @Part("booking[reference_number]") String referenceNumber,
+      @Part("booking[from]") String from,
+      @Part("booking[to]") String to,
+      Callback<ApiResponse> cb);
 }

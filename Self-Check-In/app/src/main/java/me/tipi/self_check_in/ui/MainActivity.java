@@ -27,13 +27,11 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
-import me.tipi.self_check_in.data.api.models.ApiResponse;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
 import me.tipi.self_check_in.ui.fragments.LoginFragment;
-import retrofit.Call;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
@@ -94,33 +92,24 @@ public class MainActivity extends AppCompatActivity {
    * Login.
    */
   public void login() {
-    Call<ApiResponse> call = authenticationService.login(new LoginRequest(username.get(), password.get()));
-
     loading.show();
-    call.enqueue(new Callback<ApiResponse>() {
-      @Override public void onResponse(Response<ApiResponse> response, Retrofit retrofit) {
+    authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<Response>() {
+      @Override public void success(Response response, Response response2) {
         loading.dismiss();
-        if (response.isSuccess()) {
-          Timber.d("LoggedIn");
-          avatarPath.delete();
-          startActivity(new Intent(MainActivity.this, SignUpActivity.class));
-          finish();
-        } else {
-          Timber.d("Response %s", response.body());
-          showLoginFragment();
-          Snackbar.make(appContainer.bind(MainActivity.this), "Your email/password doesn't match!", Snackbar.LENGTH_LONG).show();
-        }
+        Timber.d("LoggedIn");
+        avatarPath.delete();
+        startActivity(new Intent(MainActivity.this, SignUpActivity.class));
+        finish();
       }
 
-      @Override public void onFailure(Throwable t) {
+      @Override public void failure(RetrofitError error) {
         loading.dismiss();
-        Timber.d("Login Failed");
-        Snackbar.make(appContainer.bind(MainActivity.this), "Sorry, Network problem", Snackbar.LENGTH_INDEFINITE)
-            .setAction("Retry", new View.OnClickListener() {
-              @Override public void onClick(View v) {
-                login();
-              }
-            }).show();
+        showLoginFragment();
+        if (error.getResponse().getStatus() == 401) {
+          Snackbar.make(appContainer.bind(MainActivity.this), "Your email/password doesn't match!", Snackbar.LENGTH_LONG).show();
+        } else {
+          Snackbar.make(appContainer.bind(MainActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
+        }
       }
     });
   }

@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -24,8 +25,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.f2prateek.rx.preferences.Preference;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.RequestBody;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -52,10 +51,10 @@ import me.tipi.self_check_in.ui.events.EmailConflictEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.ui.misc.ChangeSwipeViewPager;
-import retrofit.Call;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.mime.TypedFile;
 import timber.log.Timber;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -65,6 +64,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Inject Guest guest;
   @Inject AuthenticationService authenticationService;
   @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
+  @Inject AppContainer appContainer;
 
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
   @Bind(R.id.backBtn) TextView backButtonView;
@@ -178,44 +178,39 @@ public class SignUpActivity extends AppCompatActivity {
   @Subscribe
   public void onSubmit(SubmitEvent event) {
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-    MediaType mediaType = MediaType.parse("multipart/form-data");
     if (avatarPath != null && avatarPath.get() != null) {
-      File avatarFile = new File(avatarPath.get());
-      RequestBody requestBody = RequestBody.create(mediaType, avatarFile);
-      Call<ApiResponse> call = authenticationService.addGuest(
-          RequestBody.create(mediaType, guest.email),
-          RequestBody.create(mediaType, guest.name),
-          TextUtils.isEmpty(guest.city) ? null : RequestBody.create(mediaType, guest.city),
-          TextUtils.isEmpty(guest.country) ? null : RequestBody.create(mediaType, guest.country),
-          RequestBody.create(mediaType, guest.passportNumber),
-          guest.dob == null ? null : RequestBody.create(mediaType, dateFormat.format(guest.dob)),
-          RequestBody.create(mediaType, guest.referenceCode),
-          RequestBody.create(mediaType, dateFormat.format(guest.checkInDate)),
-          RequestBody.create(mediaType, dateFormat.format(guest.checkOutDate)),
-          requestBody
-      );
-
       loading.show();
-      call.enqueue(new Callback<ApiResponse>() {
-        @Override public void onResponse(Response<ApiResponse> response, Retrofit retrofit) {
-          loading.dismiss();
-          if (response.isSuccess()) {
-            Timber.d("Good");
-            viewPager.setCurrentItem(3, true);
-          } else {
-            Timber.d(response.raw().message());
-            if (response.raw().code() == 409) {
-              viewPager.setCurrentItem(1, true);
-              bus.post(new EmailConflictEvent());
+      @SuppressWarnings("ConstantConditions")
+      TypedFile avatarFile = new TypedFile("image/jpeg", new File(avatarPath.get()));
+      authenticationService.addGuest(
+          avatarFile,
+          guest.email,
+          guest.name,
+          TextUtils.isEmpty(guest.city) ? null : guest.city,
+          TextUtils.isEmpty(guest.country) ? null : guest.country,
+          guest.passportNumber,
+          guest.dob == null ? null : dateFormat.format(guest.dob),
+          guest.referenceCode,
+          dateFormat.format(guest.checkInDate),
+          dateFormat.format(guest.checkOutDate),
+          new Callback<ApiResponse>() {
+            @Override public void success(ApiResponse apiResponse, Response response) {
+              loading.dismiss();
+              Timber.d("Good");
+              viewPager.setCurrentItem(3, true);
+            }
+
+            @Override public void failure(RetrofitError error) {
+              loading.dismiss();
+              if (error.getResponse().getStatus() == 409) {
+                viewPager.setCurrentItem(1, true);
+                bus.post(new EmailConflictEvent());
+              } else {
+                Snackbar.make(appContainer.bind(SignUpActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
+              }
             }
           }
-        }
-
-        @Override public void onFailure(Throwable t) {
-          Timber.e(t, "failed");
-          loading.dismiss();
-        }
-      });
+      );
     }
 
   }
@@ -238,6 +233,7 @@ public class SignUpActivity extends AppCompatActivity {
           Manifest.permission.CAMERA)) {
         // Show our own UI to explain to the user why we need to read the contacts
         // before actually requesting the permission and showing the default UI
+        Timber.d("Should ask again for permission");
       }
 
       // Fire off an async request to actually get the permission

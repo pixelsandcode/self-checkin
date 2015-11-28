@@ -11,17 +11,19 @@
       android:id="@+id/successBtn"
       android:layout_width="120dp"
       android:layout_height="120dp"
+      android:layout_centerHorizontal="true"
+      android:layout_above="@+id/success"
+      android:layout_margin="@dimen/second_key_line"
       android:background="@drawable/button_round_green"
-      android:layout_centerInParent="true"
       android:src="@drawable/ic_done_white_48dp" />
 
   <TextView
       android:id="@+id/success"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/successBtn"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/first_key_line"
+      android:layout_centerInParent="true"
+      android:padding="@dimen/first_key_line"
+      android:gravity="center"
       android:textColor="@color/black"
       android:textSize="@dimen/font_large"
       android:text="@string/success"/>

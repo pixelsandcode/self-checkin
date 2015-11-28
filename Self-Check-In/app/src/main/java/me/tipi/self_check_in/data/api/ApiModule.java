@@ -8,70 +8,66 @@
 
 package me.tipi.self_check_in.data.api;
 
-import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import me.tipi.self_check_in.data.api.models.Guest;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
+import retrofit.Endpoint;
+import retrofit.Endpoints;
+import retrofit.RestAdapter;
+import retrofit.android.AndroidLog;
+import retrofit.client.Client;
+import retrofit.client.OkClient;
 
 @Module(
     complete = false,
     library = true
 )
 public final class ApiModule {
-  public static final HttpUrl PRODUCTION_API_URL = HttpUrl.parse(ApiConstants.API_URL);
 
   /**
    * Provide base url http url.
    *
    * @return the http url
    */
-  @Provides @Singleton HttpUrl provideBaseUrl() {
-    return PRODUCTION_API_URL;
-  }
-
-  /**
-   * Provide api client ok http client.
-   *
-   * @param client             the client
-   * @param loggingInterceptor the logging interceptor
-   * @return the ok http client
-   */
-  @Provides @Singleton @Named("Api") OkHttpClient provideApiClient(OkHttpClient client, LoggingInterceptor loggingInterceptor) {
-    return createApiClient(client, loggingInterceptor);
-  }
-
-  /**
-   * Provide retrofit retrofit.
-   *
-   * @param baseUrl the base url
-   * @param client  the client
-   * @return the retrofit
-   */
   @Provides @Singleton
-  Retrofit provideRetrofit(HttpUrl baseUrl, @Named("Api") OkHttpClient client) {
-    return new Retrofit.Builder() //
-        .client(client) //
-        .baseUrl(baseUrl) //
-        .addConverterFactory(GsonConverterFactory.create()) //
+  Endpoint provideEndpoint() {
+    return Endpoints.newFixedEndpoint(ApiConstants.API_URL);
+  }
+
+  /**
+   * Provide client client.
+   *
+   * @param client the client
+   * @return the client
+   */
+  @Provides @Singleton Client provideClient(OkHttpClient client) {
+    return new OkClient(client);
+  }
+
+  @Provides @Singleton
+  RestAdapter provideMainRestAdapter(Endpoint endpoint, Client client, ApiHeaders headers) {
+    return new RestAdapter.Builder() //
+        .setClient(client) //
+        .setEndpoint(endpoint)
+        .setRequestInterceptor(headers)
+        .setLogLevel(RestAdapter.LogLevel.FULL)
+        .setLog(new AndroidLog("TipiSelfRetrofit"))
         .build();
   }
 
   /**
    * Provide authentication service authentication service.
    *
-   * @param retrofit the retrofit
+   * @param restAdapter the restAdapter
    * @return the authentication service
    */
   @Provides @Singleton
-  AuthenticationService provideAuthenticationService(Retrofit retrofit) {
-    return retrofit.create(AuthenticationService.class);
+  AuthenticationService provideAuthenticationService(RestAdapter restAdapter) {
+    return restAdapter.create(AuthenticationService.class);
   }
 
   /**
@@ -82,18 +78,5 @@ public final class ApiModule {
   @Provides @Singleton
   Guest provideGuest() {
     return new Guest();
-  }
-
-  /**
-   * Create api client ok http client.
-   *
-   * @param client             the client
-   * @param loggingInterceptor the logging interceptor
-   * @return the ok http client
-   */
-  static OkHttpClient createApiClient(OkHttpClient client, LoggingInterceptor loggingInterceptor) {
-    client = client.clone();
-    client.interceptors().add(loggingInterceptor);
-    return client;
   }
 }

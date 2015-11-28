@@ -6,7 +6,6 @@ import android.net.Uri;
 
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
-import com.squareup.moshi.Moshi;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.OkHttpDownloader;
@@ -60,12 +59,6 @@ public final class DataModule {
   @Provides @Singleton @Named(ApiConstants.AVATAR)
   Preference<String> provideAvatar(RxSharedPreferences prefs) {
     return prefs.getString(ApiConstants.AVATAR);
-  }
-
-  @Provides @Singleton Moshi provideMoshi() {
-    return new Moshi.Builder()
-        .add(new InstantAdapter())
-        .build();
   }
 
   @Provides @Singleton Clock provideClock() {
