@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,9 @@ import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -54,6 +58,8 @@ public class AvatarFragment extends Fragment {
 
   @Bind(R.id.avatar) ImageView avatarView;
 
+  Uri uriSavedImage;
+
   /**
    * Instantiates a new Avatar fragment.
    */
@@ -74,8 +80,7 @@ public class AvatarFragment extends Fragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                           Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_avatar, container, false);
     ButterKnife.bind(this, rootView);
@@ -97,9 +102,8 @@ public class AvatarFragment extends Fragment {
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == CAPTURE_IMAGE_REQUEST_CODE) {
       if (resultCode == SignUpActivity.RESULT_OK) {
-        Uri takenPhotoUri = data.getData();
         try {
-          File imageFile = FileHelper.getResizedFile(getActivity(), takenPhotoUri,
+          File imageFile = FileHelper.getResizedFile(getActivity(), uriSavedImage,
               Build.VERSION.SDK_INT, 500, 500);
           picasso.load(imageFile).resize(400,400).centerCrop().into(avatarView);
           // Save taken photo path to show later if not signed up
@@ -108,9 +112,6 @@ public class AvatarFragment extends Fragment {
         } catch (Exception e) {
           Snackbar.make(appContainer.bind(getActivity()), "Picture wasn't taken!", Snackbar.LENGTH_LONG).show();
         }
-      } else {
-      // Result was a failure
-        Snackbar.make(appContainer.bind(getActivity()), "Picture wasn't taken!", Snackbar.LENGTH_LONG).show();
       }
     }
   }
@@ -133,6 +134,16 @@ public class AvatarFragment extends Fragment {
   public void onLaunchCamera() {
     // create Intent to take a picture and return control to the calling application
     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+
+    //folder stuff
+    File imagesFolder = new File(Environment.getExternalStorageDirectory(), "GuestAvatars");
+    imagesFolder.mkdirs();
+
+    File image = new File(imagesFolder, "Avatar_" + timeStamp + ".jpg");
+    uriSavedImage = Uri.fromFile(image);
+
+    intent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
     // Start the image capture intent to take photo
     startActivityForResult(intent, CAPTURE_IMAGE_REQUEST_CODE);
   }
@@ -146,7 +157,7 @@ public class AvatarFragment extends Fragment {
       Timber.v(avatarPath.get());
       bus.post(new PagerChangeEvent(1));
     } else {
-      Snackbar.make(appContainer.bind(getActivity()), "Avatar is required!", Snackbar.LENGTH_LONG).show();
+      Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie first!", Snackbar.LENGTH_LONG).show();
     }
   }
 }

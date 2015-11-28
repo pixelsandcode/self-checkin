@@ -10,8 +10,8 @@
   <dimen name="font_large">24sp</dimen>
   <dimen name="font_normal">18sp</dimen>
 
-  <dimen name="logo_size">72dp</dimen>
+  <dimen name="logo_size">96dp</dimen>
 
-  <dimen name="main_frame">480dp</dimen>
-  <dimen name="main_frame_height">480dp</dimen>
+  <dimen name="main_frame">672dp</dimen>
+  <dimen name="main_frame_height">672dp</dimen>
 </resources>

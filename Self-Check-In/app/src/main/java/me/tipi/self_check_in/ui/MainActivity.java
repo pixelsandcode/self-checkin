@@ -101,20 +101,20 @@ public class MainActivity extends AppCompatActivity {
       @Override public void onResponse(Response<ApiResponse> response, Retrofit retrofit) {
         loading.dismiss();
         if (response.isSuccess()) {
-          Timber.d("LoggedIn", response.body());
+          Timber.d("LoggedIn");
           avatarPath.delete();
           startActivity(new Intent(MainActivity.this, SignUpActivity.class));
           finish();
         } else {
-          Timber.d("Response", response.body());
+          Timber.d("Response %s", response.body());
           showLoginFragment();
-          Snackbar.make(appContainer.bind(MainActivity.this), "Authentication failed", Snackbar.LENGTH_LONG).show();
+          Snackbar.make(appContainer.bind(MainActivity.this), "Your email/password doesn't match!", Snackbar.LENGTH_LONG).show();
         }
       }
 
       @Override public void onFailure(Throwable t) {
         loading.dismiss();
-        Timber.d("Login Failed", t.getMessage());
+        Timber.d("Login Failed");
         Snackbar.make(appContainer.bind(MainActivity.this), "Sorry, Network problem", Snackbar.LENGTH_INDEFINITE)
             .setAction("Retry", new View.OnClickListener() {
               @Override public void onClick(View v) {

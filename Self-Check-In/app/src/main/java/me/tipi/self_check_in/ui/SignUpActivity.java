@@ -8,12 +8,19 @@
 
 package me.tipi.self_check_in.ui;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.f2prateek.rx.preferences.Preference;
@@ -52,6 +59,7 @@ import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class SignUpActivity extends AppCompatActivity {
+  private static final int CAMERA_GALLERY_PERMISSIONS_REQUEST = 9000;
 
   @Inject Bus bus;
   @Inject Guest guest;
@@ -87,6 +95,7 @@ public class SignUpActivity extends AppCompatActivity {
     super.onResume();
     Timber.d("Resumed");
     bus.register(this);
+    getPermissionToOpenCameraAndGalley();
   }
 
   @Override protected void onPause() {
@@ -104,6 +113,21 @@ public class SignUpActivity extends AppCompatActivity {
     } else {
       // Otherwise, select the previous step.
       viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+    }
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    // Make sure it's our original READ_CONTACTS request
+    if (requestCode == CAMERA_GALLERY_PERMISSIONS_REQUEST) {
+      if (grantResults.length == 2 &&
+          grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+        Timber.d("Permission Granted");
+      } else {
+        Toast.makeText(SignUpActivity.this, "Sorry you can't use this app without permission", Toast.LENGTH_LONG).show();
+      }
+    } else {
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
   }
 
@@ -194,6 +218,33 @@ public class SignUpActivity extends AppCompatActivity {
       });
     }
 
+  }
+
+  // Called when the user is performing an action which requires the app to show camera
+  @TargetApi(Build.VERSION_CODES.M)
+  public void getPermissionToOpenCameraAndGalley() {
+    // 1) Use the support library version ContextCompat.checkSelfPermission(...) to avoid
+    // checking the build version since Context.checkSelfPermission(...) is only available
+    // in Marshmallow
+    // 2) Always check for permission (even if permission has already been granted)
+    // since the user can revoke permissions at any time through Settings
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        != PackageManager.PERMISSION_GRANTED) {
+
+      // The permission is NOT already granted.
+      // Check if the user has been asked about this permission already and denied
+      // it. If so, we want to give more explanation about why the permission is needed.
+      if (shouldShowRequestPermissionRationale(
+          Manifest.permission.CAMERA)) {
+        // Show our own UI to explain to the user why we need to read the contacts
+        // before actually requesting the permission and showing the default UI
+      }
+
+      // Fire off an async request to actually get the permission
+      // This will show the standard permission request dialog UI
+      requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
+          CAMERA_GALLERY_PERMISSIONS_REQUEST);
+    }
   }
 
   /**
