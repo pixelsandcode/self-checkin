@@ -92,6 +92,7 @@ dependencies {
 
     androidTestCompile 'com.squareup.spoon:spoon-client:1.2.0'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.robolectric:robolectric:3.0'
 }
 
 repositories {
