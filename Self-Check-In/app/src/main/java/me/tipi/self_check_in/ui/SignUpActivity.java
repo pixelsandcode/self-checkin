@@ -10,6 +10,7 @@ package me.tipi.self_check_in.ui;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -20,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -145,6 +147,12 @@ public class SignUpActivity extends AppCompatActivity {
    */
   @OnClick(R.id.backBtn)
   public void backClicked() {
+    View view = this.getCurrentFocus();
+    if (view != null) {
+      InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     if (viewPager.getCurrentItem() != 0) {
       viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
     }
