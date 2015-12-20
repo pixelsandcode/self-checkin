@@ -4,6 +4,7 @@
   <color name="colorPrimary">#3F51B5</color>
   <color name="colorPrimaryDark">#313A46</color>
   <color name="colorAccent">#FF3064</color>
+  <color name="secondaryAccent">#22B674</color>
 
   <!-- Basic colors -->
   <color name="green">#27D34D</color>
@@ -23,4 +24,5 @@
   <color name="main_text">#243044</color>
   <color name="label_text">#BDBDBD</color>
   <color name="primary_trans">#B3475567</color>
+  <color name="photo_background">#313A46</color>
 </resources>
