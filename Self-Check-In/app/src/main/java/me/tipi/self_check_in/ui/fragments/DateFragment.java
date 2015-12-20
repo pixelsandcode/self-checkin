@@ -79,8 +79,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                           Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_date, container, false);
     ButterKnife.bind(this, rootView);
@@ -163,6 +162,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     enteredReference = referenceTextView.getText().toString();
 
     boolean cancel = false;
+    View focusView = null;
     Calendar compare = Calendar.getInstance();
     compare.add(Calendar.HOUR, -1);
 
@@ -184,8 +184,14 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       checkOutDate = null;
     } else if (TextUtils.isEmpty(enteredReference)) {
       referenceTextView.setError(getString(R.string.error_field_required));
-      //focusView = referenceTextView;
+      focusView = referenceTextView;
       cancel = true;
+    }
+
+    if (cancel) {
+      if (focusView != null) {
+        focusView.requestFocus();
+      }
     }
 
     return cancel;

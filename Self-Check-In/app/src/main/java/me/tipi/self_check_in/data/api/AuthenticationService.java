@@ -45,6 +45,7 @@ public interface AuthenticationService {
   @POST(ApiConstants.SIGN_UP)
   void addGuest(
       @Part("avatar") TypedFile avatar,
+      @Part("passport[scan]") TypedFile scan,
       @Part("email") String email,
       @Part("name") String name,
       @Part("city") String city,

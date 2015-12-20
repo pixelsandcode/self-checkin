@@ -204,6 +204,7 @@ public class SignUpActivity extends AppCompatActivity {
       TypedFile passportFile = new TypedFile("image/jpeg", new File(passportPath.get()));
       authenticationService.addGuest(
           avatarFile,
+          passportFile,
           guest.email,
           guest.name,
           TextUtils.isEmpty(guest.city) ? null : guest.city,
