@@ -58,7 +58,6 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   @Bind(R.id.taken_avatar) ImageView avatarTakenView;
   @Bind(R.id.full_name) EditText fullNameTextView;
   @Bind(R.id.email) EditText emailTextView;
-  @Bind(R.id.reference) EditText referenceTextView;
   @Bind(R.id.home_town) AutoCompleteTextView homeTownACView;
   @Bind(R.id.birthday) EditText birthDayPickerView;
   @Bind(R.id.passport) EditText passportTextView;
@@ -66,7 +65,6 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   public Date dob = null;
   public String enteredEmail;
   public String enteredFullName;
-  public String enteredReference;
   public String enteredPassportNumber;
   public String enteredHomeTown;
 
@@ -148,7 +146,6 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     if (!isError()) {
       guest.name = enteredFullName;
       guest.email = enteredEmail;
-      guest.referenceCode = enteredReference;
       guest.passportNumber = enteredPassportNumber;
 
       if (TextUtils.isEmpty(enteredHomeTown)) {
@@ -174,7 +171,6 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     fullNameTextView.setError(null);
     emailTextView.setError(null);
     passportTextView.setError(null);
-    referenceTextView.setError(null);
     birthDayPickerView.setError(null);
 
     boolean cancel = false;
@@ -182,7 +178,6 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
 
     enteredEmail = emailTextView.getText().toString();
     enteredFullName = fullNameTextView.getText().toString();
-    enteredReference = referenceTextView.getText().toString();
     enteredPassportNumber = passportTextView.getText().toString();
     enteredHomeTown = homeTownACView.getText().toString();
 
@@ -199,11 +194,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
       emailTextView.setError(getString(R.string.error_invalid_email));
       focusView = emailTextView;
       cancel = true;
-    } else if (TextUtils.isEmpty(enteredReference)) {
-       referenceTextView.setError(getString(R.string.error_field_required));
-       focusView = referenceTextView;
-       cancel = true;
-     } else if (TextUtils.isEmpty(enteredPassportNumber)) {
+    }  else if (TextUtils.isEmpty(enteredPassportNumber)) {
       passportTextView.setError(getString(R.string.error_field_required));
       focusView = passportTextView;
       cancel = true;

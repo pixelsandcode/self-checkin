@@ -39,27 +39,15 @@
       android:layout_centerHorizontal="true"
       android:layout_marginTop="@dimen/first_key_line"
       android:gravity="center"
-      android:hint="@string/booking_email"
+      android:hint="@string/email"
       android:imeOptions="actionNext"
       android:inputType="textEmailAddress"/>
-
-  <EditText
-      android:id="@+id/reference"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/email"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/first_key_line"
-      android:gravity="center"
-      android:hint="@string/reference_code"
-      android:imeOptions="actionNext"
-      android:inputType="textNoSuggestions"/>
 
   <AutoCompleteTextView
       android:id="@+id/home_town"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/reference"
+      android:layout_below="@+id/email"
       android:layout_centerHorizontal="true"
       android:layout_marginTop="@dimen/first_key_line"
       android:gravity="center"
@@ -97,7 +85,7 @@
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
       android:layout_marginBottom="@dimen/first_key_line"
-      android:background="@color/colorAccent"
+      android:background="@drawable/submit_button_background"
       android:text="@string/continue_text"
       android:textColor="@color/white"
       android:textSize="@dimen/font_normal"/>

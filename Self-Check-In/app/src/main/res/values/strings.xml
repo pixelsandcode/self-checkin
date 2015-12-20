@@ -3,7 +3,7 @@
   <string name="app_description">Mobile Check-in for Travellers</string>
 
   <string name="login_title">Log Into Your Tipi Account</string>
-  <string name="email">email</string>
+  <string name="email">Email</string>
   <string name="password">password</string>
   <string name="login">Login</string>
   <string name="error_invalid_email">This email address is invalid</string>

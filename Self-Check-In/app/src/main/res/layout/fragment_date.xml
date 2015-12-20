@@ -46,6 +46,18 @@
       android:imeOptions="actionDone"
       android:inputType="date"/>
 
+  <EditText
+      android:id="@+id/reference"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/email"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:gravity="center"
+      android:hint="@string/reference_code"
+      android:imeOptions="actionNext"
+      android:inputType="textNoSuggestions"/>
+
   <Button
       android:id="@+id/submit_btn"
       android:layout_width="match_parent"

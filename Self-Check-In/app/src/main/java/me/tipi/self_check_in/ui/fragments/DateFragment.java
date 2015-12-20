@@ -12,6 +12,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,10 +52,12 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   @Bind(R.id.taken_avatar) ImageView avatarTakenView;
   @Bind(R.id.check_in_date) EditText checkInDateView;
   @Bind(R.id.check_out_date) EditText checkOutDateView;
+  @Bind(R.id.reference) EditText referenceTextView;
 
   public Calendar checkInDate = null;
   public Calendar  checkOutDate = null;
   public String dateString;
+  public String enteredReference;
 
   /**
    * Instantiates a new Date fragment.
@@ -141,6 +144,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     if (!isError()) {
       guest.checkInDate = checkInDate.getTime();
       guest.checkOutDate = checkOutDate.getTime();
+      guest.referenceCode = enteredReference;
 
       bus.post(new SubmitEvent());
     }
@@ -155,6 +159,8 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
 
     checkInDateView.setError(null);
     checkOutDateView.setError(null);
+    referenceTextView.setError(null);
+    enteredReference = referenceTextView.getText().toString();
 
     boolean cancel = false;
     Calendar compare = Calendar.getInstance();
@@ -176,6 +182,10 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       checkOutDateView.setError(getString(R.string.error_check_out_before_check_in));
       cancel = true;
       checkOutDate = null;
+    } else if (TextUtils.isEmpty(enteredReference)) {
+      referenceTextView.setError(getString(R.string.error_field_required));
+      //focusView = referenceTextView;
+      cancel = true;
     }
 
     return cancel;
