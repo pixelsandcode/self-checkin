@@ -61,6 +61,11 @@ public final class DataModule {
     return prefs.getString(ApiConstants.AVATAR);
   }
 
+  @Provides @Singleton @Named(ApiConstants.PASSPORT)
+  Preference<String> providePassport(RxSharedPreferences prefs) {
+    return prefs.getString(ApiConstants.PASSPORT);
+  }
+
   @Provides @Singleton Clock provideClock() {
     return Clock.systemDefaultZone();
   }

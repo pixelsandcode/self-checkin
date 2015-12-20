@@ -8,7 +8,6 @@
 
 package me.tipi.self_check_in.ui.fragments;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -48,33 +47,27 @@ import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.util.FileHelper;
 import timber.log.Timber;
 
-public class AvatarFragment extends Fragment {
-  public final static int CAPTURE_IMAGE_REQUEST_CODE = 1034;
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class PassportFragment extends Fragment {
+  public final static int CAPTURE_PASSPORT_REQUEST_CODE = 1035;
 
   @Inject Picasso picasso;
   @Inject AppContainer appContainer;
   @Inject Bus bus;
-  @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
+  @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
 
-  @Bind(R.id.avatar) ImageView avatarView;
+  @Bind(R.id.passport_photo) ImageView passportView;
 
-  Uri uriSavedImage;
+  Uri uriSavedPassportImage;
 
-  /**
-   * Instantiates a new Avatar fragment.
-   */
-  public AvatarFragment() {
+  public PassportFragment() {
     // Required empty public constructor
   }
 
-  /**
-   * New instance avatar fragment.
-   *
-   * @param context the context
-   * @return the avatar fragment
-   */
-  public static AvatarFragment newInstance(Context context) {
-    AvatarFragment fragment = new AvatarFragment();
+  public static PassportFragment newInstance(Context context) {
+    PassportFragment fragment = new PassportFragment();
     SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
@@ -82,7 +75,7 @@ public class AvatarFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
-    View rootView = inflater.inflate(R.layout.fragment_avatar, container, false);
+    View rootView = inflater.inflate(R.layout.fragment_passport, container, false);
     ButterKnife.bind(this, rootView);
     Timber.d("OnCreateView");
     return rootView;
@@ -100,14 +93,14 @@ public class AvatarFragment extends Fragment {
 
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode == CAPTURE_IMAGE_REQUEST_CODE) {
+    if (requestCode == CAPTURE_PASSPORT_REQUEST_CODE) {
       if (resultCode == SignUpActivity.RESULT_OK) {
         try {
-          File imageFile = FileHelper.getResizedFile(getActivity(), uriSavedImage,
+          File imageFile = FileHelper.getResizedFile(getActivity(), uriSavedPassportImage,
               Build.VERSION.SDK_INT, 500, 500);
-          picasso.load(imageFile).resize(400,400).centerCrop().into(avatarView);
+          picasso.load(imageFile).resize(400,400).centerCrop().into(passportView);
           // Save taken photo path to show later if not signed up
-          avatarPath.set(imageFile.getPath());
+          passportPath.set(imageFile.getPath());
 
         } catch (Exception e) {
           Snackbar.make(appContainer.bind(getActivity()), "Picture wasn't taken!", Snackbar.LENGTH_LONG).show();
@@ -118,11 +111,11 @@ public class AvatarFragment extends Fragment {
 
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
-    if (getActivity() != null && isVisibleToUser && avatarView != null) {
-      bus.post(new BackShouldShowEvent(false));
-      if (avatarPath.isSet() && avatarPath.get() != null) {
-        picasso.load(new File(avatarPath.get())).resize(400, 400).centerCrop()
-            .placeholder(R.drawable.avatar_default).into(avatarView);
+    if (getActivity() != null && isVisibleToUser) {
+      bus.post(new BackShouldShowEvent(true));
+      if (passportPath.isSet() && passportPath.get() != null) {
+        picasso.load(new File(passportPath.get())).resize(400, 400).centerCrop()
+            .placeholder(R.drawable.passport_default).into(passportView);
       }
     }
   }
@@ -137,27 +130,28 @@ public class AvatarFragment extends Fragment {
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
 
     //folder stuff
-    File imagesFolder = new File(Environment.getExternalStorageDirectory(), "GuestAvatars");
+    File imagesFolder = new File(Environment.getExternalStorageDirectory(), "GuestPassports");
     imagesFolder.mkdirs();
 
-    File image = new File(imagesFolder, "Avatar_" + timeStamp + ".jpg");
-    uriSavedImage = Uri.fromFile(image);
+    File image = new File(imagesFolder, "scan_" + timeStamp + ".jpg");
+    uriSavedPassportImage = Uri.fromFile(image);
 
-    intent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
+    intent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedPassportImage);
     // Start the image capture intent to take photo
-    startActivityForResult(intent, CAPTURE_IMAGE_REQUEST_CODE);
+    startActivityForResult(intent, CAPTURE_PASSPORT_REQUEST_CODE);
   }
 
   /**
    * Continue to identity.
    */
   @OnClick(R.id.continue_btn)
-  public void continueToIdentity() {
-    if (avatarPath.isSet()) {
-      Timber.v(avatarPath.get());
-      bus.post(new PagerChangeEvent(1));
+  public void continueToCheckIn() {
+    if (passportPath.isSet()) {
+      Timber.v(passportPath.get());
+      bus.post(new PagerChangeEvent(3));
     } else {
-      Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie first!", Snackbar.LENGTH_LONG).show();
+      Snackbar.make(appContainer.bind(getActivity()), "Please Scan your passport first!", Snackbar.LENGTH_LONG).show();
     }
   }
+
 }

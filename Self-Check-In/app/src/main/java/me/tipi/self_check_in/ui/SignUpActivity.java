@@ -66,6 +66,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Inject Guest guest;
   @Inject AuthenticationService authenticationService;
   @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
+  @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
   @Inject AppContainer appContainer;
 
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
@@ -115,6 +116,15 @@ public class SignUpActivity extends AppCompatActivity {
     } else {
       // Otherwise, select the previous step.
       viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+    }
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    avatarPath.delete();
+    passportPath.delete();
+    if (guest != null) {
+      guest = null;
     }
   }
 
@@ -186,10 +196,12 @@ public class SignUpActivity extends AppCompatActivity {
   @Subscribe
   public void onSubmit(SubmitEvent event) {
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-    if (avatarPath != null && avatarPath.get() != null) {
+    if (avatarPath != null && avatarPath.get() != null && passportPath != null && passportPath.get() != null) {
       loading.show();
       @SuppressWarnings("ConstantConditions")
       TypedFile avatarFile = new TypedFile("image/jpeg", new File(avatarPath.get()));
+      @SuppressWarnings("ConstantConditions")
+      TypedFile passportFile = new TypedFile("image/jpeg", new File(passportPath.get()));
       authenticationService.addGuest(
           avatarFile,
           guest.email,
@@ -205,7 +217,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override public void success(ApiResponse apiResponse, Response response) {
               loading.dismiss();
               Timber.d("Good");
-              viewPager.setCurrentItem(3, true);
+              viewPager.setCurrentItem(4, true);
             }
 
             @Override public void failure(RetrofitError error) {
@@ -256,6 +268,7 @@ public class SignUpActivity extends AppCompatActivity {
    */
   private void reset() {
     avatarPath.delete();
+    passportPath.delete();
     if (guest != null) {
       guest = null;
     }

@@ -142,7 +142,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
    * Continue to date.
    */
   @OnClick(R.id.continue_btn)
-  public void continueToDate() {
+  public void continueToPassport() {
     if (!isError()) {
       guest.name = enteredFullName;
       guest.email = enteredEmail;
