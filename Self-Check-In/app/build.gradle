@@ -3,9 +3,9 @@ apply plugin: 'spoon'
 android {
     signingConfigs {
         release {
-            keyAlias 'me'
+            keyAlias KEY_ALIAS
             keyPassword KEYSTORE_PASSWORD
-            storeFile file('/Users/ashkan/Documents/Android/keystore/Tipi/tipi.jks')
+            storeFile file(KEY_FILE)
             storePassword KEYSTORE_PASSWORD
         }
     }
