@@ -62,10 +62,19 @@ public class PassportFragment extends Fragment {
 
   Uri uriSavedPassportImage;
 
+  /**
+   * Instantiates a new Passport fragment.
+   */
   public PassportFragment() {
     // Required empty public constructor
   }
 
+  /**
+   * New instance passport fragment.
+   *
+   * @param context the context
+   * @return the passport fragment
+   */
   public static PassportFragment newInstance(Context context) {
     PassportFragment fragment = new PassportFragment();
     SelfCheckInApp.get(context).inject(fragment);

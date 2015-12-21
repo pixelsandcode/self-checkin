@@ -24,8 +24,8 @@
       android:layout_height="wrap_content"
       android:layout_centerInParent="true"
       android:gravity="center"
-      android:drawableRight="@drawable/ic_calendar"
-      android:drawableEnd="@drawable/ic_calendar"
+      android:drawableRight="@drawable/ic_calendar_24dp"
+      android:drawableEnd="@drawable/ic_calendar_24dp"
       android:hint="@string/check_in"
       android:imeOptions="actionNext"
       android:inputType="date"/>

@@ -28,6 +28,16 @@ import java.io.InputStream;
 
 public class FileHelper {
 
+  /**
+   * Gets resized file.
+   *
+   * @param context    the context
+   * @param uri        the uri
+   * @param sdkVersion the sdk version
+   * @param dstWidth   the dst width
+   * @param dstHeight  the dst height
+   * @return the resized file
+   */
   public static File getResizedFile(final Context context, final Uri uri, int sdkVersion, int dstWidth, int dstHeight) {
     File destFile = null;
     String path;
@@ -125,6 +135,8 @@ public class FileHelper {
 
 
   /**
+   * Is external storage document boolean.
+   *
    * @param uri The Uri to check.
    * @return Whether the Uri authority is ExternalStorageProvider.
    */
@@ -133,6 +145,8 @@ public class FileHelper {
   }
 
   /**
+   * Is downloads document boolean.
+   *
    * @param uri The Uri to check.
    * @return Whether the Uri authority is DownloadsProvider.
    */
@@ -141,6 +155,8 @@ public class FileHelper {
   }
 
   /**
+   * Is media document boolean.
+   *
    * @param uri The Uri to check.
    * @return Whether the Uri authority is MediaProvider.
    */
@@ -149,6 +165,8 @@ public class FileHelper {
   }
 
   /**
+   * Is google photos uri boolean.
+   *
    * @param uri The Uri to check.
    * @return Whether the Uri authority is Google Photos.
    */
@@ -164,6 +182,7 @@ public class FileHelper {
    *
    * @param context The context.
    * @param uri     The Uri to query.
+   * @return the path for kit kat
    * @author paulburke
    */
   @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -234,6 +253,13 @@ public class FileHelper {
     return null;
   }
 
+  /**
+   * Gets path for under kit kat.
+   *
+   * @param context the context
+   * @param uri     the uri
+   * @return the path for under kit kat
+   */
   public static String getPathForUnderKitKat(final Context context, final Uri uri) {
     if (uri == null) {
       return null;

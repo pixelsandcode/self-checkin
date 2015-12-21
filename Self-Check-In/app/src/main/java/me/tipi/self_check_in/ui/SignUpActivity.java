@@ -245,7 +245,10 @@ public class SignUpActivity extends AppCompatActivity {
 
   }
 
-  // Called when the user is performing an action which requires the app to show camera
+  /**
+   * Gets permission to open camera and galley.
+   */
+// Called when the user is performing an action which requires the app to show camera
   @TargetApi(Build.VERSION_CODES.M)
   public void getPermissionToOpenCameraAndGalley() {
     // 1) Use the support library version ContextCompat.checkSelfPermission(...) to avoid
@@ -273,6 +276,19 @@ public class SignUpActivity extends AppCompatActivity {
     }
   }
 
+  /**
+   * Go to find activity.
+   *
+   * @param view the view
+   */
+  public void goToFindActivity(View view) {
+    startActivity(new Intent(this, FindUserActivity.class));
+    finish();
+  }
+
+  /**
+   * Login.
+   */
   private void login() {
     authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<Response>() {
       @Override public void success(Response response, Response response2) {

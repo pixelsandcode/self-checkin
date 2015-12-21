@@ -10,6 +10,7 @@ package me.tipi.self_check_in.data.api;
 
 import me.tipi.self_check_in.data.api.models.ApiResponse;
 import me.tipi.self_check_in.data.api.models.CountryResponse;
+import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
 import retrofit.Callback;
 import retrofit.client.Response;
@@ -41,6 +42,31 @@ public interface AuthenticationService {
   @GET(ApiConstants.HOME_TOWN)
   void getSuggestedCountries(@Query("q") String query, Callback<CountryResponse> cb);
 
+  /**
+   * Find user.
+   *
+   * @param email the email
+   * @param cb    the cb
+   */
+  @GET(ApiConstants.FIND)
+  void findUser(@Query("email") String email, Callback<FindResponse> cb);
+
+  /**
+   * Add guest.
+   *
+   * @param avatar          the avatar
+   * @param scan            the scan
+   * @param email           the email
+   * @param name            the name
+   * @param city            the city
+   * @param country         the country
+   * @param passportNumber  the passport number
+   * @param dob             the dob
+   * @param referenceNumber the reference number
+   * @param from            the from
+   * @param to              the to
+   * @param cb              the cb
+   */
   @Multipart
   @POST(ApiConstants.SIGN_UP)
   void addGuest(

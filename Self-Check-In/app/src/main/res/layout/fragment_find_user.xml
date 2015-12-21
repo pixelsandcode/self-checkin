@@ -1,0 +1,127 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:paddingLeft="@dimen/second_key_line"
+    android:paddingRight="@dimen/second_key_line"
+    tools:context="me.tipi.self_check_in.ui.fragments.FindUserFragment"
+    tools:ignore="ContentDescription">
+
+  <TextView
+      android:id="@+id/find_title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/second_key_line"
+      android:gravity="center"
+      android:lines="2"
+      android:minLines="2"
+      android:padding="@dimen/first_key_line"
+      android:text="@string/find_account_title"
+      android:textColor="@color/black"
+      android:textSize="@dimen/font_extra_large"/>
+
+  <EditText
+      android:id="@+id/email"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/find_title"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/second_key_line"
+      android:gravity="center"
+      android:hint="@string/email"
+      android:imeOptions="actionDone"
+      android:inputType="textEmailAddress"
+      android:textColorHint="@color/black"/>
+
+  <TextView
+      android:id="@+id/match_text"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/email"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/second_key_line"
+      android:gravity="center"
+      android:text="@string/find_account_hint"
+      android:textColor="@color/black"/>
+
+  <Button
+      android:id="@+id/find_btn"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/match_text"
+      android:layout_margin="@dimen/second_key_line"
+      android:background="@drawable/submit_button_background"
+      android:text="@string/find"
+      android:textColor="@color/white"
+      android:textSize="@dimen/font_normal"/>
+
+  <RelativeLayout
+      android:id="@+id/match_user_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:layout_below="@+id/find_btn"
+      android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:scaleType="centerCrop"
+        android:layout_centerVertical="true"
+        android:src="@drawable/avatar_placeholder"/>
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/avatar"
+        android:layout_toRightOf="@+id/avatar"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:padding="@dimen/normal_padding"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_normal"
+        tools:text="Jack Bowcott"
+        />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_arrow_right_36dp"
+        android:padding="8dp"/>
+  </RelativeLayout>
+
+  <TextView
+      android:id="@+id/or_text"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/find_btn"
+      android:layout_centerHorizontal="true"
+      android:gravity="center"
+      android:text="@string/or"
+      android:textColor="@color/black"
+      android:visibility="gone"/>
+
+  <Button
+      android:id="@+id/sign_up_btn"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/or_text"
+      android:layout_marginLeft="@dimen/third_key_line"
+      android:layout_marginRight="@dimen/third_key_line"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:background="@drawable/submit_button_with_border"
+      android:onClick="goToSignUp"
+      android:text="@string/sign_up"
+      android:textColor="@color/colorAccent"
+      android:textSize="@dimen/font_normal"
+      android:visibility="gone"/>
+
+</RelativeLayout>

@@ -15,6 +15,7 @@ import dagger.Provides;
 import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.fragments.AvatarFragment;
 import me.tipi.self_check_in.ui.fragments.DateFragment;
+import me.tipi.self_check_in.ui.fragments.FindUserFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LoginFragment;
 import me.tipi.self_check_in.ui.fragments.PassportFragment;
@@ -24,10 +25,12 @@ import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
     injects = {
         MainActivity.class,
         SignUpActivity.class,
+        FindUserActivity.class,
         LoginFragment.class,
         AvatarFragment.class,
         PassportFragment.class,
         IdentityFragment.class,
+        FindUserFragment.class,
         DateFragment.class,
         SuccessSignUpFragment.class,
         HomeTownAutoCompleteAdapter.class

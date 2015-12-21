@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public final class Guest {
+  public String user_key = "";
   public String name;
   public String email;
   public String city;

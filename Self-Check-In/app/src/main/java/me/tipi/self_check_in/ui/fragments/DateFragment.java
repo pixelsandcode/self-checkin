@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
@@ -41,6 +42,7 @@ import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
+import me.tipi.self_check_in.util.Strings;
 
 public class DateFragment extends Fragment implements DatePickerDialogFragment.DatePickerDialogHandler {
 
@@ -134,7 +136,11 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       guest.referenceCode = enteredReference;
 
       checkInDate = null;
-      bus.post(new SubmitEvent());
+      if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
+        Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
+      } else {
+        bus.post(new SubmitEvent());
+      }
     }
   }
 
@@ -196,6 +202,10 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       bus.post(new BackShouldShowEvent(true));
       if (avatarPath.isSet() && avatarPath.get() != null) {
         picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
+            .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+            .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
+      } else if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
+        picasso.load(Strings.makeAvatarUrl(guest.user_key)).resize(200, 200).centerCrop()
             .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
             .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
       }

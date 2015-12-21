@@ -7,7 +7,11 @@ import static butterknife.ButterKnife.findById;
 
 /** An indirection which allows controlling the root container used for each activity. */
 public interface AppContainer {
-  /** The root {@link ViewGroup} into which the activity should place its contents. */
+  /**
+   * The root {@link ViewGroup} into which the activity should place its contents.  @param activity the activity
+   *
+   * @return the view group
+   */
   ViewGroup bind(Activity activity);
 
   /** An {@link AppContainer} which returns the normal activity content view. */

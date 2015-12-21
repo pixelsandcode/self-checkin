@@ -9,6 +9,7 @@
 package me.tipi.self_check_in.util;
 
 
+import me.tipi.self_check_in.data.api.ApiConstants;
 
 public final class Strings {
   /**
@@ -51,5 +52,15 @@ public final class Strings {
   public static String getPostStringSplit(String value, String splitter) {
     String[] parts = value.split(splitter);
     return parts[parts.length - 1];
+  }
+
+  /**
+   * Make avatar url string.
+   *
+   * @param userId the user id
+   * @return the string
+   */
+  public static String makeAvatarUrl(String userId) {
+    return ApiConstants.API_IMAGE_URL + String.format(ApiConstants.AVATAR_URL, userId) + ".jpg";
   }
 }

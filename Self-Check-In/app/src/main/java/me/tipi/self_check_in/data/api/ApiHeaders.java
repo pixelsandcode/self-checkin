@@ -22,6 +22,11 @@ import retrofit.RequestInterceptor;
 final class ApiHeaders implements RequestInterceptor {
   private final Application app;
 
+  /**
+   * Instantiates a new Api headers.
+   *
+   * @param app the app
+   */
   @Inject
   public ApiHeaders(Application app) {
     this.app = app;
@@ -43,6 +48,7 @@ final class ApiHeaders implements RequestInterceptor {
   }
 
   /**
+   * Is network available boolean.
    *
    * @return a boolean indicating if network is available
    */

@@ -80,6 +80,7 @@
       android:background="@drawable/submit_button_with_border"
       android:textColor="@color/colorAccent"
       android:textSize="@dimen/font_normal"
+      android:onClick="goToFindActivity"
       android:text="@string/log_in"/>
 
 </RelativeLayout>

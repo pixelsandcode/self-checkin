@@ -12,14 +12,20 @@ public class ApiConstants {
 
   // Api Ips
   //public static final String API_URL = "http://api.tipi.me/v1";
+  //public static final String API_IMAGE_URL = "http://api.tipi.me/cdn";
 
   // Api Stg
   public static final String API_URL = "http://stg.api.tipi.me/v1";
+  public static final String API_IMAGE_URL = "http://stg.api.tipi.me/cdn";
 
   // Routes
   public static final String LOGIN = "/dashboard/login";
   public static final String HOME_TOWN = "/countries/suggest";
   public static final String SIGN_UP = "/dashboard/users/signup";
+  public static final String FIND = "/dashboard/users/find";
+
+  // Images
+  public static final String AVATAR_URL = "/user/%s/savatar";
 
   // Prefs
   public static final String USER_NAME = "username";

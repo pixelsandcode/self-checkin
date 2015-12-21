@@ -38,4 +38,11 @@
   <string name="scan_passport">Scan your Passport</string>
   <string name="number_of_nights">Number of Nights</string>
   <string name="title_activity_login">LoginActivity</string>
+  <string name="find">Find</string>
+  <string name="find_account_title">Find your\nAccount</string>
+  <string name="find_account_hint">the email you used to sign-up to tipi</string>
+  <string name="match_found_hint">Found a match</string>
+  <string name="no_match_hint">No matches found</string>
+  <string name="or">OR</string>
+  <string name="sign_up">Sign up</string>
 </resources>

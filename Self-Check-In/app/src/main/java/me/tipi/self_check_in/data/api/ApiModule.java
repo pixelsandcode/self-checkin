@@ -48,6 +48,14 @@ public final class ApiModule {
     return new OkClient(client);
   }
 
+  /**
+   * Provide main rest adapter rest adapter.
+   *
+   * @param endpoint the endpoint
+   * @param client   the client
+   * @param headers  the headers
+   * @return the rest adapter
+   */
   @Provides @Singleton
   RestAdapter provideMainRestAdapter(Endpoint endpoint, Client client, ApiHeaders headers) {
     return new RestAdapter.Builder() //
