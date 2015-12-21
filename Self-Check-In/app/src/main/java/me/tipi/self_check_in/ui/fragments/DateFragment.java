@@ -39,7 +39,6 @@ import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
-import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 
 public class DateFragment extends Fragment implements DatePickerDialogFragment.DatePickerDialogHandler {
@@ -51,13 +50,13 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
 
   @Bind(R.id.taken_avatar) ImageView avatarTakenView;
   @Bind(R.id.check_in_date) EditText checkInDateView;
-  @Bind(R.id.check_out_date) EditText checkOutDateView;
+  @Bind(R.id.nights_number) EditText nightsNumberView;
   @Bind(R.id.reference) EditText referenceTextView;
 
   public Calendar checkInDate = null;
-  public Calendar  checkOutDate = null;
   public String dateString;
   public String enteredReference;
+  public int enteredNights = 0;
 
   /**
    * Instantiates a new Date fragment.
@@ -89,7 +88,6 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     }
 
     checkInDateView.setInputType(InputType.TYPE_NULL);
-    checkOutDateView.setInputType(InputType.TYPE_NULL);
 
     Calendar today = Calendar.getInstance();
     checkInDate = today;
@@ -108,19 +106,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       }
     });
 
-    checkOutDateView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        DatePickerBuilder dpb = new DatePickerBuilder()
-            .setFragmentManager(getChildFragmentManager())
-            .setStyleResId(R.style.BetterPickersDialogFragment)
-            .setTargetFragment(DateFragment.this)
-            .setReference(20);
-        dpb.show();
-      }
-    });
-
-    checkOutDateView.requestFocus();
+    nightsNumberView.requestFocus();
 
     return rootView;
   }
@@ -142,10 +128,12 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   public void dateSubmitClicked() {
     if (!isError()) {
       guest.checkInDate = checkInDate.getTime();
-      guest.checkOutDate = checkOutDate.getTime();
+      checkInDate.add(Calendar.DAY_OF_MONTH, enteredNights);
+      guest.checkOutDate = checkInDate.getTime();
       guest.referenceCode = enteredReference;
 
-      bus.post(new SubmitEvent());
+      checkInDate = null;
+      //bus.post(new SubmitEvent());
     }
   }
 
@@ -157,7 +145,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   private boolean isError() {
 
     checkInDateView.setError(null);
-    checkOutDateView.setError(null);
+    nightsNumberView.setError(null);
     referenceTextView.setError(null);
     enteredReference = referenceTextView.getText().toString();
 
@@ -170,18 +158,19 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       checkInDateView.setError(getString(R.string.error_field_required));
       cancel = true;
       checkInDate = null;
-    } else if (checkOutDate == null) {
-      checkOutDateView.setError(getString(R.string.error_field_required));
+    } else if (nightsNumberView.getText() == null || TextUtils.isEmpty(nightsNumberView.getText().toString())) {
+      nightsNumberView.setError(getString(R.string.error_field_required));
       cancel = true;
-      checkOutDate = null;
+      enteredNights = 0;
     } else if (checkInDate.before(compare)) {
       checkInDateView.setError(getString(R.string.error_less_than_today));
       cancel = true;
       checkInDate = null;
-    } else if (checkOutDate.equals(checkInDate) || checkOutDate.before(checkInDate)) {
-      checkOutDateView.setError(getString(R.string.error_check_out_before_check_in));
+    } else if (Integer.parseInt(nightsNumberView.getText().toString()) <= 0) {
+      nightsNumberView.setError(getString(R.string.error_check_out_before_check_in));
       cancel = true;
-      checkOutDate = null;
+      focusView = nightsNumberView;
+      enteredNights = 0;
     } else if (TextUtils.isEmpty(enteredReference)) {
       referenceTextView.setError(getString(R.string.error_field_required));
       focusView = referenceTextView;
@@ -193,6 +182,8 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
         focusView.requestFocus();
       }
     }
+
+    enteredNights = Integer.parseInt(nightsNumberView.getText().toString());
 
     return cancel;
   }
@@ -217,9 +208,6 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     if (reference == 10) {
       checkInDateView.setText(dateString);
       checkInDate = calendar;
-    } else if (reference == 20) {
-      checkOutDateView.setText(dateString);
-      checkOutDate = calendar;
     }
   }
 }
