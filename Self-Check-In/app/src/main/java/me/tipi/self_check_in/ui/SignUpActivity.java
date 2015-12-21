@@ -47,6 +47,7 @@ import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.ApiResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
+import me.tipi.self_check_in.data.api.models.LoginRequest;
 import me.tipi.self_check_in.ui.adapters.SignUpAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.EmailConflictEvent;
@@ -64,10 +65,12 @@ public class SignUpActivity extends AppCompatActivity {
 
   @Inject Bus bus;
   @Inject Guest guest;
-  @Inject AuthenticationService authenticationService;
   @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
   @Inject AppContainer appContainer;
+  @Inject AuthenticationService authenticationService;
+  @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
+  @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
 
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
   @Bind(R.id.backBtn) TextView backButtonView;
@@ -105,6 +108,12 @@ public class SignUpActivity extends AppCompatActivity {
     super.onPause();
     Timber.d("Paused");
     bus.unregister(this);
+  }
+
+  @Override protected void onRestart() {
+    super.onRestart();
+    Timber.d("Restart");
+    login();
   }
 
   @Override
@@ -262,6 +271,24 @@ public class SignUpActivity extends AppCompatActivity {
       requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
           CAMERA_GALLERY_PERMISSIONS_REQUEST);
     }
+  }
+
+  private void login() {
+    authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<Response>() {
+      @Override public void success(Response response, Response response2) {
+        Timber.d("LoggedIn");
+      }
+
+      @Override public void failure(RetrofitError error) {
+        if (error.getResponse().getStatus() == 401) {
+          Snackbar.make(appContainer.bind(SignUpActivity.this), "Your email/password doesn't match!", Snackbar.LENGTH_LONG).show();
+        } else {
+          Snackbar.make(appContainer.bind(SignUpActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
+        }
+        startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+        finish();
+      }
+    });
   }
 
   /**

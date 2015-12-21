@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="me.tipi.self_check_in"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="me.tipi.self_check_in"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -40,8 +39,8 @@
     </activity>
     <activity
         android:name=".ui.SignUpActivity"
-        android:screenOrientation="landscape"
         android:configChanges="screenSize|orientation"
+        android:screenOrientation="landscape"
         android:windowSoftInputMode="adjustPan">
     </activity>
   </application>

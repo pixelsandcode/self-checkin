@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
   @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
   @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
+  @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
   @Inject AppContainer appContainer;
 
   @Bind(R.id.main_logo) TextView mainLogoView;
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         loading.dismiss();
         Timber.d("LoggedIn");
         avatarPath.delete();
+        passportPath.delete();
         startActivity(new Intent(MainActivity.this, SignUpActivity.class));
         finish();
       }
@@ -105,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
       @Override public void failure(RetrofitError error) {
         loading.dismiss();
         showLoginFragment();
-        if (error.getResponse().getStatus() == 401) {
+        if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
           Snackbar.make(appContainer.bind(MainActivity.this), "Your email/password doesn't match!", Snackbar.LENGTH_LONG).show();
         } else {
           Snackbar.make(appContainer.bind(MainActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();

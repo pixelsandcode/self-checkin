@@ -39,6 +39,7 @@ import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
+import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 
 public class DateFragment extends Fragment implements DatePickerDialogFragment.DatePickerDialogHandler {
@@ -133,7 +134,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       guest.referenceCode = enteredReference;
 
       checkInDate = null;
-      //bus.post(new SubmitEvent());
+      bus.post(new SubmitEvent());
     }
   }
 
