@@ -110,12 +110,6 @@ public class SignUpActivity extends AppCompatActivity {
     bus.unregister(this);
   }
 
-  @Override protected void onRestart() {
-    super.onRestart();
-    Timber.d("Restart");
-    login();
-  }
-
   @Override
   public void onBackPressed() {
     if (viewPager.getCurrentItem() == 0) {
@@ -231,11 +225,15 @@ public class SignUpActivity extends AppCompatActivity {
             }
 
             @Override public void failure(RetrofitError error) {
-              loading.dismiss();
               if (error.getResponse().getStatus() == 409) {
+                loading.dismiss();
                 viewPager.setCurrentItem(1, true);
                 bus.post(new EmailConflictEvent());
-              } else {
+              } else if (error.getResponse().getStatus() == 401) {
+                login();
+              }
+              else {
+                loading.dismiss();
                 Snackbar.make(appContainer.bind(SignUpActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
               }
             }
@@ -292,6 +290,7 @@ public class SignUpActivity extends AppCompatActivity {
     authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<Response>() {
       @Override public void success(Response response, Response response2) {
         Timber.d("LoggedIn");
+        bus.post(new SubmitEvent());
       }
 
       @Override public void failure(RetrofitError error) {

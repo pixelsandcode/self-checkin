@@ -31,6 +31,8 @@ import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
 import me.tipi.self_check_in.ui.adapters.LoginAdapter;
+import me.tipi.self_check_in.ui.events.AuthenticationFailedEvent;
+import me.tipi.self_check_in.ui.events.AuthenticationPassedEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.misc.ChangeSwipeViewPager;
 import retrofit.Callback;
@@ -77,12 +79,6 @@ public class FindUserActivity extends AppCompatActivity {
     bus.unregister(this);
   }
 
-  @Override protected void onRestart() {
-    super.onRestart();
-    Timber.d("Restart");
-    login();
-  }
-
   @Override
   public void onBackPressed() {
     if (viewPager.getCurrentItem() == 0) {
@@ -105,6 +101,11 @@ public class FindUserActivity extends AppCompatActivity {
     viewPager.setCurrentItem(event.page, true);
   }
 
+  @Subscribe
+  public void onAuthFailed(AuthenticationFailedEvent event) {
+    login();
+  }
+
   /**
    * Start over.
    */
@@ -120,8 +121,7 @@ public class FindUserActivity extends AppCompatActivity {
    * @param view the view
    */
   public void goToSignUp(View view) {
-    startActivity(new Intent(this, SignUpActivity.class));
-    finish();
+    reset();
   }
 
   /**
@@ -143,6 +143,7 @@ public class FindUserActivity extends AppCompatActivity {
     authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<Response>() {
       @Override public void success(Response response, Response response2) {
         Timber.d("LoggedIn");
+        bus.post(new AuthenticationPassedEvent());
       }
 
       @Override public void failure(RetrofitError error) {

@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -37,6 +38,8 @@ import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.User;
+import me.tipi.self_check_in.ui.events.AuthenticationFailedEvent;
+import me.tipi.self_check_in.ui.events.AuthenticationPassedEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.Strings;
@@ -120,6 +123,12 @@ public class FindUserFragment extends Fragment {
     Timber.d("Paused");
   }
 
+  @Subscribe
+  public void onAuthPassed(AuthenticationPassedEvent event) {
+    find();
+    Timber.d("finding again after login");
+  }
+
   /**
    * Find.
    */
@@ -156,15 +165,20 @@ public class FindUserFragment extends Fragment {
         }
 
         @Override public void failure(RetrofitError error) {
-          loading.dismiss();
 
-          // Handling show/hide views
-          matchTextView.setText(R.string.no_match_hint);
-          matchTextView.setTextColor(accentColor);
-          orTextView.setVisibility(View.VISIBLE);
-          signUpButton.setVisibility(View.VISIBLE);
-          matchedUserContainer.setVisibility(View.GONE);
-          Timber.d("Error finding: %s", error.toString());
+          if (error.getResponse().getStatus() == 401) {
+            Timber.d("authentication failed");
+            bus.post(new AuthenticationFailedEvent());
+          } else {
+            // Handling show/hide views
+            loading.dismiss();
+            matchTextView.setText(R.string.no_match_hint);
+            matchTextView.setTextColor(accentColor);
+            orTextView.setVisibility(View.VISIBLE);
+            signUpButton.setVisibility(View.VISIBLE);
+            matchedUserContainer.setVisibility(View.GONE);
+            Timber.d("Error finding: %s", error.toString());
+          }
         }
       });
     }
