@@ -92,6 +92,9 @@ public class SignUpActivity extends AppCompatActivity {
         .progress(true, 0)
         .build();
 
+    guest.user_key = null;
+    guest.name = null;
+
     adapter = new SignUpAdapter(getSupportFragmentManager(), this);
     viewPager.setAdapter(adapter);
     viewPager.setSwipingEnabled(false);
