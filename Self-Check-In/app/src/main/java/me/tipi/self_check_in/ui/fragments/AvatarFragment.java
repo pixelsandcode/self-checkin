@@ -85,6 +85,7 @@ public class AvatarFragment extends Fragment {
     View rootView = inflater.inflate(R.layout.fragment_avatar, container, false);
     ButterKnife.bind(this, rootView);
     Timber.d("OnCreateView");
+
     return rootView;
   }
 
@@ -118,9 +119,9 @@ public class AvatarFragment extends Fragment {
 
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
-    if (getActivity() != null && isVisibleToUser && avatarView != null) {
+    if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(false));
-      if (avatarPath.isSet() && avatarPath.get() != null) {
+      if (avatarPath.isSet() && avatarPath.get() != null && avatarView != null) {
         picasso.load(new File(avatarPath.get())).resize(400, 400).centerCrop()
             .placeholder(R.drawable.avatar_default).into(avatarView);
       }

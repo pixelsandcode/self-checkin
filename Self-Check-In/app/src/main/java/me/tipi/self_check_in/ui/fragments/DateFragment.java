@@ -135,7 +135,6 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       guest.checkOutDate = checkInDate.getTime();
       guest.referenceCode = enteredReference;
 
-      checkInDate = null;
       if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
         Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
       } else {

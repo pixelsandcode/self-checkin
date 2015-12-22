@@ -112,6 +112,12 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
       }
     });
 
+    if (avatarPath != null && avatarPath.isSet() && avatarPath.get() != null && avatarTakenView != null) {
+      picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
+          .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+          .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
+    }
+
     return rootView;
   }
 
@@ -130,7 +136,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(true));
-      if (avatarPath.isSet() && avatarPath.get() != null) {
+      if (avatarPath.isSet() && avatarPath.get() != null && avatarTakenView != null) {
         picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
             .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
             .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
