@@ -9,6 +9,7 @@
 package me.tipi.self_check_in.data.api;
 
 import me.tipi.self_check_in.data.api.models.ApiResponse;
+import me.tipi.self_check_in.data.api.models.ClaimRequest;
 import me.tipi.self_check_in.data.api.models.CountryResponse;
 import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
@@ -19,6 +20,7 @@ import retrofit.http.GET;
 import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.Part;
+import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.mime.TypedFile;
 
@@ -81,5 +83,11 @@ public interface AuthenticationService {
       @Part("booking[reference_number]") String referenceNumber,
       @Part("booking[from]") String from,
       @Part("booking[to]") String to,
+      Callback<ApiResponse> cb);
+
+  @POST(ApiConstants.CLAIM)
+  void claim(
+      @Path("user_key") String userKey,
+      @Body ClaimRequest claimRequest,
       Callback<ApiResponse> cb);
 }

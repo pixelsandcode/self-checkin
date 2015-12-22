@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
@@ -40,6 +39,7 @@ import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
+import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.Strings;
@@ -134,9 +134,10 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       checkInDate.add(Calendar.DAY_OF_MONTH, enteredNights);
       guest.checkOutDate = checkInDate.getTime();
       guest.referenceCode = enteredReference;
+      enteredNights = Integer.parseInt(nightsNumberView.getText().toString());
 
       if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
-        Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
+        bus.post(new ClaimEvent());
       } else {
         bus.post(new SubmitEvent());
       }
@@ -186,10 +187,11 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     if (cancel) {
       if (focusView != null) {
         focusView.requestFocus();
+        focusView.requestFocus();
       }
     }
 
-    enteredNights = Integer.parseInt(nightsNumberView.getText().toString());
+
 
     return cancel;
   }
@@ -199,6 +201,9 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     if (getActivity() != null && isVisibleToUser) {
 
       bus.post(new BackShouldShowEvent(true));
+      if (nightsNumberView != null) {
+        nightsNumberView.requestFocus();
+      }
       if (avatarPath.isSet() && avatarPath.get() != null) {
         picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
             .transform(new CircleStrokeTransformation(getActivity(), 0, 0))

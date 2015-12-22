@@ -42,7 +42,7 @@
       android:layout_height="wrap_content"
       android:layout_below="@+id/email"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/second_key_line"
+      android:layout_marginTop="@dimen/first_key_line"
       android:gravity="center"
       android:text="@string/find_account_hint"
       android:textColor="@color/black"/>
@@ -62,7 +62,6 @@
       android:id="@+id/match_user_container"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginTop="@dimen/first_key_line"
       android:layout_below="@+id/find_btn"
       android:visibility="gone">
 

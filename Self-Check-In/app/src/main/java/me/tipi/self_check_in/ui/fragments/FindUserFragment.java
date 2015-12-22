@@ -162,6 +162,7 @@ public class FindUserFragment extends Fragment {
           userNameView.setText(matchedUser.name);
           guest.name = matchedUser.name;
           guest.user_key = matchedUser.doc_key;
+          guest.email = enteredEmail;
         }
 
         @Override public void failure(RetrofitError error) {

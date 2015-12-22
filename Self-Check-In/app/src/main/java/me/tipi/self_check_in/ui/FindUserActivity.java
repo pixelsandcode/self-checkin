@@ -14,9 +14,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.f2prateek.rx.preferences.Preference;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,11 +33,15 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
+import me.tipi.self_check_in.data.api.models.ApiResponse;
+import me.tipi.self_check_in.data.api.models.Booking;
+import me.tipi.self_check_in.data.api.models.ClaimRequest;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
 import me.tipi.self_check_in.ui.adapters.LoginAdapter;
 import me.tipi.self_check_in.ui.events.AuthenticationFailedEvent;
 import me.tipi.self_check_in.ui.events.AuthenticationPassedEvent;
+import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.misc.ChangeSwipeViewPager;
 import retrofit.Callback;
@@ -52,6 +61,7 @@ public class FindUserActivity extends AppCompatActivity {
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
 
   public LoginAdapter adapter;
+  private MaterialDialog loading;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +70,12 @@ public class FindUserActivity extends AppCompatActivity {
     SelfCheckInApp.get(this).inject(this);
     ButterKnife.bind(this);
     Timber.d("Created");
+
+    loading = new MaterialDialog.Builder(this)
+        .content("Please wait")
+        .cancelable(false)
+        .progress(true, 0)
+        .build();
 
     adapter = new LoginAdapter(getSupportFragmentManager(), this);
     viewPager.setAdapter(adapter);
@@ -106,13 +122,38 @@ public class FindUserActivity extends AppCompatActivity {
     login();
   }
 
+  @Subscribe
+  public void onClaimEvent(ClaimEvent event) {
+    loading.show();
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+    authenticationService.claim(guest.user_key, new ClaimRequest(
+            guest.email,
+            new Booking(
+                guest.referenceCode,
+                dateFormat.format(guest.checkInDate),
+                dateFormat.format(guest.checkOutDate))),
+        new Callback<ApiResponse>() {
+          @Override public void success(ApiResponse apiResponse, Response response) {
+            loading.dismiss();
+            Timber.d("Claimed");
+            viewPager.setCurrentItem(2);
+          }
+
+          @Override public void failure(RetrofitError error) {
+            loading.dismiss();
+            Timber.d("Claim error : %s", error.toString());
+            Snackbar.make(appContainer.bind(FindUserActivity.this), "Something went wrong, try again", Snackbar.LENGTH_SHORT)
+                .show();
+          }
+        });
+  }
+
   /**
    * Start over.
    */
   @OnClick(R.id.resetBtn)
   public void startOver() {
     reset();
-    bus.post(new PagerChangeEvent(0));
   }
 
   /**

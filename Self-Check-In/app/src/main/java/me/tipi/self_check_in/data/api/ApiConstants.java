@@ -23,6 +23,7 @@ public class ApiConstants {
   public static final String HOME_TOWN = "/countries/suggest";
   public static final String SIGN_UP = "/dashboard/users/signup";
   public static final String FIND = "/dashboard/users/find";
+  public static final String CLAIM = "/dashboard/users/{user_key}/claim";
 
   // Images
   public static final String AVATAR_URL = "/user/%s/savatar";

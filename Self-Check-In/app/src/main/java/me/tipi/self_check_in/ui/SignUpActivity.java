@@ -94,6 +94,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     guest.user_key = null;
     guest.name = null;
+    guest.email = null;
 
     adapter = new SignUpAdapter(getSupportFragmentManager(), this);
     viewPager.setAdapter(adapter);
