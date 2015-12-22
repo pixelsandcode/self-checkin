@@ -40,7 +40,8 @@
       android:gravity="center"
       android:hint="@string/number_of_nights"
       android:imeOptions="actionNext"
-      android:inputType="number"/>
+      android:inputType="phone"
+      android:digits="1234567890"/>
 
   <EditText
       android:id="@+id/reference"
