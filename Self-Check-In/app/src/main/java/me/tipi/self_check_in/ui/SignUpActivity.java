@@ -283,7 +283,6 @@ public class SignUpActivity extends AppCompatActivity {
    */
   public void goToFindActivity(View view) {
     startActivity(new Intent(this, FindUserActivity.class));
-    finish();
   }
 
   /**

@@ -88,8 +88,7 @@ public class FindUserActivity extends AppCompatActivity {
     if (viewPager.getCurrentItem() == 0) {
       // If the user is currently looking at the first step, allow the system to handle the
       // Back button. This calls finish() on this activity and pops the back stack.
-      startActivity(new Intent(this, SignUpActivity.class));
-      finish();
+      super.onBackPressed();
     } else {
       // Otherwise, select the previous step.
       viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
@@ -133,9 +132,8 @@ public class FindUserActivity extends AppCompatActivity {
       guest = null;
     }
 
-    Intent intent = getIntent();
+    startActivity(new Intent(this, SignUpActivity.class));
     finish();
-    startActivity(intent);
   }
 
   /**
