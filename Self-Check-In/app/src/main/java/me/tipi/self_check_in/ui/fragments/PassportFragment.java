@@ -87,10 +87,7 @@ public class PassportFragment extends Fragment {
     View rootView = inflater.inflate(R.layout.fragment_passport, container, false);
     ButterKnife.bind(this, rootView);
     Timber.d("OnCreateView");
-    if (passportPath != null && passportPath.isSet() && passportPath.get() != null && passportView != null) {
-      picasso.load(new File(passportPath.get())).resize(400, 400).centerCrop()
-          .placeholder(R.drawable.passport_default).into(passportView);
-    }
+    setPassportImage();
     return rootView;
   }
 
@@ -126,10 +123,7 @@ public class PassportFragment extends Fragment {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(true));
-      if (passportPath.isSet() && passportPath.get() != null && passportView != null) {
-        picasso.load(new File(passportPath.get())).resize(400, 400).centerCrop()
-            .placeholder(R.drawable.passport_default).into(passportView);
-      }
+      setPassportImage();
     }
   }
 
@@ -164,6 +158,16 @@ public class PassportFragment extends Fragment {
       bus.post(new PagerChangeEvent(3));
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please Scan your passport first!", Snackbar.LENGTH_LONG).show();
+    }
+  }
+
+  /**
+   * Sets passport image.
+   */
+  private void setPassportImage() {
+    if (passportPath != null && passportPath.isSet() && passportPath.get() != null && passportView != null) {
+      picasso.load(new File(passportPath.get())).resize(400, 400).centerCrop()
+          .placeholder(R.drawable.passport_default).into(passportView);
     }
   }
 

@@ -84,11 +84,6 @@ public class LoginFragment extends Fragment {
     Timber.d("Resumed");
   }
 
-  @Override public void onStop() {
-    super.onStop();
-    Timber.d("Stopped");
-  }
-
   /**
    * Login.
    */

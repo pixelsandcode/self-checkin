@@ -76,11 +76,6 @@ public class MainActivity extends AppCompatActivity {
     Timber.d("Resumed");
   }
 
-  @Override protected void onStop() {
-    super.onStop();
-    Timber.d("Stopped");
-  }
-
   /**
    * Show login fragment.
    */

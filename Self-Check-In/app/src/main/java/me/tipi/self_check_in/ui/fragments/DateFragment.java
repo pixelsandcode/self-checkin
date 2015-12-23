@@ -86,10 +86,11 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     View rootView = inflater.inflate(R.layout.fragment_date, container, false);
     ButterKnife.bind(this, rootView);
 
+    // Fix avatar according to process
     setAvatar();
 
+    // Check-in date date picker
     checkInDateView.setInputType(InputType.TYPE_NULL);
-
     Calendar today = Calendar.getInstance();
     checkInDate = today;
     dateString = String.format("%d - %d - %d", today.get(Calendar.DAY_OF_MONTH), today.get(Calendar.MONTH) + 1, today.get(Calendar.YEAR));
@@ -108,7 +109,6 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     });
 
     nightsNumberView.requestFocus();
-
     return rootView;
   }
 
@@ -185,7 +185,6 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     if (cancel) {
       if (focusView != null) {
         focusView.requestFocus();
-        focusView.requestFocus();
       }
     }
 
@@ -197,8 +196,12 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
+      if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
+        bus.post(new BackShouldShowEvent(false));
+      } else {
+        bus.post(new BackShouldShowEvent(true));
+      }
 
-      bus.post(new BackShouldShowEvent(true));
       if (nightsNumberView != null) {
         nightsNumberView.requestFocus();
       }
@@ -217,17 +220,22 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     }
   }
 
+  /**
+   * Sets avatar.
+   */
   private void setAvatar() {
 
-    if (avatarPath.isSet() && avatarPath.get() != null && avatarTakenView != null) {
-      picasso.invalidate(avatarPath.get());
-      picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
-          .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-          .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
-    } else if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key) && avatarTakenView != null) {
-      picasso.load(Strings.makeAvatarUrl(guest.user_key)).resize(200, 200).centerCrop()
-          .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-          .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
+    if (avatarTakenView != null) {
+      if (avatarPath != null && avatarPath.isSet() && avatarPath.get() != null) {
+        picasso.invalidate(avatarPath.get());
+        picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
+            .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+            .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
+      } else if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
+        picasso.load(Strings.makeAvatarUrl(guest.user_key)).resize(200, 200).centerCrop()
+            .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+            .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
+      }
     }
   }
 }

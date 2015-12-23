@@ -85,6 +85,13 @@ public interface AuthenticationService {
       @Part("booking[to]") String to,
       Callback<ApiResponse> cb);
 
+  /**
+   * Claim.
+   *
+   * @param userKey      the user key
+   * @param claimRequest the claim request
+   * @param cb           the cb
+   */
   @POST(ApiConstants.CLAIM)
   void claim(
       @Path("user_key") String userKey,

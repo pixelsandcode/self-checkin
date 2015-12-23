@@ -13,6 +13,13 @@ public class Booking {
   public final String from;
   public final String to;
 
+  /**
+   * Instantiates a new Booking.
+   *
+   * @param reference_number the reference number
+   * @param from             the from
+   * @param to               the to
+   */
   public Booking(String reference_number, String from, String to) {
     this.reference_number = reference_number;
     this.from = from;

@@ -123,6 +123,11 @@ public class FindUserFragment extends Fragment {
     Timber.d("Paused");
   }
 
+  /**
+   * On auth passed.
+   *
+   * @param event the event
+   */
   @Subscribe
   public void onAuthPassed(AuthenticationPassedEvent event) {
     find();

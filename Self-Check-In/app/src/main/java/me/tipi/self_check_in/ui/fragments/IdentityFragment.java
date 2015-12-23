@@ -83,7 +83,6 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   public String enteredHomeTown;
   MaterialDialog matchUserDialog;
 
-
   /**
    * Instantiates a new Identity fragment.
    */
@@ -109,11 +108,6 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     View rootView = inflater.inflate(R.layout.fragment_identity, container, false);
     ButterKnife.bind(this, rootView);
 
-
-    if (avatarPath != null && avatarPath.isSet() && avatarPath.get() != null) {
-      picasso.invalidate(avatarPath.get());
-    }
-
     birthDayPickerView.setInputType(InputType.TYPE_NULL);
     birthDayPickerView.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -134,8 +128,8 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
         .cancelable(false)
         .onPositive(new MaterialDialog.SingleButtonCallback() {
           @Override public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-            bus.post(new PagerChangeEvent(3));
             avatarPath.delete();
+            bus.post(new PagerChangeEvent(3));
           }
         })
         .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -146,11 +140,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
           }
         }).build();
 
-    if (avatarPath != null && avatarPath.isSet() && avatarPath.get() != null && avatarTakenView != null) {
-      picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
-          .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-          .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
-    }
+    setAvatar();
 
     emailTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
       @Override public void onFocusChange(View v, boolean hasFocus) {
@@ -187,11 +177,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(true));
-      if (avatarPath.isSet() && avatarPath.get() != null && avatarTakenView != null) {
-        picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
-            .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-            .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
-      }
+      setAvatar();
     }
   }
 
@@ -291,6 +277,11 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     emailTextView.setError(getString(R.string.error_conflict_email));
   }
 
+  /**
+   * Find user with email.
+   *
+   * @param enteredEmail the entered email
+   */
   private void findUserWithEmail(final String enteredEmail) {
     authenticationService.findUser(enteredEmail, new Callback<FindResponse>() {
       @Override public void success(FindResponse findResponse, Response response) {
@@ -322,5 +313,18 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
         }
       }
     });
+  }
+
+  /**
+   * Sets avatar.
+   */
+  private void setAvatar() {
+
+    if (avatarPath != null && avatarPath.isSet() && avatarPath.get() != null && avatarTakenView != null) {
+      picasso.invalidate(avatarPath.get());
+      picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
+          .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+          .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
+    }
   }
 }
