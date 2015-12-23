@@ -46,10 +46,13 @@ import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.ApiResponse;
+import me.tipi.self_check_in.data.api.models.Booking;
+import me.tipi.self_check_in.data.api.models.ClaimRequest;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
 import me.tipi.self_check_in.ui.adapters.SignUpAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
+import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.EmailConflictEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
@@ -245,6 +248,32 @@ public class SignUpActivity extends AppCompatActivity {
       );
     }
 
+  }
+
+  @Subscribe
+  public void onClaimEvent(ClaimEvent event) {
+    loading.show();
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+    authenticationService.claim(guest.user_key, new ClaimRequest(
+            guest.email,
+            new Booking(
+                guest.referenceCode,
+                dateFormat.format(guest.checkInDate),
+                dateFormat.format(guest.checkOutDate))),
+        new Callback<ApiResponse>() {
+          @Override public void success(ApiResponse apiResponse, Response response) {
+            loading.dismiss();
+            Timber.d("Claimed");
+            viewPager.setCurrentItem(4);
+          }
+
+          @Override public void failure(RetrofitError error) {
+            loading.dismiss();
+            Timber.d("Claim error : %s", error.toString());
+            Snackbar.make(appContainer.bind(SignUpActivity.this), "Something went wrong, try again", Snackbar.LENGTH_SHORT)
+                .show();
+          }
+        });
   }
 
   /**

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+  <TextView
+      android:id="@+id/title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:text="@string/match_found_hint"
+      android:gravity="center"
+      android:padding="@dimen/first_key_line"
+      android:textSize="@dimen/font_large"
+      android:textStyle="bold"
+      android:textColor="@color/colorAccent"/>
+
+  <ImageView
+      android:id="@+id/avatar"
+      android:layout_width="96dp"
+      android:layout_height="96dp"
+      android:layout_below="@+id/title"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:scaleType="centerCrop"
+      android:src="@drawable/avatar_placeholder"
+      tools:ignore="ContentDescription"/>
+
+  <TextView
+      android:id="@+id/user_name"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/avatar"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:gravity="center"
+      android:padding="@dimen/normal_padding"
+      android:textColor="@color/black"
+      android:textSize="@dimen/font_normal"
+      tools:text="Jack Bowcott"
+      />
+</RelativeLayout>

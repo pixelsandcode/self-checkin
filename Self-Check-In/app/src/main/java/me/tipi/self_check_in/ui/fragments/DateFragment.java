@@ -86,9 +86,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     View rootView = inflater.inflate(R.layout.fragment_date, container, false);
     ButterKnife.bind(this, rootView);
 
-    if (avatarPath.isSet() && avatarPath.get() != null) {
-      picasso.invalidate(avatarPath.get());
-    }
+    setAvatar();
 
     checkInDateView.setInputType(InputType.TYPE_NULL);
 
@@ -204,15 +202,8 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       if (nightsNumberView != null) {
         nightsNumberView.requestFocus();
       }
-      if (avatarPath.isSet() && avatarPath.get() != null) {
-        picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
-            .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-            .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
-      } else if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
-        picasso.load(Strings.makeAvatarUrl(guest.user_key)).resize(200, 200).centerCrop()
-            .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-            .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
-      }
+
+      setAvatar();
     }
   }
 
@@ -223,6 +214,20 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     if (reference == 10) {
       checkInDateView.setText(dateString);
       checkInDate = calendar;
+    }
+  }
+
+  private void setAvatar() {
+
+    if (avatarPath.isSet() && avatarPath.get() != null && avatarTakenView != null) {
+      picasso.invalidate(avatarPath.get());
+      picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
+          .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+          .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
+    } else if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key) && avatarTakenView != null) {
+      picasso.load(Strings.makeAvatarUrl(guest.user_key)).resize(200, 200).centerCrop()
+          .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+          .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
     }
   }
 }

@@ -45,4 +45,6 @@
   <string name="no_match_hint">No matches found</string>
   <string name="or">OR</string>
   <string name="sign_up">Sign up</string>
+  <string name="dialog_me_text">This is Me</string>
+  <string name="dialog_not_me_text">Not Me</string>
 </resources>

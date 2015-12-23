@@ -10,6 +10,7 @@ package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -19,7 +20,11 @@ import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
 import com.f2prateek.rx.preferences.Preference;
@@ -40,20 +45,29 @@ import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
+import me.tipi.self_check_in.data.api.AuthenticationService;
+import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
+import me.tipi.self_check_in.data.api.models.User;
 import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.EmailConflictEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.Strings;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import timber.log.Timber;
 
 public class IdentityFragment extends Fragment implements DatePickerDialogFragment.DatePickerDialogHandler {
 
   @Inject Picasso picasso;
   @Inject Bus bus;
-  @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
+  @Inject
+  @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject Guest guest;
+  @Inject AuthenticationService authenticationService;
 
   @Bind(R.id.taken_avatar) ImageView avatarTakenView;
   @Bind(R.id.full_name) EditText fullNameTextView;
@@ -67,6 +81,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   public String enteredFullName;
   public String enteredPassportNumber;
   public String enteredHomeTown;
+  MaterialDialog matchUserDialog;
 
 
   /**
@@ -89,8 +104,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                           Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_identity, container, false);
     ButterKnife.bind(this, rootView);
@@ -112,11 +126,48 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
       }
     });
 
+    matchUserDialog = new MaterialDialog.Builder(getActivity())
+        .customView(R.layout.found_user_dialog, false)
+        .positiveText(R.string.dialog_me_text)
+        .negativeText(R.string.dialog_not_me_text)
+        .positiveColorRes(R.color.secondaryAccent)
+        .cancelable(false)
+        .onPositive(new MaterialDialog.SingleButtonCallback() {
+          @Override public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+            bus.post(new PagerChangeEvent(3));
+            avatarPath.delete();
+          }
+        })
+        .onNegative(new MaterialDialog.SingleButtonCallback() {
+          @Override public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+            emailTextView.setText("");
+            guest.email = null;
+            guest.user_key = null;
+          }
+        }).build();
+
     if (avatarPath != null && avatarPath.isSet() && avatarPath.get() != null && avatarTakenView != null) {
       picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
           .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
           .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
     }
+
+    emailTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+      @Override public void onFocusChange(View v, boolean hasFocus) {
+        if (!hasFocus) {
+          emailTextView.setError(null);
+
+          enteredEmail = emailTextView.getText().toString();
+
+          // Check for a valid email address.
+          if (!TextUtils.isEmpty(enteredEmail)) {
+            if (Strings.isValidEmail(enteredEmail)) {
+              findUserWithEmail(enteredEmail);
+            }
+          }
+        }
+      }
+    });
 
     return rootView;
   }
@@ -160,7 +211,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
       }
 
       if (dob != null) {
-        guest.dob= dob;
+        guest.dob = dob;
       }
 
       bus.post(new PagerChangeEvent(2));
@@ -188,7 +239,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     enteredHomeTown = homeTownACView.getText().toString();
 
     // Check for validation
-     if (TextUtils.isEmpty(enteredFullName)) {
+    if (TextUtils.isEmpty(enteredFullName)) {
       fullNameTextView.setError(getString(R.string.error_field_required));
       focusView = fullNameTextView;
       cancel = true;
@@ -200,7 +251,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
       emailTextView.setError(getString(R.string.error_invalid_email));
       focusView = emailTextView;
       cancel = true;
-    }  else if (TextUtils.isEmpty(enteredPassportNumber)) {
+    } else if (TextUtils.isEmpty(enteredPassportNumber)) {
       passportTextView.setError(getString(R.string.error_field_required));
       focusView = passportTextView;
       cancel = true;
@@ -238,5 +289,38 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   public void onEmailConflict(EmailConflictEvent event) {
     emailTextView.requestFocus();
     emailTextView.setError(getString(R.string.error_conflict_email));
+  }
+
+  private void findUserWithEmail(final String enteredEmail) {
+    authenticationService.findUser(enteredEmail, new Callback<FindResponse>() {
+      @Override public void success(FindResponse findResponse, Response response) {
+        User matchedUser = findResponse.data;
+        Timber.d("Found user: %s", matchedUser.toString());
+
+        RelativeLayout dialogView = (RelativeLayout) matchUserDialog.getCustomView();
+        if (dialogView != null) {
+          ImageView avatar = (ImageView) dialogView.findViewById(R.id.avatar);
+          TextView name = (TextView) dialogView.findViewById(R.id.user_name);
+          picasso.load(Strings.makeAvatarUrl(matchedUser.doc_key))
+              .resize(200, 200).centerCrop()
+              .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+              .placeholder(R.drawable.avatar_placeholder).into(avatar);
+          name.setText(matchedUser.name);
+          matchUserDialog.show();
+        }
+
+        guest.user_key = matchedUser.doc_key;
+        guest.email = enteredEmail;
+      }
+
+      @Override public void failure(RetrofitError error) {
+
+        if (error.getResponse().getStatus() == 401) {
+          Timber.d("authentication failed");
+        } else {
+          Timber.d("Error finding: %s", error.toString());
+        }
+      }
+    });
   }
 }
