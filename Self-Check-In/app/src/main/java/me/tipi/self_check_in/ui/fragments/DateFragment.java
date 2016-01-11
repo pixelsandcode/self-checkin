@@ -131,7 +131,10 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       guest.checkInDate = checkInDate.getTime();
       checkInDate.add(Calendar.DAY_OF_MONTH, enteredNights);
       guest.checkOutDate = checkInDate.getTime();
-      guest.referenceCode = enteredReference;
+      if (!TextUtils.isEmpty(enteredReference)) {
+        guest.referenceCode = enteredReference;
+      }
+
       enteredNights = Integer.parseInt(nightsNumberView.getText().toString());
 
       if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
@@ -176,19 +179,17 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       cancel = true;
       focusView = nightsNumberView;
       enteredNights = 0;
-    } else if (TextUtils.isEmpty(enteredReference)) {
+    } /*else if (TextUtils.isEmpty(enteredReference)) {
       referenceTextView.setError(getString(R.string.error_field_required));
       focusView = referenceTextView;
       cancel = true;
-    }
+    }*/
 
     if (cancel) {
       if (focusView != null) {
         focusView.requestFocus();
       }
     }
-
-
 
     return cancel;
   }
