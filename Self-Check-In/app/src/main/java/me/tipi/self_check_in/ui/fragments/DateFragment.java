@@ -133,8 +133,11 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       guest.checkInDate = checkInDate.getTime();
       checkInDate.add(Calendar.DAY_OF_MONTH, enteredNights);
       guest.checkOutDate = checkInDate.getTime();
+
       if (!TextUtils.isEmpty(enteredReference)) {
         guest.referenceCode = enteredReference;
+      } else {
+        guest.referenceCode = null;
       }
 
       if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {

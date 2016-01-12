@@ -217,11 +217,11 @@ public class SignUpActivity extends AppCompatActivity {
           passportFile,
           guest.email,
           guest.name,
-          TextUtils.isEmpty(guest.city) ? null : guest.city,
-          TextUtils.isEmpty(guest.country) ? null : guest.country,
+          (guest.city == null || TextUtils.isEmpty(guest.city)) ? null : guest.city,
+          (guest.country == null || TextUtils.isEmpty(guest.country)) ? null : guest.country,
           guest.passportNumber,
           guest.dob == null ? null : dateFormat.format(guest.dob),
-          guest.referenceCode,
+          guest.referenceCode != null ? guest.referenceCode : null,
           dateFormat.format(guest.checkInDate),
           dateFormat.format(guest.checkOutDate),
           new Callback<ApiResponse>() {
@@ -345,7 +345,16 @@ public class SignUpActivity extends AppCompatActivity {
     avatarPath.delete();
     passportPath.delete();
     if (guest != null) {
-      guest = null;
+      guest.user_key = null;
+      guest.email = null;
+      guest.name = null;
+      guest.checkInDate = null;
+      guest.checkOutDate = null;
+      guest.city = null;
+      guest.country = null;
+      guest.dob = null;
+      guest.passportNumber = null;
+      guest.referenceCode = null;
     }
 
     Intent intent = getIntent();
