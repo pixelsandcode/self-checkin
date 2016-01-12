@@ -127,15 +127,15 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
    */
   @OnClick(R.id.submit_btn)
   public void dateSubmitClicked() {
+
     if (!isError()) {
+      enteredNights = Integer.parseInt(nightsNumberView.getText().toString());
       guest.checkInDate = checkInDate.getTime();
       checkInDate.add(Calendar.DAY_OF_MONTH, enteredNights);
       guest.checkOutDate = checkInDate.getTime();
       if (!TextUtils.isEmpty(enteredReference)) {
         guest.referenceCode = enteredReference;
       }
-
-      enteredNights = Integer.parseInt(nightsNumberView.getText().toString());
 
       if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
         bus.post(new ClaimEvent());

@@ -191,7 +191,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
       guest.email = enteredEmail;
       guest.passportNumber = enteredPassportNumber;
 
-      if (TextUtils.isEmpty(enteredHomeTown)) {
+      if (!TextUtils.isEmpty(enteredHomeTown)) {
         guest.city = Strings.getPreStringSplit(enteredHomeTown, "-");
         guest.country = Strings.getPostStringSplit(enteredHomeTown, "-");
       }
