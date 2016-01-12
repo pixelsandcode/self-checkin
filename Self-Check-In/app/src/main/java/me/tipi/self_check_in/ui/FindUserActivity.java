@@ -169,8 +169,18 @@ public class FindUserActivity extends AppCompatActivity {
    * Reset.
    */
   private void reset() {
+
     if (guest != null) {
-      guest = null;
+      guest.user_key = null;
+      guest.email = null;
+      guest.name = null;
+      guest.checkInDate = null;
+      guest.checkOutDate = null;
+      guest.city = null;
+      guest.country = null;
+      guest.dob = null;
+      guest.passportNumber = null;
+      guest.referenceCode = null;
     }
 
     startActivity(new Intent(this, SignUpActivity.class));
