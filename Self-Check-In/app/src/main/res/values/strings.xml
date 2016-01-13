@@ -17,7 +17,7 @@
   <string name="hello_blank_fragment">Hello blank fragment</string>
   <string name="full_name">Full Name</string>
   <string name="booking_email">Booking Email</string>
-  <string name="home_town">Hometown</string>
+  <string name="home_town">Your City / Country</string>
   <string name="birthday">Birthday</string>
   <string name="passport_number">Passport Number</string>
   <string name="continue_text">Continue</string>

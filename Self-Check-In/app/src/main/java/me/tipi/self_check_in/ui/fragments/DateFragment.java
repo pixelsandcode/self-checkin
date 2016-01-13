@@ -101,7 +101,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       public void onClick(View v) {
         DatePickerBuilder fromDb = new DatePickerBuilder()
             .setFragmentManager(getChildFragmentManager())
-            .setStyleResId(R.style.BetterPickersDialogFragment)
+            .setStyleResId(R.style.BetterPickersDialogFragment_Light)
             .setTargetFragment(DateFragment.this)
             .setReference(10);
         fromDb.show();

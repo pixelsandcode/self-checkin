@@ -10,13 +10,16 @@ package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -108,14 +111,16 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     View rootView = inflater.inflate(R.layout.fragment_identity, container, false);
     ButterKnife.bind(this, rootView);
 
+    final DatePickerBuilder dpb = new DatePickerBuilder()
+        .setFragmentManager(getChildFragmentManager())
+        .setStyleResId(R.style.BetterPickersDialogFragment_Light)
+        .setTargetFragment(IdentityFragment.this);
+
+
     birthDayPickerView.setInputType(InputType.TYPE_NULL);
     birthDayPickerView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        DatePickerBuilder dpb = new DatePickerBuilder()
-            .setFragmentManager(getChildFragmentManager())
-            .setStyleResId(R.style.BetterPickersDialogFragment)
-            .setTargetFragment(IdentityFragment.this);
         dpb.show();
       }
     });
@@ -141,6 +146,27 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
         }).build();
 
     setAvatar();
+
+    homeTownACView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+      @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == R.id.next || actionId == EditorInfo.IME_ACTION_NEXT) {
+          birthDayPickerView.requestFocus();
+          getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                  dpb.show();
+                }
+              }, 200);
+            }
+          });
+          return true;
+        }
+        return false;
+      }
+    });
 
     emailTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
       @Override public void onFocusChange(View v, boolean hasFocus) {

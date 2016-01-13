@@ -52,6 +52,7 @@
       android:layout_marginTop="@dimen/first_key_line"
       android:gravity="center"
       android:hint="@string/home_town"
+      android:imeActionId="@+id/next"
       android:imeOptions="actionNext"
       android:inputType="text"/>
 
