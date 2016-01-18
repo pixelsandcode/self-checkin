@@ -16,6 +16,8 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.f2prateek.rx.preferences.Preference;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -57,6 +59,7 @@ public class FindUserActivity extends AppCompatActivity {
   @Inject AuthenticationService authenticationService;
   @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
+  @Inject Tracker tracker;
 
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
 
@@ -87,6 +90,8 @@ public class FindUserActivity extends AppCompatActivity {
     super.onResume();
     Timber.d("Resumed");
     bus.register(this);
+    tracker.setScreenName(getClass().getSimpleName());
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
   @Override protected void onPause() {
@@ -137,6 +142,7 @@ public class FindUserActivity extends AppCompatActivity {
             loading.dismiss();
             Timber.d("Claimed");
             viewPager.setCurrentItem(2);
+            tracker.send(new HitBuilders.EventBuilder("Check-in", "Claim").build());
           }
 
           @Override public void failure(RetrofitError error) {

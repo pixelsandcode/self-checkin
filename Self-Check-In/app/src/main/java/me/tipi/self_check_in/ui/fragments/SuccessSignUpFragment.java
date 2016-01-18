@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
@@ -27,6 +29,7 @@ import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 public class SuccessSignUpFragment extends Fragment {
 
   @Inject Bus bus;
+  @Inject Tracker tracker;
 
   /**
    * Instantiates a new Success sign up fragment.
@@ -58,6 +61,8 @@ public class SuccessSignUpFragment extends Fragment {
   @Override public void onResume() {
     super.onResume();
     bus.register(this);
+    tracker.setScreenName("Success");
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
   @Override public void onPause() {

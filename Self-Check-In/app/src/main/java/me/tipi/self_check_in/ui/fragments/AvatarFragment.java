@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.f2prateek.rx.preferences.Preference;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 
@@ -55,6 +57,7 @@ public class AvatarFragment extends Fragment {
   @Inject AppContainer appContainer;
   @Inject Bus bus;
   @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
+  @Inject Tracker tracker;
 
   @Bind(R.id.avatar) ImageView avatarView;
 
@@ -92,6 +95,8 @@ public class AvatarFragment extends Fragment {
   @Override public void onResume() {
     super.onResume();
     bus.register(this);
+    tracker.setScreenName(getClass().getSimpleName());
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
   @Override public void onPause() {
@@ -147,6 +152,8 @@ public class AvatarFragment extends Fragment {
     intent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
     // Start the image capture intent to take photo
     startActivityForResult(intent, CAPTURE_IMAGE_REQUEST_CODE);
+
+    tracker.send(new HitBuilders.EventBuilder("Image", "Take avatar").build());
   }
 
   /**

@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
 import com.f2prateek.rx.preferences.Preference;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 
@@ -50,6 +52,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   @Inject Bus bus;
   @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject Guest guest;
+  @Inject Tracker tracker;
 
   @Bind(R.id.taken_avatar) ImageView avatarTakenView;
   @Bind(R.id.check_in_date) EditText checkInDateView;
@@ -115,6 +118,8 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   @Override public void onResume() {
     super.onResume();
     bus.register(this);
+    tracker.setScreenName(getClass().getSimpleName());
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
   @Override public void onPause() {

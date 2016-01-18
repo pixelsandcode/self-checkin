@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.f2prateek.rx.preferences.Preference;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -74,6 +76,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Inject AuthenticationService authenticationService;
   @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
+  @Inject Tracker tracker;
 
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
   @Bind(R.id.backBtn) TextView backButtonView;
@@ -108,6 +111,8 @@ public class SignUpActivity extends AppCompatActivity {
     super.onResume();
     Timber.d("Resumed");
     bus.register(this);
+    tracker.setScreenName(getResources().getString(R.string.guest_landing));
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
     getPermissionToOpenCameraAndGalley();
   }
 
@@ -176,6 +181,8 @@ public class SignUpActivity extends AppCompatActivity {
     if (viewPager.getCurrentItem() != 0) {
       viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
     }
+
+    tracker.send(new HitBuilders.EventBuilder("Sign up", "Back").build());
   }
 
   /**
@@ -228,6 +235,8 @@ public class SignUpActivity extends AppCompatActivity {
             @Override public void success(ApiResponse apiResponse, Response response) {
               loading.dismiss();
               Timber.d("Good");
+
+              tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
               viewPager.setCurrentItem(4, true);
             }
 
@@ -264,6 +273,7 @@ public class SignUpActivity extends AppCompatActivity {
           @Override public void success(ApiResponse apiResponse, Response response) {
             loading.dismiss();
             Timber.d("Claimed");
+            tracker.send(new HitBuilders.EventBuilder("Check-in", "Claim").build());
             viewPager.setCurrentItem(4);
           }
 
@@ -356,6 +366,8 @@ public class SignUpActivity extends AppCompatActivity {
       guest.passportNumber = null;
       guest.referenceCode = null;
     }
+
+
 
     Intent intent = getIntent();
     finish();

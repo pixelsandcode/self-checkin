@@ -23,6 +23,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.f2prateek.rx.preferences.Preference;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 
@@ -57,6 +59,7 @@ public class PassportFragment extends Fragment {
   @Inject AppContainer appContainer;
   @Inject Bus bus;
   @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
+  @Inject Tracker tracker;
 
   @Bind(R.id.passport_photo) ImageView passportView;
 
@@ -94,6 +97,8 @@ public class PassportFragment extends Fragment {
   @Override public void onResume() {
     super.onResume();
     bus.register(this);
+    tracker.setScreenName(getClass().getSimpleName());
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
   @Override public void onPause() {
@@ -146,6 +151,7 @@ public class PassportFragment extends Fragment {
     intent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedPassportImage);
     // Start the image capture intent to take photo
     startActivityForResult(intent, CAPTURE_PASSPORT_REQUEST_CODE);
+    tracker.send(new HitBuilders.EventBuilder("Image", "Take passport").build());
   }
 
   /**

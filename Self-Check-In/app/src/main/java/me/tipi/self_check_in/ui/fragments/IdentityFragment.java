@@ -31,6 +31,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
 import com.f2prateek.rx.preferences.Preference;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
@@ -71,6 +73,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject Guest guest;
   @Inject AuthenticationService authenticationService;
+  @Inject Tracker tracker;
 
   @Bind(R.id.taken_avatar) ImageView avatarTakenView;
   @Bind(R.id.full_name) EditText fullNameTextView;
@@ -134,6 +137,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
         .onPositive(new MaterialDialog.SingleButtonCallback() {
           @Override public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
             avatarPath.delete();
+            tracker.send(new HitBuilders.EventBuilder("Matched User", "Choose me").build());
             bus.post(new PagerChangeEvent(3));
           }
         })
@@ -192,6 +196,8 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     super.onResume();
     bus.register(this);
     homeTownACView.setAdapter(new HomeTownAutoCompleteAdapter(getActivity()));
+    tracker.setScreenName(getClass().getSimpleName());
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
   @Override public void onPause() {

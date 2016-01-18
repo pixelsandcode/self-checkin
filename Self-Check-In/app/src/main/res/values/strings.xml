@@ -13,8 +13,6 @@
   <string name="reset">Reset</string>
   <string name="smile">Take a selfie - SMILE!</string>
 
-  <!-- TODO: Remove or change this placeholder text -->
-  <string name="hello_blank_fragment">Hello blank fragment</string>
   <string name="full_name">Full Name</string>
   <string name="booking_email">Booking Email</string>
   <string name="home_town">Your City / Country</string>
@@ -47,4 +45,9 @@
   <string name="sign_up">Sign up</string>
   <string name="dialog_me_text">This is Me</string>
   <string name="dialog_not_me_text">Not Me</string>
+
+
+  <!-- Tracker Screen Names -->
+  <string name="hostel_login"> Hostel Login</string>
+  <string name="guest_landing">Guest Landing</string>
 </resources>

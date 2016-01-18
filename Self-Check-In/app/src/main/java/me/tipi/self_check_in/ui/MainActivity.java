@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.f2prateek.rx.preferences.Preference;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
   @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
   @Inject AppContainer appContainer;
+  @Inject Tracker tracker;
 
   @Bind(R.id.main_logo) TextView mainLogoView;
 
@@ -74,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
   @Override protected void onResume() {
     super.onResume();
     Timber.d("Resumed");
+    tracker.setScreenName(getResources().getString(R.string.hostel_login));
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
   /**
@@ -95,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         Timber.d("LoggedIn");
         avatarPath.delete();
         passportPath.delete();
+        tracker.send(new HitBuilders.TimingBuilder("Login", "Logged In", System.currentTimeMillis()).build());
         startActivity(new Intent(MainActivity.this, SignUpActivity.class));
         finish();
       }

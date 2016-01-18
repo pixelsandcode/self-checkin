@@ -22,6 +22,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
@@ -57,6 +59,7 @@ public class FindUserFragment extends Fragment {
   @Inject Bus bus;
   @Inject AuthenticationService authenticationService;
   @Inject Guest guest;
+  @Inject Tracker tracker;
 
   @Bind(R.id.email) EditText emailEditText;
   @Bind(R.id.match_text) TextView matchTextView;
@@ -115,6 +118,8 @@ public class FindUserFragment extends Fragment {
     super.onResume();
     bus.register(this);
     Timber.d("Resumed");
+    tracker.setScreenName(getClass().getSimpleName());
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
   @Override public void onPause() {
@@ -168,6 +173,8 @@ public class FindUserFragment extends Fragment {
           guest.name = matchedUser.name;
           guest.user_key = matchedUser.doc_key;
           guest.email = enteredEmail;
+
+          tracker.send(new HitBuilders.EventBuilder("Matched User", "User found").build());
         }
 
         @Override public void failure(RetrofitError error) {
