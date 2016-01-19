@@ -43,6 +43,7 @@ import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
+import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
@@ -58,6 +59,7 @@ public class AvatarFragment extends Fragment {
   @Inject Bus bus;
   @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject Tracker tracker;
+  @Inject Guest guest;
 
   @Bind(R.id.avatar) ImageView avatarView;
 
@@ -163,6 +165,7 @@ public class AvatarFragment extends Fragment {
   public void continueToIdentity() {
     if (avatarPath.isSet()) {
       Timber.v(avatarPath.get());
+      guest.time = System.currentTimeMillis();
       bus.post(new PagerChangeEvent(1));
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie first!", Snackbar.LENGTH_LONG).show();

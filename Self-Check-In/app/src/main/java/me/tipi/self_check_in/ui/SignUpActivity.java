@@ -36,6 +36,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -236,6 +237,14 @@ public class SignUpActivity extends AppCompatActivity {
               loading.dismiss();
               Timber.d("Good");
 
+              // Send overall success time
+              long elapsed = Math.abs(guest.time - System.currentTimeMillis());
+              long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
+              tracker.send(new HitBuilders.EventBuilder()
+                  .setCategory(getString(R.string.overal_time))
+                  .setAction("Check-In")
+                  .setLabel("Sign Up")
+                  .setValue(diffSeconds).build());
               tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
               viewPager.setCurrentItem(4, true);
             }
@@ -274,6 +283,15 @@ public class SignUpActivity extends AppCompatActivity {
             loading.dismiss();
             Timber.d("Claimed");
             tracker.send(new HitBuilders.EventBuilder("Check-in", "Claim").build());
+
+            // Send overall success time
+            long elapsed = Math.abs(guest.time - System.currentTimeMillis());
+            long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
+            tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(getString(R.string.overal_time))
+                .setAction("Check-In")
+                .setLabel("Claim")
+                .setValue(diffSeconds).build());
             viewPager.setCurrentItem(4);
           }
 
@@ -323,6 +341,7 @@ public class SignUpActivity extends AppCompatActivity {
    * @param view the view
    */
   public void goToFindActivity(View view) {
+    guest.time = System.currentTimeMillis();
     startActivity(new Intent(this, FindUserActivity.class));
   }
 

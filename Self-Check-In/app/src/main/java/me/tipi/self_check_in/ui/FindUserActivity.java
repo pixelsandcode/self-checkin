@@ -24,6 +24,7 @@ import com.squareup.otto.Subscribe;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -143,6 +144,15 @@ public class FindUserActivity extends AppCompatActivity {
             Timber.d("Claimed");
             viewPager.setCurrentItem(2);
             tracker.send(new HitBuilders.EventBuilder("Check-in", "Claim").build());
+
+            // Send overall success time
+            long elapsed = Math.abs(guest.time - System.currentTimeMillis());
+            long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
+            tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(getString(R.string.overal_time))
+                .setAction("Check-In")
+                .setLabel("Claim")
+                .setValue(diffSeconds).build());
           }
 
           @Override public void failure(RetrofitError error) {

@@ -50,4 +50,5 @@
   <!-- Tracker Screen Names -->
   <string name="hostel_login"> Hostel Login</string>
   <string name="guest_landing">Guest Landing</string>
+  <string name="overal_time">Success Overall Timing</string>
 </resources>

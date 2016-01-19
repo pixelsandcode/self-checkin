@@ -24,6 +24,7 @@ public final class Guest {
   public String passportNumber;
   public Date checkInDate;
   public Date checkOutDate;
+  public long time;
 
   /**
    * Instantiates a new Guest.
