@@ -1,6 +1,6 @@
 <resources>
   <string name="app_name">Tipi Self-Check-In</string>
-  <string name="app_name_short">Self-Check-in</string>
+  <string name="app_name_short">Self Check-in</string>
   <string name="app_description">Mobile Check-in for Travellers</string>
 
   <string name="login_title">Log-in to Your Tipi account</string>
@@ -54,4 +54,8 @@
   <string name="overal_time">Success Overall Timing</string>
   <string name="forget_password_text">Forget your Password?</string>
   <string name="reset_button_text">Reset Here</string>
+
+  <string name="font_light">SF-UI-Text-Light.otf</string>
+  <string name="font_medium">SF-UI-Text-Medium.otf</string>
+  <string name="fonr_regular">SF-UI-Text-Regular.otf</string>
 </resources>

@@ -9,6 +9,7 @@
 package me.tipi.self_check_in.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.drivemode.android.typeface.TypefaceHelper;
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
   @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
   @Inject AppContainer appContainer;
   @Inject Tracker tracker;
+  @Inject TypefaceHelper typeface;
 
   @Bind(R.id.main_logo) TextView mainLogoView;
 
@@ -56,17 +59,20 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
     SelfCheckInApp.get(this).inject(this);
-    Timber.d("Created");
+    typeface.setTypeface(this, "SF-UI-Text-Regular.otf");
     loading = new MaterialDialog.Builder(this)
         .content("Loading")
         .cancelable(false)
         .progress(true, 0)
         .build();
+
     if (username.isSet() && password.isSet()) {
       this.login();
     } else {
       showLoginFragment();
     }
+
+    Timber.d("Created");
   }
 
   @Override protected void onPause() {
@@ -115,5 +121,10 @@ public class MainActivity extends AppCompatActivity {
         }
       }
     });
+  }
+
+  public void forgetPassword(View view) {
+    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://dashboard.tipi.me/#/forgot"));
+    startActivity(browserIntent);
   }
 }

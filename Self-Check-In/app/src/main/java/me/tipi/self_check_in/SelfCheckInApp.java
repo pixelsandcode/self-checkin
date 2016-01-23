@@ -11,6 +11,7 @@ package me.tipi.self_check_in;
 import android.app.Application;
 import android.content.Context;
 
+import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
@@ -37,6 +38,13 @@ public final class SelfCheckInApp extends Application {
 
     objectGraph = ObjectGraph.create(new SelfCheckInModule(this));
     objectGraph.inject(this);
+
+    TypefaceHelper.initialize(this);
+  }
+
+  @Override public void onTerminate() {
+    TypefaceHelper.destroy();
+    super.onTerminate();
   }
 
   synchronized public Tracker getDefaultTracker() {

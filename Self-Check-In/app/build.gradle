@@ -81,6 +81,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-v4'
     }
 
+    compile 'com.drivemode:TypefaceHelper:1.0.0@aar'
+
 
     androidTestCompile 'com.squareup.spoon:spoon-client:1.2.0'
     testCompile 'junit:junit:4.12'

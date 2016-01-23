@@ -33,7 +33,7 @@
         android:gravity="center"
         android:text="@string/app_name_short"
         android:textColor="@color/main_text"
-        android:textSize="@dimen/font_extra_large"/>
+        android:textSize="@dimen/font_large"/>
 
 
     <TextView
@@ -94,7 +94,6 @@
         android:padding="@dimen/normal_padding"
         android:text="@string/login"
         android:textColor="@color/white"
-
         android:textSize="@dimen/font_normal"/>
   </RelativeLayout>
 </android.support.v7.widget.CardView>

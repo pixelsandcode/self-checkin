@@ -10,6 +10,7 @@ package me.tipi.self_check_in;
 
 import android.app.Application;
 
+import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
@@ -63,5 +64,9 @@ public final class SelfCheckInModule {
 
   @Provides @Singleton Tracker provideTracker() {
     return app.getDefaultTracker();
+  }
+
+  @Provides @Singleton TypefaceHelper provideTypeface() {
+    return TypefaceHelper.getInstance();
   }
 }

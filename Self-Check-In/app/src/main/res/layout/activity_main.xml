@@ -55,6 +55,7 @@
       android:textAllCaps="false"
       android:textStyle="bold"
       android:textSize="@dimen/font_normal"
+      android:onClick="forgetPassword"
       android:background="@android:color/transparent"
       android:textColor="@color/colorAccent"
       android:text="@string/reset_button_text"/>
