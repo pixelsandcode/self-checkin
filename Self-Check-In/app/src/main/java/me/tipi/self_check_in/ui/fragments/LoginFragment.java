@@ -11,6 +11,7 @@ package me.tipi.self_check_in.ui.fragments;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,8 @@ public class LoginFragment extends Fragment {
   @Bind(R.id.email) EditText emailText;
   @Bind(R.id.password) EditText passwordText;
   @Bind(R.id.sub_title) TextView subTitleView;
+  @Bind(R.id.email_input_layout) TextInputLayout emailLayout;
+  @Bind(R.id.password_input_layout) TextInputLayout passwordLayout;
 
   /**
    * Instantiates a new Login fragment.
@@ -68,7 +71,7 @@ public class LoginFragment extends Fragment {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_login, container, false);
     ButterKnife.bind(this, rootView);
-    typeface.setTypeface(this, getResources().getString(R.string.fonr_regular));
+    typeface.setTypeface((ViewGroup) rootView, getResources().getString(R.string.font_regular));
     typeface.setTypeface(subTitleView, getResources().getString(R.string.font_light));
 
     if (username.isSet() && password.isSet()) {
@@ -95,8 +98,8 @@ public class LoginFragment extends Fragment {
    */
   @OnClick(R.id.submit_btn)
   public void login() {
-    emailText.setError(null);
-    passwordText.setError(null);
+    emailLayout.setErrorEnabled(false);
+    passwordLayout.setErrorEnabled(false);
     boolean cancel = false;
     View focusView = null;
 
@@ -105,19 +108,23 @@ public class LoginFragment extends Fragment {
 
     // Check for a valid email address.
     if (TextUtils.isEmpty(enteredEmail)) {
-      emailText.setError(getString(R.string.error_field_required));
+      emailLayout.setError(getString(R.string.error_field_required));
+      emailLayout.setErrorEnabled(true);
       focusView = emailText;
       cancel = true;
     } else if (!Strings.isValidEmail(enteredEmail)) {
-      emailText.setError(getString(R.string.error_invalid_email));
+      emailLayout.setError(getString(R.string.error_invalid_email));
+      emailLayout.setErrorEnabled(true);
       focusView = emailText;
       cancel = true;
     } else if (TextUtils.isEmpty(enteredPassword)) {
-      passwordText.setError(getString(R.string.error_field_required));
+      passwordLayout.setError(getString(R.string.error_field_required));
+      passwordLayout.setErrorEnabled(true);
       focusView = passwordText;
       cancel = true;
     } else if (enteredPassword.length() < 8) {
-      passwordText.setError(getString(R.string.error_incorrect_password));
+      passwordLayout.setError(getString(R.string.error_incorrect_password));
+      passwordLayout.setErrorEnabled(true);
       focusView = passwordText;
       cancel = true;
     }

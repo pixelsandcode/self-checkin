@@ -44,7 +44,8 @@
       android:textColor="@color/white"
       android:textSize="@dimen/font_normal"
       android:layout_marginTop="8dp"
-      android:text="@string/forget_password_text"/>
+      android:text="@string/forget_password_text"
+      android:visibility="gone"/>
 
   <Button
       android:id="@+id/reset_password_button"
@@ -58,7 +59,8 @@
       android:onClick="forgetPassword"
       android:background="@android:color/transparent"
       android:textColor="@color/colorAccent"
-      android:text="@string/reset_button_text"/>
+      android:text="@string/reset_button_text"
+      android:visibility="gone"/>
 
 
 </RelativeLayout>

@@ -14,7 +14,7 @@
   <dimen name="logo_size">96dp</dimen>
 
   <dimen name="main_frame">480dp</dimen>
-  <dimen name="main_frame_height">548dp</dimen>
+  <dimen name="main_frame_height">576dp</dimen>
   <!-- Default screen margins, per the Android Design guidelines. -->
   <dimen name="activity_horizontal_margin">16dp</dimen>
   <dimen name="activity_vertical_margin">16dp</dimen>

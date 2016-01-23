@@ -17,6 +17,7 @@ import me.tipi.self_check_in.ui.fragments.AvatarFragment;
 import me.tipi.self_check_in.ui.fragments.DateFragment;
 import me.tipi.self_check_in.ui.fragments.FindUserFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
+import me.tipi.self_check_in.ui.fragments.LandingFragment;
 import me.tipi.self_check_in.ui.fragments.LoginFragment;
 import me.tipi.self_check_in.ui.fragments.PassportFragment;
 import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
@@ -27,6 +28,7 @@ import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
         SignUpActivity.class,
         FindUserActivity.class,
         LoginFragment.class,
+        LandingFragment.class,
         AvatarFragment.class,
         PassportFragment.class,
         IdentityFragment.class,

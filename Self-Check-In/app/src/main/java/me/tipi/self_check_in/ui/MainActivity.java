@@ -8,12 +8,18 @@
 
 package me.tipi.self_check_in.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -50,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
   @Inject TypefaceHelper typeface;
 
   @Bind(R.id.main_logo) TextView mainLogoView;
+  @Bind(R.id.forgot_password_text) TextView forgotPassView;
+  @Bind(R.id.reset_password_button) Button resetPasswordButton;
 
   MaterialDialog loading;
 
@@ -87,12 +95,48 @@ public class MainActivity extends AppCompatActivity {
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
+  @Override public boolean dispatchTouchEvent(MotionEvent ev) {
+    View view = getCurrentFocus();
+
+    int x = (int) ev.getX();
+    int y = (int) ev.getY();
+
+    if(view instanceof EditText){
+      EditText innerView = (EditText) getCurrentFocus();
+
+      if (ev.getAction() == MotionEvent.ACTION_UP &&
+          !getLocationOnScreen(innerView).contains(x, y)) {
+
+        InputMethodManager input = (InputMethodManager)
+            getSystemService(Context.INPUT_METHOD_SERVICE);
+        input.hideSoftInputFromWindow(view.getWindowToken(), 0);
+      }
+    }
+    return super.dispatchTouchEvent(ev);
+  }
+
+  protected Rect getLocationOnScreen(EditText mEditText) {
+    Rect mRect = new Rect();
+    int[] location = new int[2];
+
+    mEditText.getLocationOnScreen(location);
+
+    mRect.left = location[0];
+    mRect.top = location[1];
+    mRect.right = location[0] + mEditText.getWidth();
+    mRect.bottom = location[1] + mEditText.getHeight();
+
+    return mRect;
+  }
+
   /**
    * Show login fragment.
    */
   public void showLoginFragment() {
     mainLogoView.setVisibility(View.INVISIBLE);
     getFragmentManager().beginTransaction().replace(R.id.container, LoginFragment.newInstance(this)).commit();
+    forgotPassView.setVisibility(View.VISIBLE);
+    resetPasswordButton.setVisibility(View.VISIBLE);
   }
 
   /**

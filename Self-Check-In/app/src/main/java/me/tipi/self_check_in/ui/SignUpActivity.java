@@ -10,7 +10,6 @@ package me.tipi.self_check_in.ui;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -21,11 +20,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.drivemode.android.typeface.TypefaceHelper;
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -58,6 +58,7 @@ import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.EmailConflictEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
+import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.ui.misc.ChangeSwipeViewPager;
 import retrofit.Callback;
@@ -78,9 +79,12 @@ public class SignUpActivity extends AppCompatActivity {
   @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
   @Inject Tracker tracker;
+  @Inject TypefaceHelper typeface;
 
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
-  @Bind(R.id.backBtn) TextView backButtonView;
+  @Bind(R.id.settingBtn) ImageView settingButton;
+  @Bind(R.id.resetBtn) ImageView resetButton;
+  @Bind(R.id.tipi_description) TextView description;
 
   MaterialDialog loading;
 
@@ -98,6 +102,9 @@ public class SignUpActivity extends AppCompatActivity {
         .cancelable(false)
         .progress(true, 0)
         .build();
+
+    typeface.setTypeface(description, getString(R.string.font_medium));
+
 
     guest.user_key = null;
     guest.name = null;
@@ -171,19 +178,9 @@ public class SignUpActivity extends AppCompatActivity {
   /**
    * Back clicked.
    */
-  @OnClick(R.id.backBtn)
-  public void backClicked() {
-    View view = this.getCurrentFocus();
-    if (view != null) {
-      InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-      imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    if (viewPager.getCurrentItem() != 0) {
-      viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-    }
-
-    tracker.send(new HitBuilders.EventBuilder("Sign up", "Back").build());
+  @OnClick(R.id.settingBtn)
+  public void settingClicked() {
+    // TODO: Show setting page
   }
 
   /**
@@ -202,8 +199,13 @@ public class SignUpActivity extends AppCompatActivity {
    * @param event the event
    */
   @Subscribe
-  public void onBackShown(BackShouldShowEvent event) {
-    backButtonView.setVisibility(event.show ? View.VISIBLE : View.GONE);
+  public void onSettingShown(BackShouldShowEvent event) {
+    settingButton.setVisibility(event.show ? View.VISIBLE : View.GONE);
+  }
+
+  @Subscribe
+  public void onRefreshShouldShow(RefreshShouldShowEvent event) {
+    resetButton.setVisibility(event.show ? View.VISIBLE : View.GONE);
   }
 
   /**

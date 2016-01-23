@@ -57,5 +57,14 @@
 
   <string name="font_light">SF-UI-Text-Light.otf</string>
   <string name="font_medium">SF-UI-Text-Medium.otf</string>
-  <string name="fonr_regular">SF-UI-Text-Regular.otf</string>
+  <string name="font_regular">SF-UI-Text-Regular.otf</string>
+
+  <!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+  <string name="tipi_description_text">Powered by Tipi - Mobile check-in for Travellers</string>
+  <string name="tipi_check_in">Tipi Check-in</string>
+  <string name="fill_details_text">Fill in your details to check-in</string>
+  <string name="checked_in_text">Have you checked-in on Tipi before?</string>
+  <string name="yes">Yes</string>
+  <string name="no">No</string>
 </resources>
