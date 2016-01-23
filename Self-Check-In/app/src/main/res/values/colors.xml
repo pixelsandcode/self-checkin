@@ -4,7 +4,7 @@
   <color name="colorPrimary">#3F51B5</color>
   <color name="colorPrimaryDark">#313A46</color>
   <color name="colorAccent">#F33258</color>
-  <color name="secondaryAccent">#22B674</color>
+  <color name="secondaryAccent">#2CC990</color>
 
   <!-- Basic colors -->
   <color name="green">#27D34D</color>
@@ -21,7 +21,7 @@
   <color name="black">@color/md_black_1000</color>
 
   <color name="main_overlay">#A6607D8B</color>
-  <color name="main_text">#243044</color>
+  <color name="main_text">#1D1D26</color>
   <color name="label_text">#BDBDBD</color>
   <color name="primary_trans">#B3475567</color>
   <color name="photo_background">#313A46</color>

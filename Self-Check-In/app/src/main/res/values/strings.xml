@@ -1,8 +1,9 @@
 <resources>
   <string name="app_name">Tipi Self-Check-In</string>
+  <string name="app_name_short">Self-Check-in</string>
   <string name="app_description">Mobile Check-in for Travellers</string>
 
-  <string name="login_title">Log Into Your Tipi Account</string>
+  <string name="login_title">Log-in to Your Tipi account</string>
   <string name="email">Email</string>
   <string name="password">password</string>
   <string name="login">Login</string>
@@ -51,4 +52,6 @@
   <string name="hostel_login"> Hostel Login</string>
   <string name="guest_landing">Guest Landing</string>
   <string name="overal_time">Success Overall Timing</string>
+  <string name="forget_password_text">Forget your Password?</string>
+  <string name="reset_button_text">Reset Here</string>
 </resources>
