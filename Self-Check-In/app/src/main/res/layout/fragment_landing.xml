@@ -1,101 +1,95 @@
-<android.support.v7.widget.CardView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/main_frame"
-    android:layout_height="@dimen/main_frame_height"
-    android:layout_gravity="center"
-    android:background="?android:attr/selectableItemBackground"
-    android:clickable="false"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingRight="@dimen/second_key_line"
+    android:paddingLeft="@dimen/second_key_line"
     tools:context="me.tipi.self_check_in.ui.fragments.LandingFragment">
 
-  <RelativeLayout
+  <ImageView
+      android:id="@+id/logo"
+      android:layout_width="@dimen/logo_size"
+      android:layout_height="@dimen/logo_size"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/normal_margin"
+      android:contentDescription="@string/app_name"
+      android:scaleType="fitCenter"
+      android:src="@drawable/logo"/>
+
+
+  <TextView
+      android:id="@+id/title"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_margin="@dimen/first_key_line">
-
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="@dimen/logo_size"
-        android:layout_height="@dimen/logo_size"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/normal_margin"
-        android:contentDescription="@string/app_name"
-        android:scaleType="fitCenter"
-        android:src="@drawable/logo"/>
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/logo"
+      android:layout_marginTop="@dimen/second_key_line"
+      android:gravity="center"
+      android:text="@string/tipi_check_in"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_large"/>
 
 
-    <TextView
-        android:id="@+id/title"
+  <TextView
+      android:id="@+id/sub_title"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/title"
+      android:layout_marginTop="8dp"
+      android:gravity="center"
+      android:text="@string/fill_details_text"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_normal"/>
+
+
+  <TextView
+      android:id="@+id/checked_in"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/button_container"
+      android:gravity="center"
+      android:padding="@dimen/first_key_line"
+      android:text="@string/checked_in_text"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_normal"/>
+
+  <LinearLayout
+      android:id="@+id/button_container"
+      android:layout_width="match_parent"
+      android:layout_height="48dp"
+      android:layout_marginBottom="@dimen/first_key_line"
+      android:layout_alignParentBottom="true"
+      android:background="@drawable/submit_button_background"
+      android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/login_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/logo"
-        android:layout_marginTop="@dimen/second_key_line"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
         android:gravity="center"
-        android:text="@string/tipi_check_in"
-        android:textColor="@color/main_text"
-        android:textSize="@dimen/font_large"/>
+        android:onClick="goToFindActivity"
+        android:text="@string/yes"
+        android:textColor="@color/white"/>
 
+    <View
+        android:layout_width="1dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:background="#33000000"/>
 
-    <TextView
-        android:id="@+id/sub_title"
+    <Button
+        android:id="@+id/sign_up_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/title"
-        android:layout_marginTop="8dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
         android:gravity="center"
-        android:text="@string/fill_details_text"
-        android:textColor="@color/main_text"
-        android:textSize="@dimen/font_normal"/>
+        android:text="@string/no"
+        android:textColor="@color/white"/>
 
-
-    <TextView
-        android:id="@+id/checked_in"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button_container"
-        android:gravity="center"
-        android:padding="@dimen/first_key_line"
-        android:text="@string/checked_in_text"
-        android:textColor="@color/main_text"
-        android:textSize="@dimen/font_normal"/>
-
-    <LinearLayout
-        android:id="@+id/button_container"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/submit_button_background"
-        android:orientation="horizontal">
-
-      <Button
-          android:id="@+id/login_button"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:layout_gravity="center_vertical"
-          android:layout_weight="1"
-          android:background="@android:color/transparent"
-          android:gravity="center"
-          android:text="@string/yes"
-          android:onClick="goToFindActivity"
-          android:textColor="@color/white"/>
-
-      <View
-          android:layout_width="1dp"
-          android:layout_height="32dp"
-          android:background="#33000000"
-          android:layout_gravity="center" />
-
-      <Button
-          android:id="@+id/sign_up_button"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:layout_gravity="center_vertical"
-          android:layout_weight="1"
-          android:background="@android:color/transparent"
-          android:gravity="center"
-          android:text="@string/no"
-          android:textColor="@color/white"/>
-
-    </LinearLayout>
-  </RelativeLayout>
-</android.support.v7.widget.CardView>
+  </LinearLayout>
+</RelativeLayout>

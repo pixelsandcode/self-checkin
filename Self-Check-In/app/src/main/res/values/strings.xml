@@ -67,4 +67,8 @@
   <string name="checked_in_text">Have you checked-in on Tipi before?</string>
   <string name="yes">Yes</string>
   <string name="no">No</string>
+  <string name="title_activity_setting">Settings</string>
+  <string name="start_check_in">Start Check-in</string>
+  <string name="download">Download</string>
+  <string name="logout">Logout</string>
 </resources>

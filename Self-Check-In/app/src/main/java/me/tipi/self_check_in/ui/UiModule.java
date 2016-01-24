@@ -27,6 +27,7 @@ import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
         MainActivity.class,
         SignUpActivity.class,
         FindUserActivity.class,
+        SettingActivity.class,
         LoginFragment.class,
         LandingFragment.class,
         AvatarFragment.class,

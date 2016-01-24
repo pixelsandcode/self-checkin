@@ -180,7 +180,7 @@ public class SignUpActivity extends AppCompatActivity {
    */
   @OnClick(R.id.settingBtn)
   public void settingClicked() {
-    // TODO: Show setting page
+    startActivity(new Intent(this, SettingActivity.class));
   }
 
   /**

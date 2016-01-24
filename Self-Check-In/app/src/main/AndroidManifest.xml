@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="me.tipi.self_check_in"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="me.tipi.self_check_in"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -55,15 +54,29 @@
           android:value=".ui.SignUpActivity"/>
     </activity>
 
-    <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
-              android:enabled="true">
+    <receiver
+        android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+        android:enabled="true">
       <intent-filter>
-        <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+        <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH"/>
       </intent-filter>
     </receiver>
-    <service android:name="com.google.android.gms.analytics.AnalyticsService"
-             android:enabled="true"
-             android:exported="false"/>
+
+    <service
+        android:name="com.google.android.gms.analytics.AnalyticsService"
+        android:enabled="true"
+        android:exported="false"/>
+
+    <activity
+        android:name=".ui.SettingActivity"
+        android:label="@string/title_activity_setting"
+        android:configChanges="screenSize|orientation"
+        android:screenOrientation="landscape"
+        android:windowSoftInputMode="adjustPan">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value="me.tipi.self_check_in.ui.SignUpActivity"/>
+    </activity>
   </application>
 
 </manifest>
