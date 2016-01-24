@@ -78,4 +78,9 @@ public class SettingActivity extends AppCompatActivity {
     finish();
   }
 
+  public void goToCheckIn(View view) {
+    startActivity(new Intent(this, SignUpActivity.class));
+    finish();
+  }
+
 }

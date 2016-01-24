@@ -10,8 +10,10 @@ package me.tipi.self_check_in.ui;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,7 +21,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -166,6 +171,40 @@ public class SignUpActivity extends AppCompatActivity {
     }
   }
 
+  @Override public boolean dispatchTouchEvent(MotionEvent ev) {
+    View view = getCurrentFocus();
+
+    int x = (int) ev.getX();
+    int y = (int) ev.getY();
+
+    if(view instanceof EditText){
+      EditText innerView = (EditText) getCurrentFocus();
+
+      if (ev.getAction() == MotionEvent.ACTION_UP &&
+          !getLocationOnScreen(innerView).contains(x, y)) {
+
+        InputMethodManager input = (InputMethodManager)
+            getSystemService(Context.INPUT_METHOD_SERVICE);
+        input.hideSoftInputFromWindow(view.getWindowToken(), 0);
+      }
+    }
+    return super.dispatchTouchEvent(ev);
+  }
+
+  protected Rect getLocationOnScreen(EditText mEditText) {
+    Rect mRect = new Rect();
+    int[] location = new int[2];
+
+    mEditText.getLocationOnScreen(location);
+
+    mRect.left = location[0];
+    mRect.top = location[1];
+    mRect.right = location[0] + mEditText.getWidth();
+    mRect.bottom = location[1] + mEditText.getHeight();
+
+    return mRect;
+  }
+
   /**
    * Start over.
    */
@@ -181,6 +220,7 @@ public class SignUpActivity extends AppCompatActivity {
   @OnClick(R.id.settingBtn)
   public void settingClicked() {
     startActivity(new Intent(this, SettingActivity.class));
+    finish();
   }
 
   /**
@@ -345,6 +385,16 @@ public class SignUpActivity extends AppCompatActivity {
   public void goToFindActivity(View view) {
     guest.time = System.currentTimeMillis();
     startActivity(new Intent(this, FindUserActivity.class));
+  }
+
+  /**
+   * Go to find activity.
+   *
+   * @param view the view
+   */
+  public void goToIdentity(View view) {
+    guest.time = System.currentTimeMillis();
+    viewPager.setCurrentItem(1);
   }
 
   /**

@@ -71,4 +71,6 @@
   <string name="start_check_in">Start Check-in</string>
   <string name="download">Download</string>
   <string name="logout">Logout</string>
+  <string name="check_in_details">Check-in Details</string>
+  <string name="next">Next</string>
 </resources>

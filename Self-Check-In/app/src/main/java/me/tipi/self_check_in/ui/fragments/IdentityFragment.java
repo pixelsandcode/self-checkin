@@ -12,9 +12,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,26 +33,22 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
-import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
-import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
@@ -58,6 +57,7 @@ import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.EmailConflictEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
+import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.Strings;
 import retrofit.Callback;
@@ -69,23 +69,22 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
 
   @Inject Picasso picasso;
   @Inject Bus bus;
-  @Inject
-  @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject Guest guest;
   @Inject AuthenticationService authenticationService;
   @Inject Tracker tracker;
 
-  @Bind(R.id.taken_avatar) ImageView avatarTakenView;
   @Bind(R.id.full_name) EditText fullNameTextView;
   @Bind(R.id.email) EditText emailTextView;
   @Bind(R.id.home_town) AutoCompleteTextView homeTownACView;
   @Bind(R.id.birthday) EditText birthDayPickerView;
-  @Bind(R.id.passport) EditText passportTextView;
+  @Bind(R.id.name_input_layout) TextInputLayout nameLayout;
+  @Bind(R.id.email_input_layout) TextInputLayout emailLayout;
+  @Bind(R.id.birthday_input_layout) TextInputLayout birthdayLayout;
+
 
   public Date dob = null;
   public String enteredEmail;
   public String enteredFullName;
-  public String enteredPassportNumber;
   public String enteredHomeTown;
   MaterialDialog matchUserDialog;
 
@@ -136,7 +135,6 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
         .cancelable(false)
         .onPositive(new MaterialDialog.SingleButtonCallback() {
           @Override public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-            avatarPath.delete();
             tracker.send(new HitBuilders.EventBuilder("Matched User", "Choose me").build());
             bus.post(new PagerChangeEvent(3));
           }
@@ -148,8 +146,6 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
             guest.user_key = null;
           }
         }).build();
-
-    setAvatar();
 
     homeTownACView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
       @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -172,18 +168,22 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
       }
     });
 
-    emailTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-      @Override public void onFocusChange(View v, boolean hasFocus) {
-        if (!hasFocus) {
-          emailTextView.setError(null);
+    emailTextView.addTextChangedListener(new TextWatcher() {
+      @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-          enteredEmail = emailTextView.getText().toString();
+      }
 
-          // Check for a valid email address.
-          if (!TextUtils.isEmpty(enteredEmail)) {
-            if (Strings.isValidEmail(enteredEmail)) {
-              findUserWithEmail(enteredEmail);
-            }
+      @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+      }
+
+      @Override public void afterTextChanged(Editable s) {
+        emailLayout.setError(null);
+
+        // Check for a valid email address.
+        if (!TextUtils.isEmpty(s.toString())) {
+          if (Strings.isValidEmail(s.toString())) {
+            findUserWithEmail(s.toString());
           }
         }
       }
@@ -208,8 +208,8 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
-      bus.post(new BackShouldShowEvent(true));
-      setAvatar();
+      bus.post(new BackShouldShowEvent(false));
+      bus.post(new RefreshShouldShowEvent(true));
     }
   }
 
@@ -221,7 +221,6 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     if (!isError()) {
       guest.name = enteredFullName;
       guest.email = enteredEmail;
-      guest.passportNumber = enteredPassportNumber;
 
       if (!TextUtils.isEmpty(enteredHomeTown)) {
         guest.city = Strings.getPreStringSplit(enteredHomeTown, "-");
@@ -243,39 +242,33 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
    */
   private boolean isError() {
 
-    fullNameTextView.setError(null);
-    emailTextView.setError(null);
-    passportTextView.setError(null);
-    birthDayPickerView.setError(null);
+    nameLayout.setErrorEnabled(false);
+    emailLayout.setErrorEnabled(false);
+    birthdayLayout.setErrorEnabled(false);
 
     boolean cancel = false;
     View focusView = null;
 
     enteredEmail = emailTextView.getText().toString();
     enteredFullName = fullNameTextView.getText().toString();
-    enteredPassportNumber = passportTextView.getText().toString();
     enteredHomeTown = homeTownACView.getText().toString();
 
     // Check for validation
     if (TextUtils.isEmpty(enteredFullName)) {
-      fullNameTextView.setError(getString(R.string.error_field_required));
+      nameLayout.setError(getString(R.string.error_field_required));
       focusView = fullNameTextView;
       cancel = true;
     } else if (TextUtils.isEmpty(enteredEmail)) {
-      emailTextView.setError(getString(R.string.error_field_required));
+      emailLayout.setError(getString(R.string.error_field_required));
       focusView = emailTextView;
       cancel = true;
     } else if (!Strings.isValidEmail(enteredEmail)) {
-      emailTextView.setError(getString(R.string.error_invalid_email));
+      emailLayout.setError(getString(R.string.error_invalid_email));
       focusView = emailTextView;
-      cancel = true;
-    } else if (TextUtils.isEmpty(enteredPassportNumber)) {
-      passportTextView.setError(getString(R.string.error_field_required));
-      focusView = passportTextView;
       cancel = true;
     } else if (dob != null) {
       if (dob.after(new Date())) {
-        birthDayPickerView.setError(getString(R.string.birthday_error));
+        birthdayLayout.setError(getString(R.string.birthday_error));
         focusView = birthDayPickerView;
         cancel = true;
         dob = null;
@@ -306,7 +299,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   @Subscribe
   public void onEmailConflict(EmailConflictEvent event) {
     emailTextView.requestFocus();
-    emailTextView.setError(getString(R.string.error_conflict_email));
+    emailLayout.setError(getString(R.string.error_conflict_email));
   }
 
   /**
@@ -345,18 +338,5 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
         }
       }
     });
-  }
-
-  /**
-   * Sets avatar.
-   */
-  private void setAvatar() {
-
-    if (avatarPath != null && avatarPath.isSet() && avatarPath.get() != null && avatarTakenView != null) {
-      picasso.invalidate(avatarPath.get());
-      picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
-          .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-          .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
-    }
   }
 }

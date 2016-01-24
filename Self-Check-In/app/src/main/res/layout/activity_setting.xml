@@ -146,6 +146,7 @@
           android:padding="@dimen/normal_padding"
           android:text="@string/start_check_in"
           android:textColor="@color/white"
+          android:onClick="goToCheckIn"
           android:textSize="@dimen/font_normal"
           android:textStyle="bold"/>
     </RelativeLayout>

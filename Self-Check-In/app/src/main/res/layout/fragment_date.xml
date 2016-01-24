@@ -31,6 +31,18 @@
       android:inputType="date"/>
 
   <EditText
+      android:id="@+id/passport"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/birthday"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:gravity="center"
+      android:hint="@string/passport_number"
+      android:imeOptions="actionDone"
+      android:inputType="textNoSuggestions"/>
+
+  <EditText
       android:id="@+id/nights_number"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
