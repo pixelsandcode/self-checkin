@@ -38,8 +38,8 @@
   <string name="number_of_nights">Number of Nights</string>
   <string name="title_activity_login">LoginActivity</string>
   <string name="find">Find</string>
-  <string name="find_account_title">Find your\nAccount</string>
-  <string name="find_account_hint">the email you used to sign-up to tipi</string>
+  <string name="find_account_title">Find Your Account</string>
+  <string name="find_account_hint">Enter Tipi email to find\n your account</string>
   <string name="match_found_hint">Found a match</string>
   <string name="no_match_hint">No matches found</string>
   <string name="or">OR</string>
@@ -73,4 +73,8 @@
   <string name="logout">Logout</string>
   <string name="check_in_details">Check-in Details</string>
   <string name="next">Next</string>
+  <string name="email_hint">TIPI EMAIL</string>
+  <string name="create_account">Create Account</string>
+  <string name="no_account_text">NO ACCOUNT?</string>
+  <string name="try_again_text">TRY AGAIN?</string>
 </resources>

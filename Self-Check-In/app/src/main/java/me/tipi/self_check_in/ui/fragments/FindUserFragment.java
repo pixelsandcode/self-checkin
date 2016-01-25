@@ -10,6 +10,7 @@ package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -62,8 +63,10 @@ public class FindUserFragment extends Fragment {
   @Inject Tracker tracker;
 
   @Bind(R.id.email) EditText emailEditText;
+  @Bind(R.id.email_input_layout) TextInputLayout emailLayout;
   @Bind(R.id.match_text) TextView matchTextView;
-  @Bind(R.id.or_text) TextView orTextView;
+  @Bind(R.id.try_again) TextView tryAgainView;
+  @Bind(R.id.no_account) TextView noAccountView;
   @Bind(R.id.sign_up_btn) Button signUpButton;
   @Bind(R.id.match_user_container) RelativeLayout matchedUserContainer;
   @Bind(R.id.avatar) ImageView avatarView;
@@ -147,9 +150,10 @@ public class FindUserFragment extends Fragment {
     if (!isError()) {
       guest.user_key = "";
       guest.name = "";
-      orTextView.setVisibility(View.GONE);
       signUpButton.setVisibility(View.GONE);
       matchedUserContainer.setVisibility(View.GONE);
+      noAccountView.setVisibility(View.GONE);
+      tryAgainView.setVisibility(View.GONE);
       loading.show();
       authenticationService.findUser(enteredEmail, new Callback<FindResponse>() {
         @Override public void success(FindResponse findResponse, Response response) {
@@ -160,8 +164,9 @@ public class FindUserFragment extends Fragment {
           // Handling show/hide views
           matchTextView.setText(R.string.match_found_hint);
           matchTextView.setTextColor(accentColor);
-          orTextView.setVisibility(View.GONE);
           signUpButton.setVisibility(View.GONE);
+          noAccountView.setVisibility(View.GONE);
+          tryAgainView.setVisibility(View.GONE);
           matchedUserContainer.setVisibility(View.VISIBLE);
 
           // Filling user info
@@ -187,8 +192,9 @@ public class FindUserFragment extends Fragment {
             loading.dismiss();
             matchTextView.setText(R.string.no_match_hint);
             matchTextView.setTextColor(accentColor);
-            orTextView.setVisibility(View.VISIBLE);
             signUpButton.setVisibility(View.VISIBLE);
+            noAccountView.setVisibility(View.VISIBLE);
+            tryAgainView.setVisibility(View.VISIBLE);
             matchedUserContainer.setVisibility(View.GONE);
             Timber.d("Error finding: %s", error.toString());
           }
@@ -204,7 +210,8 @@ public class FindUserFragment extends Fragment {
    */
   private boolean isError() {
 
-    emailEditText.setError(null);
+    emailLayout.setError(null);
+    emailLayout.setErrorEnabled(false);
 
     boolean cancel = false;
     View focusView = null;
@@ -213,11 +220,13 @@ public class FindUserFragment extends Fragment {
 
     // Check for validation
     if (TextUtils.isEmpty(enteredEmail)) {
-      emailEditText.setError(getString(R.string.error_field_required));
+      emailLayout.setErrorEnabled(true);
+      emailLayout.setError(getString(R.string.error_field_required));
       focusView = emailEditText;
       cancel = true;
     } else if (!Strings.isValidEmail(enteredEmail)) {
-      emailEditText.setError(getString(R.string.error_invalid_email));
+      emailLayout.setErrorEnabled(true);
+      emailLayout.setError(getString(R.string.error_invalid_email));
       focusView = emailEditText;
       cancel = true;
     }

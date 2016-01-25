@@ -77,7 +77,7 @@
       android:layout_marginTop="@dimen/first_key_line"
       android:layout_marginRight="@dimen/third_key_line"
       android:layout_marginLeft="@dimen/third_key_line"
-      android:background="@drawable/submit_button_with_border"
+      android:background="@drawable/submit_button_green_background"
       android:textColor="@color/colorAccent"
       android:textSize="@dimen/font_normal"
       android:onClick="goToFindActivity"
