@@ -10,6 +10,7 @@ package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -17,51 +18,46 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
-import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.Calendar;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
-import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
-import me.tipi.self_check_in.ui.events.SubmitEvent;
-import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
-import me.tipi.self_check_in.util.Strings;
+import me.tipi.self_check_in.ui.events.PagerChangeEvent;
+import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 
 public class DateFragment extends Fragment implements DatePickerDialogFragment.DatePickerDialogHandler {
 
-  @Inject Picasso picasso;
   @Inject Bus bus;
-  @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject Guest guest;
   @Inject Tracker tracker;
 
-  @Bind(R.id.taken_avatar) ImageView avatarTakenView;
   @Bind(R.id.check_in_date) EditText checkInDateView;
   @Bind(R.id.nights_number) EditText nightsNumberView;
   @Bind(R.id.reference) EditText referenceTextView;
+  @Bind(R.id.passport) EditText passportEditText;
+  @Bind(R.id.check_in_input_layout) TextInputLayout checkInLayout;
+  @Bind(R.id.nights_number_input_layout) TextInputLayout nightNumberLayout;
+  @Bind(R.id.passport_input_layout) TextInputLayout passportLayout;
 
   public Calendar checkInDate = null;
   public String dateString;
   public String enteredReference;
+  public String enteredPassport;
   public int enteredNights = 0;
 
   /**
@@ -88,9 +84,6 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_date, container, false);
     ButterKnife.bind(this, rootView);
-
-    // Fix avatar according to process
-    setAvatar();
 
     // Check-in date date picker
     checkInDateView.setInputType(InputType.TYPE_NULL);
@@ -138,6 +131,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       guest.checkInDate = checkInDate.getTime();
       checkInDate.add(Calendar.DAY_OF_MONTH, enteredNights);
       guest.checkOutDate = checkInDate.getTime();
+      guest.passportNumber = enteredPassport;
 
       if (!TextUtils.isEmpty(enteredReference)) {
         guest.referenceCode = enteredReference;
@@ -148,7 +142,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
         bus.post(new ClaimEvent());
       } else {
-        bus.post(new SubmitEvent());
+        bus.post(new PagerChangeEvent(3));
       }
     }
   }
@@ -160,10 +154,11 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
    */
   private boolean isError() {
 
-    checkInDateView.setError(null);
-    nightsNumberView.setError(null);
-    referenceTextView.setError(null);
+    checkInLayout.setErrorEnabled(false);
+    nightNumberLayout.setErrorEnabled(false);
+    passportLayout.setErrorEnabled(false);
     enteredReference = referenceTextView.getText().toString();
+    enteredPassport = passportEditText.getText().toString();
 
     boolean cancel = false;
     View focusView = null;
@@ -171,27 +166,32 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     compare.add(Calendar.HOUR, -1);
 
     if (checkInDate == null) {
-      checkInDateView.setError(getString(R.string.error_field_required));
+      checkInLayout.setErrorEnabled(true);
+      checkInLayout.setError(getString(R.string.error_field_required));
       cancel = true;
       checkInDate = null;
     } else if (nightsNumberView.getText() == null || TextUtils.isEmpty(nightsNumberView.getText().toString())) {
-      nightsNumberView.setError(getString(R.string.error_field_required));
+      nightNumberLayout.setErrorEnabled(true);
+      nightNumberLayout.setError(getString(R.string.error_field_required));
       cancel = true;
       enteredNights = 0;
     } else if (checkInDate.before(compare)) {
-      checkInDateView.setError(getString(R.string.error_less_than_today));
+      checkInLayout.setErrorEnabled(true);
+      checkInLayout.setError(getString(R.string.error_less_than_today));
       cancel = true;
       checkInDate = null;
     } else if (Integer.parseInt(nightsNumberView.getText().toString()) <= 0) {
-      nightsNumberView.setError(getString(R.string.error_check_out_before_check_in));
+      nightNumberLayout.setErrorEnabled(true);
+      nightNumberLayout.setError(getString(R.string.error_check_out_before_check_in));
       cancel = true;
       focusView = nightsNumberView;
       enteredNights = 0;
-    } /*else if (TextUtils.isEmpty(enteredReference)) {
-      referenceTextView.setError(getString(R.string.error_field_required));
+    } else if (TextUtils.isEmpty(enteredPassport)) {
+      passportLayout.setErrorEnabled(true);
+      passportLayout.setError(getString(R.string.error_field_required));
       focusView = referenceTextView;
       cancel = true;
-    }*/
+    }
 
     if (cancel) {
       if (focusView != null) {
@@ -205,17 +205,12 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
-      if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
-        bus.post(new BackShouldShowEvent(false));
-      } else {
-        bus.post(new BackShouldShowEvent(true));
-      }
+      bus.post(new BackShouldShowEvent(false));
+      bus.post(new RefreshShouldShowEvent(true));
 
       if (nightsNumberView != null) {
         nightsNumberView.requestFocus();
       }
-
-      setAvatar();
     }
   }
 
@@ -226,25 +221,6 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     if (reference == 10) {
       checkInDateView.setText(dateString);
       checkInDate = calendar;
-    }
-  }
-
-  /**
-   * Sets avatar.
-   */
-  private void setAvatar() {
-
-    if (avatarTakenView != null) {
-      if (avatarPath != null && avatarPath.isSet() && avatarPath.get() != null) {
-        picasso.invalidate(avatarPath.get());
-        picasso.load(new File(avatarPath.get())).resize(200, 200).centerCrop()
-            .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-            .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
-      } else if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
-        picasso.load(Strings.makeAvatarUrl(guest.user_key)).resize(200, 200).centerCrop()
-            .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-            .placeholder(R.drawable.avatar_placeholder).into(avatarTakenView);
-      }
     }
   }
 }

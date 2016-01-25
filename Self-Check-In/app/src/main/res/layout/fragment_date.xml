@@ -1,83 +1,113 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingRight="@dimen/second_key_line"
     android:paddingLeft="@dimen/second_key_line"
+    android:paddingRight="@dimen/second_key_line"
     tools:context="me.tipi.self_check_in.ui.fragments.DateFragment"
     tools:ignore="ContentDescription">
 
-  <ImageView
-      android:id="@+id/taken_avatar"
-      android:layout_width="@dimen/logo_size"
-      android:layout_height="@dimen/logo_size"
+  <TextView
+      android:id="@+id/title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/first_key_line"
-      android:scaleType="centerCrop"
-      android:src="@drawable/avatar_placeholder"
-      />
+      android:layout_marginTop="@dimen/second_key_line"
+      android:text="@string/check_in_details"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_large"/>
 
-  <EditText
-      android:id="@+id/check_in_date"
+  <android.support.design.widget.TextInputLayout
+      android:id="@+id/check_in_input_layout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_centerInParent="true"
-      android:gravity="center"
-      android:drawableRight="@drawable/ic_calendar_24dp"
-      android:drawableEnd="@drawable/ic_calendar_24dp"
-      android:hint="@string/check_in"
-      android:imeOptions="actionNext"
-      android:inputType="date"/>
+      android:layout_below="@+id/title"
+      android:layout_marginTop="@dimen/second_key_line"
+      app:hintTextAppearance="@style/hintText">
 
-  <EditText
-      android:id="@+id/passport"
+    <EditText
+        android:id="@+id/check_in_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/check_in"
+        android:paddingLeft="@dimen/normal_padding"
+        android:paddingRight="@dimen/normal_padding"
+        android:imeOptions="actionNext"
+        android:inputType="date"/>
+  </android.support.design.widget.TextInputLayout>
+
+  <android.support.design.widget.TextInputLayout
+      android:id="@+id/nights_number_input_layout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/birthday"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/first_key_line"
-      android:gravity="center"
-      android:hint="@string/passport_number"
-      android:imeOptions="actionDone"
-      android:inputType="textNoSuggestions"/>
+      android:layout_below="@+id/check_in_input_layout"
+      android:layout_marginTop="@dimen/normal_margin"
+      app:hintTextAppearance="@style/hintText">
 
-  <EditText
-      android:id="@+id/nights_number"
+    <EditText
+        android:id="@+id/nights_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:digits="1234567890"
+        android:hint="@string/number_of_nights"
+        android:paddingLeft="@dimen/normal_padding"
+        android:paddingRight="@dimen/normal_padding"
+        android:imeOptions="actionNext"
+        android:inputType="phone"/>
+  </android.support.design.widget.TextInputLayout>
+
+  <android.support.design.widget.TextInputLayout
+      android:id="@+id/passport_input_layout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/check_in_date"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/first_key_line"
-      android:gravity="center"
-      android:hint="@string/number_of_nights"
-      android:imeOptions="actionNext"
-      android:inputType="phone"
-      android:digits="1234567890"/>
+      android:layout_below="@+id/nights_number_input_layout"
+      android:layout_marginTop="@dimen/normal_margin"
+      app:hintTextAppearance="@style/hintText">
 
-  <EditText
-      android:id="@+id/reference"
+    <EditText
+        android:id="@+id/passport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/birthday"
+        android:hint="@string/passport_number"
+        android:paddingLeft="@dimen/normal_padding"
+        android:paddingRight="@dimen/normal_padding"
+        android:imeOptions="actionNext"
+        android:inputType="textNoSuggestions"/>
+  </android.support.design.widget.TextInputLayout>
+
+  <android.support.design.widget.TextInputLayout
+      android:id="@+id/reference_input_layout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/nights_number"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/first_key_line"
-      android:drawablePadding="8dp"
-      android:gravity="center"
-      android:hint="@string/reference_code"
-      android:imeOptions="actionDone"
-      android:inputType="textNoSuggestions"/>
+      android:layout_below="@+id/passport_input_layout"
+      android:layout_marginTop="@dimen/normal_margin"
+      app:hintTextAppearance="@style/hintText">
+
+    <EditText
+        android:id="@+id/reference"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/first_key_line"
+        android:hint="@string/reference_code"
+        android:paddingLeft="@dimen/normal_padding"
+        android:paddingRight="@dimen/normal_padding"
+        android:imeOptions="actionDone"
+        android:inputType="textNoSuggestions"/>
+  </android.support.design.widget.TextInputLayout>
 
   <Button
       android:id="@+id/submit_btn"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
       android:layout_marginBottom="@dimen/first_key_line"
       android:background="@drawable/submit_button_background"
+      android:text="@string/next"
       android:textColor="@color/white"
-      android:textSize="@dimen/font_normal"
-      android:layout_alignParentBottom="true"
-      android:text="@string/submit"/>
-
+      android:textSize="@dimen/font_normal"/>
 
 </RelativeLayout>
