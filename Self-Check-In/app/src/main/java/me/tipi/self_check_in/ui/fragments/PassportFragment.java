@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
@@ -45,7 +46,9 @@ import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
-import me.tipi.self_check_in.ui.events.PagerChangeEvent;
+import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
+import me.tipi.self_check_in.ui.events.SubmitEvent;
+import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.FileHelper;
 import timber.log.Timber;
 
@@ -61,7 +64,9 @@ public class PassportFragment extends Fragment {
   @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
   @Inject Tracker tracker;
 
-  @Bind(R.id.passport_photo) ImageView passportView;
+  @Bind(R.id.scan) ImageView passportView;
+  @Bind(R.id.title) TextView titleView;
+  @Bind(R.id.avatar_hint) TextView hintView;
 
   Uri uriSavedPassportImage;
 
@@ -113,12 +118,16 @@ public class PassportFragment extends Fragment {
         try {
           File imageFile = FileHelper.getResizedFile(getActivity(), uriSavedPassportImage,
               Build.VERSION.SDK_INT, 500, 500);
-          picasso.load(imageFile).resize(400,400).centerCrop().into(passportView);
+          picasso.load(imageFile).resize(400, 400).centerCrop()
+              .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+              .into(passportView);
           // Save taken photo path to show later if not signed up
           passportPath.set(imageFile.getPath());
+          titleView.setText(getResources().getString(R.string.avatar_success_title));
 
         } catch (Exception e) {
-          Snackbar.make(appContainer.bind(getActivity()), "Picture wasn't taken!", Snackbar.LENGTH_LONG).show();
+          titleView.setText(getResources().getString(R.string.avatar_fail_titel));
+          picasso.load(R.drawable.fail_photo).into(passportView);
         }
       }
     }
@@ -127,7 +136,8 @@ public class PassportFragment extends Fragment {
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
-      bus.post(new BackShouldShowEvent(true));
+      bus.post(new BackShouldShowEvent(false));
+      bus.post(new RefreshShouldShowEvent(true));
       setPassportImage();
     }
   }
@@ -135,7 +145,7 @@ public class PassportFragment extends Fragment {
   /**
    * On launch camera.
    */
-  @OnClick(R.id.captureBtn)
+  @OnClick(R.id.scan)
   public void onLaunchCamera() {
     // create Intent to take a picture and return control to the calling application
     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -161,7 +171,7 @@ public class PassportFragment extends Fragment {
   public void continueToCheckIn() {
     if (passportPath.isSet()) {
       Timber.v(passportPath.get());
-      bus.post(new PagerChangeEvent(3));
+      bus.post(new SubmitEvent());
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please Scan your passport first!", Snackbar.LENGTH_LONG).show();
     }
@@ -173,7 +183,8 @@ public class PassportFragment extends Fragment {
   private void setPassportImage() {
     if (passportPath != null && passportPath.isSet() && passportPath.get() != null && passportView != null) {
       picasso.load(new File(passportPath.get())).resize(400, 400).centerCrop()
-          .placeholder(R.drawable.passport_default).into(passportView);
+          .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+          .placeholder(R.drawable.avatar_button).into(passportView);
     }
   }
 

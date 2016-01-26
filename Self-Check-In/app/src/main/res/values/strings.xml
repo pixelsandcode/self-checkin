@@ -12,7 +12,7 @@
   <string name="error_field_required">This field is required</string>
   <string name="error_conflict_email">This booking email is used already!</string>
   <string name="reset">Reset</string>
-  <string name="smile">Take a selfie - SMILE!</string>
+  <string name="smile">Smile!</string>
 
   <string name="full_name">Full Name</string>
   <string name="booking_email">Booking Email</string>
@@ -34,7 +34,7 @@
   <string name="success_description">You just checked-in like da boss man…</string>
   <string name="already_user">Already a Tipi Traveller?</string>
   <string name="log_in">log-in</string>
-  <string name="scan_passport">Scan your Passport</string>
+  <string name="scan_passport">Scan Passport</string>
   <string name="number_of_nights">Number of Nights</string>
   <string name="title_activity_login">LoginActivity</string>
   <string name="find">Find</string>
@@ -77,4 +77,9 @@
   <string name="create_account">Create Account</string>
   <string name="no_account_text">NO ACCOUNT?</string>
   <string name="try_again_text">TRY AGAIN?</string>
+  <string name="take_selfie_hint">Tap the camera icon to\n take a selfie</string>
+  <string name="avatar_fail_titel">Oops… Try Again</string>
+  <string name="avatar_success_title">Nice!</string>
+  <string name="avatar_success_hint">Change your pic anytime\n in Tipi mobile app</string>
+  <string name="take_scan_hint">Tap the camera icon to\n scan passport</string>
 </resources>

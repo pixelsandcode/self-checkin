@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
@@ -48,6 +49,8 @@ import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
+import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
+import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.FileHelper;
 import timber.log.Timber;
 
@@ -62,6 +65,8 @@ public class AvatarFragment extends Fragment {
   @Inject Guest guest;
 
   @Bind(R.id.avatar) ImageView avatarView;
+  @Bind(R.id.title) TextView titleView;
+  @Bind(R.id.avatar_hint) TextView hintView;
 
   Uri uriSavedImage;
 
@@ -113,12 +118,16 @@ public class AvatarFragment extends Fragment {
         try {
           File imageFile = FileHelper.getResizedFile(getActivity(), uriSavedImage,
               Build.VERSION.SDK_INT, 500, 500);
-          picasso.load(imageFile).resize(400,400).centerCrop().into(avatarView);
+          picasso.load(imageFile).resize(400, 400).centerCrop()
+              .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+              .into(avatarView);
           // Save taken photo path to show later if not signed up
           avatarPath.set(imageFile.getPath());
+          titleView.setText(getResources().getString(R.string.avatar_success_title));
+          hintView.setText(getResources().getString(R.string.avatar_success_hint));
 
         } catch (Exception e) {
-          Snackbar.make(appContainer.bind(getActivity()), "Picture wasn't taken!", Snackbar.LENGTH_LONG).show();
+          titleView.setText(getResources().getString(R.string.avatar_fail_titel));
         }
       }
     }
@@ -128,9 +137,11 @@ public class AvatarFragment extends Fragment {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(false));
+      bus.post(new RefreshShouldShowEvent(true));
       if (avatarPath.isSet() && avatarPath.get() != null && avatarView != null) {
         picasso.load(new File(avatarPath.get())).resize(400, 400).centerCrop()
-            .placeholder(R.drawable.avatar_default).into(avatarView);
+            .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+            .placeholder(R.drawable.avatar_placeholder).into(avatarView);
       }
     }
   }
@@ -138,7 +149,7 @@ public class AvatarFragment extends Fragment {
   /**
    * On launch camera.
    */
-  @OnClick(R.id.captureBtn)
+  @OnClick(R.id.avatar)
   public void onLaunchCamera() {
     // create Intent to take a picture and return control to the calling application
     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -165,8 +176,7 @@ public class AvatarFragment extends Fragment {
   public void continueToIdentity() {
     if (avatarPath.isSet()) {
       Timber.v(avatarPath.get());
-      guest.time = System.currentTimeMillis();
-      bus.post(new PagerChangeEvent(1));
+      bus.post(new PagerChangeEvent(4));
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie first!", Snackbar.LENGTH_LONG).show();
     }

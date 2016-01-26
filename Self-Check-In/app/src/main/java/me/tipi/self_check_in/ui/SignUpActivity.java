@@ -288,7 +288,7 @@ public class SignUpActivity extends AppCompatActivity {
                   .setLabel("Sign Up")
                   .setValue(diffSeconds).build());
               tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
-              viewPager.setCurrentItem(4, true);
+              viewPager.setCurrentItem(5, true);
             }
 
             @Override public void failure(RetrofitError error) {
