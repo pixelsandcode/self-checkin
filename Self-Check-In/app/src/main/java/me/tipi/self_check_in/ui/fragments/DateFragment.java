@@ -62,6 +62,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   public String enteredReference;
   public String enteredPassport;
   public int enteredNights = 0;
+  private boolean isLogin;
 
   /**
    * Instantiates a new Date fragment.
@@ -108,7 +109,6 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       }
     });
 
-    nightsNumberView.requestFocus();
     return rootView;
   }
 
@@ -143,7 +143,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
         guest.referenceCode = null;
       }
 
-      if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
+      if (isLogin) {
         bus.post(new ClaimEvent());
       } else {
         bus.post(new PagerChangeEvent(3));
@@ -190,7 +190,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       cancel = true;
       focusView = nightsNumberView;
       enteredNights = 0;
-    } else if (TextUtils.isEmpty(enteredPassport)) {
+    } else if (!isLogin && TextUtils.isEmpty(enteredPassport)) {
       passportLayout.setErrorEnabled(true);
       passportLayout.setError(getString(R.string.error_field_required));
       focusView = referenceTextView;
@@ -212,9 +212,11 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       bus.post(new BackShouldShowEvent(true));
       bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
-
-      if (nightsNumberView != null) {
-        nightsNumberView.requestFocus();
+      isLogin = guest.user_key != null && !TextUtils.isEmpty(guest.user_key);
+      if (isLogin) {
+        passportLayout.setVisibility(View.GONE);
+      } else {
+        passportLayout.setVisibility(View.VISIBLE);
       }
     }
   }

@@ -10,7 +10,6 @@ package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -18,11 +17,9 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -122,11 +119,20 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
         .setStyleResId(R.style.BetterPickersDialogFragment_Light)
         .setTargetFragment(IdentityFragment.this);
 
-
     birthDayPickerView.setInputType(InputType.TYPE_NULL);
+
+    birthDayPickerView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+      @Override public void onFocusChange(View v, boolean hasFocus) {
+        if (hasFocus) {
+          if (birthDayPickerView.getText().toString().equals("")) {
+            dpb.show();
+          }
+        }
+      }
+    });
+
     birthDayPickerView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+      @Override public void onClick(View v) {
         dpb.show();
       }
     });
@@ -150,27 +156,6 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
             guest.user_key = null;
           }
         }).build();
-
-    homeTownACView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-      @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == R.id.next || actionId == EditorInfo.IME_ACTION_NEXT) {
-          birthDayPickerView.requestFocus();
-          getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-              new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                  dpb.show();
-                }
-              }, 200);
-            }
-          });
-          return true;
-        }
-        return false;
-      }
-    });
 
     emailTextView.addTextChangedListener(new TextWatcher() {
       @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {

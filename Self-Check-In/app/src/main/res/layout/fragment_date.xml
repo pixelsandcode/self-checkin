@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/second_key_line"
     android:paddingRight="@dimen/second_key_line"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="me.tipi.self_check_in.ui.fragments.DateFragment"
     tools:ignore="ContentDescription">
 
