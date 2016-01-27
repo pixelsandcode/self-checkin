@@ -82,4 +82,7 @@
   <string name="avatar_success_title">Nice!</string>
   <string name="avatar_success_hint">Change your pic anytime\n in Tipi mobile app</string>
   <string name="take_scan_hint">Tap the camera icon to\n scan passport</string>
+  <string name="hand_back">Please hand back to the staff.</string>
+  <string name="meet_text">Meet other travellers at Jolly Swagman.\n Download Tipi Today!</string>
+  <string name="scan_success_title">Review Passport</string>
 </resources>

@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
@@ -28,6 +29,7 @@ import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
+import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import timber.log.Timber;
 
 /**
@@ -38,6 +40,7 @@ public class LandingFragment extends Fragment {
   @Inject Bus bus;
   @Inject Tracker tracker;
   @Inject AppContainer appContainer;
+  @Inject TypefaceHelper typeface;
 
   public LandingFragment() {
     // Required empty public constructor
@@ -57,6 +60,7 @@ public class LandingFragment extends Fragment {
     ButterKnife.bind(this, rootView);
 
     Timber.d("OnCreateView");
+    typeface.setTypeface(container, getResources().getString(R.string.font_regular));
     return rootView;
   }
 
@@ -75,7 +79,8 @@ public class LandingFragment extends Fragment {
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
-      bus.post(new BackShouldShowEvent(true));
+      bus.post(new SettingShouldShowEvent(true));
+      bus.post(new BackShouldShowEvent(false));
       bus.post(new RefreshShouldShowEvent(false));
     }
   }

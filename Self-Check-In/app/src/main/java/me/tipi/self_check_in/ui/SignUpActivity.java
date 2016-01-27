@@ -64,6 +64,7 @@ import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.EmailConflictEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
+import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.ui.misc.ChangeSwipeViewPager;
 import retrofit.Callback;
@@ -89,6 +90,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
   @Bind(R.id.settingBtn) ImageView settingButton;
   @Bind(R.id.resetBtn) ImageView resetButton;
+  @Bind(R.id.backBtn) ImageView backButtonView;
   @Bind(R.id.tipi_description) TextView description;
 
   MaterialDialog loading;
@@ -224,6 +226,24 @@ public class SignUpActivity extends AppCompatActivity {
   }
 
   /**
+   * Back clicked.
+   */
+  @OnClick(R.id.backBtn)
+  public void backClicked() {
+    View view = this.getCurrentFocus();
+    if (view != null) {
+      InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    if (viewPager.getCurrentItem() != 0) {
+      viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+    }
+
+    tracker.send(new HitBuilders.EventBuilder("Sign up", "Back").build());
+  }
+
+  /**
    * On pager change.
    *
    * @param event the event
@@ -239,8 +259,18 @@ public class SignUpActivity extends AppCompatActivity {
    * @param event the event
    */
   @Subscribe
-  public void onSettingShown(BackShouldShowEvent event) {
+  public void onSettingShown(SettingShouldShowEvent event) {
     settingButton.setVisibility(event.show ? View.VISIBLE : View.GONE);
+  }
+
+  /**
+   * On back shown.
+   *
+   * @param event the event
+   */
+  @Subscribe
+  public void onBackShown(BackShouldShowEvent event) {
+    backButtonView.setVisibility(event.show ? View.VISIBLE : View.GONE);
   }
 
   @Subscribe
@@ -334,7 +364,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .setAction("Check-In")
                 .setLabel("Claim")
                 .setValue(diffSeconds).build());
-            viewPager.setCurrentItem(4);
+            viewPager.setCurrentItem(5);
           }
 
           @Override public void failure(RetrofitError error) {

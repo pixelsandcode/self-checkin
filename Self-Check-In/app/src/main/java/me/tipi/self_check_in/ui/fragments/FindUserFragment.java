@@ -23,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
@@ -61,6 +62,7 @@ public class FindUserFragment extends Fragment {
   @Inject AuthenticationService authenticationService;
   @Inject Guest guest;
   @Inject Tracker tracker;
+  @Inject TypefaceHelper typeface;
 
   @Bind(R.id.email) EditText emailEditText;
   @Bind(R.id.email_input_layout) TextInputLayout emailLayout;
@@ -101,6 +103,7 @@ public class FindUserFragment extends Fragment {
     View rootView = inflater.inflate(R.layout.fragment_find_user, container, false);
     ButterKnife.bind(this, rootView);
     Timber.d("ViewCreated");
+    typeface.setTypeface(container, getResources().getString(R.string.font_regular));
 
     loading = new MaterialDialog.Builder(getActivity())
         .content("Please wait")

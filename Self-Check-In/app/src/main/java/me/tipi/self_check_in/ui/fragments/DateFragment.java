@@ -21,6 +21,7 @@ import android.widget.EditText;
 
 import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
+import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
@@ -39,12 +40,14 @@ import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
+import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 
 public class DateFragment extends Fragment implements DatePickerDialogFragment.DatePickerDialogHandler {
 
   @Inject Bus bus;
   @Inject Guest guest;
   @Inject Tracker tracker;
+  @Inject TypefaceHelper typeface;
 
   @Bind(R.id.check_in_date) EditText checkInDateView;
   @Bind(R.id.nights_number) EditText nightsNumberView;
@@ -84,6 +87,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_date, container, false);
     ButterKnife.bind(this, rootView);
+    typeface.setTypeface(container, getResources().getString(R.string.font_regular));
 
     // Check-in date date picker
     checkInDateView.setInputType(InputType.TYPE_NULL);
@@ -205,8 +209,9 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
-      bus.post(new BackShouldShowEvent(false));
+      bus.post(new BackShouldShowEvent(true));
       bus.post(new RefreshShouldShowEvent(true));
+      bus.post(new SettingShouldShowEvent(false));
 
       if (nightsNumberView != null) {
         nightsNumberView.requestFocus();

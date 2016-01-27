@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.drivemode.android.typeface.TypefaceHelper;
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -50,6 +51,7 @@ import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
+import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.FileHelper;
 import timber.log.Timber;
@@ -63,6 +65,7 @@ public class AvatarFragment extends Fragment {
   @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject Tracker tracker;
   @Inject Guest guest;
+  @Inject TypefaceHelper typeface;
 
   @Bind(R.id.avatar) ImageView avatarView;
   @Bind(R.id.title) TextView titleView;
@@ -95,6 +98,7 @@ public class AvatarFragment extends Fragment {
     View rootView = inflater.inflate(R.layout.fragment_avatar, container, false);
     ButterKnife.bind(this, rootView);
     Timber.d("OnCreateView");
+    typeface.setTypeface(container, getResources().getString(R.string.font_regular));
 
     return rootView;
   }
@@ -118,7 +122,7 @@ public class AvatarFragment extends Fragment {
         try {
           File imageFile = FileHelper.getResizedFile(getActivity(), uriSavedImage,
               Build.VERSION.SDK_INT, 500, 500);
-          picasso.load(imageFile).resize(400, 400).centerCrop()
+          picasso.load(imageFile).resize(150, 150).centerCrop()
               .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
               .into(avatarView);
           // Save taken photo path to show later if not signed up
@@ -136,10 +140,11 @@ public class AvatarFragment extends Fragment {
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
-      bus.post(new BackShouldShowEvent(false));
+      bus.post(new BackShouldShowEvent(true));
       bus.post(new RefreshShouldShowEvent(true));
+      bus.post(new SettingShouldShowEvent(false));
       if (avatarPath.isSet() && avatarPath.get() != null && avatarView != null) {
-        picasso.load(new File(avatarPath.get())).resize(400, 400).centerCrop()
+        picasso.load(new File(avatarPath.get())).resize(150, 150).centerCrop()
             .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
             .placeholder(R.drawable.avatar_placeholder).into(avatarView);
       }

@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:paddingRight="@dimen/second_key_line"
     android:paddingLeft="@dimen/second_key_line"
+    android:paddingTop="@dimen/first_key_line"
     tools:context="me.tipi.self_check_in.ui.fragments.LandingFragment">
 
   <ImageView

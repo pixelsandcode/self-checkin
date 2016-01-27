@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.drivemode.android.typeface.TypefaceHelper;
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -47,8 +48,8 @@ import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
+import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
-import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.FileHelper;
 import timber.log.Timber;
 
@@ -63,6 +64,7 @@ public class PassportFragment extends Fragment {
   @Inject Bus bus;
   @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
   @Inject Tracker tracker;
+  @Inject TypefaceHelper typeface;
 
   @Bind(R.id.scan) ImageView passportView;
   @Bind(R.id.title) TextView titleView;
@@ -95,6 +97,7 @@ public class PassportFragment extends Fragment {
     View rootView = inflater.inflate(R.layout.fragment_passport, container, false);
     ButterKnife.bind(this, rootView);
     Timber.d("OnCreateView");
+    typeface.setTypeface(container, getResources().getString(R.string.font_regular));
     setPassportImage();
     return rootView;
   }
@@ -118,13 +121,12 @@ public class PassportFragment extends Fragment {
         try {
           File imageFile = FileHelper.getResizedFile(getActivity(), uriSavedPassportImage,
               Build.VERSION.SDK_INT, 500, 500);
-          picasso.load(imageFile).resize(400, 400).centerCrop()
-              .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+          picasso.load(imageFile).resize(400, 200).centerCrop()
               .into(passportView);
           // Save taken photo path to show later if not signed up
           passportPath.set(imageFile.getPath());
-          titleView.setText(getResources().getString(R.string.avatar_success_title));
-
+          titleView.setText(getResources().getString(R.string.scan_success_title));
+          hintView.setText("Tap on image to rescan\n passport");
         } catch (Exception e) {
           titleView.setText(getResources().getString(R.string.avatar_fail_titel));
           picasso.load(R.drawable.fail_photo).into(passportView);
@@ -136,8 +138,9 @@ public class PassportFragment extends Fragment {
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
-      bus.post(new BackShouldShowEvent(false));
+      bus.post(new BackShouldShowEvent(true));
       bus.post(new RefreshShouldShowEvent(true));
+      bus.post(new SettingShouldShowEvent(false));
       setPassportImage();
     }
   }
@@ -182,8 +185,7 @@ public class PassportFragment extends Fragment {
    */
   private void setPassportImage() {
     if (passportPath != null && passportPath.isSet() && passportPath.get() != null && passportView != null) {
-      picasso.load(new File(passportPath.get())).resize(400, 400).centerCrop()
-          .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+      picasso.load(new File(passportPath.get())).resize(400, 200).centerCrop()
           .placeholder(R.drawable.avatar_button).into(passportView);
     }
   }

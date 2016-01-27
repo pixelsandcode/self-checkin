@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.drivemode.android.typeface.TypefaceHelper;
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -61,6 +62,7 @@ public class FindUserActivity extends AppCompatActivity {
   @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
   @Inject Tracker tracker;
+  @Inject TypefaceHelper typeface;
 
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
 
@@ -75,11 +77,15 @@ public class FindUserActivity extends AppCompatActivity {
     ButterKnife.bind(this);
     Timber.d("Created");
 
+    typeface.setTypeface(this, getResources().getString(R.string.font_medium));
+
     loading = new MaterialDialog.Builder(this)
         .content("Please wait")
         .cancelable(false)
         .progress(true, 0)
         .build();
+
+
 
     adapter = new LoginAdapter(getSupportFragmentManager(), this);
     viewPager.setAdapter(adapter);

@@ -21,11 +21,11 @@
 
   <ImageView
       android:id="@+id/avatar"
-      android:layout_width="150dp"
-      android:layout_height="150dp"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
       android:layout_below="@+id/title"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/third_key_line"
+      android:layout_marginTop="@dimen/second_key_line"
       android:scaleType="centerCrop"
       android:src="@drawable/avatar_button"/>
 

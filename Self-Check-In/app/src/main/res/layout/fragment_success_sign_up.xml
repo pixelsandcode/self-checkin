@@ -4,44 +4,70 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:paddingRight="@dimen/second_key_line"
+    android:paddingLeft="@dimen/second_key_line"
+    android:paddingTop="@dimen/first_key_line"
     tools:context="me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment"
     tools:ignore="ContentDescription">
 
-  <ImageButton
-      android:id="@+id/successBtn"
-      android:layout_width="120dp"
-      android:layout_height="120dp"
+  <ImageView
+      android:id="@+id/logo"
+      android:layout_width="@dimen/logo_size"
+      android:layout_height="@dimen/logo_size"
       android:layout_centerHorizontal="true"
-      android:layout_above="@+id/success"
-      android:layout_margin="@dimen/second_key_line"
-      android:background="@drawable/button_round_green"
-      android:src="@drawable/ic_done_white_48dp" />
+      android:layout_marginTop="@dimen/normal_margin"
+      android:contentDescription="@string/app_name"
+      android:scaleType="fitCenter"
+      android:src="@drawable/logo"/>
+
 
   <TextView
-      android:id="@+id/success"
-      android:layout_width="wrap_content"
+      android:id="@+id/title"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_centerInParent="true"
-      android:padding="@dimen/first_key_line"
+      android:layout_below="@+id/logo"
+      android:layout_marginTop="@dimen/second_key_line"
       android:gravity="center"
-      android:textColor="@color/black"
-      android:textSize="@dimen/font_large"
-      android:text="@string/success"/>
+      android:text="@string/success"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_large"/>
+
 
   <TextView
-      android:id="@+id/description"
-      android:layout_width="wrap_content"
+      android:id="@+id/sub_title"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_centerHorizontal="true"
+      android:layout_below="@+id/title"
+      android:layout_marginTop="8dp"
+      android:gravity="center"
+      android:text="@string/hand_back"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_normal"/>
+
+
+  <TextView
+      android:id="@+id/meet"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/sub_title"
+      android:gravity="center"
+      android:layout_marginTop="@dimen/third_key_line"
+      android:text="@string/meet_text"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_normal"/>
+
+  <ImageView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/meet"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:src="@drawable/guest_avatars"/>
+
+  <ImageView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
-      android:layout_marginRight="@dimen/third_key_line"
-      android:layout_marginLeft="@dimen/third_key_line"
       android:layout_marginBottom="@dimen/first_key_line"
-      android:minLines="2"
-      android:padding="@dimen/normal_padding"
-      android:gravity="center"
-      android:textColor="@color/black"
-      android:textSize="@dimen/font_large"
-      android:text="@string/success_description"/>
+      android:src="@drawable/stores"/>
 
 </RelativeLayout>

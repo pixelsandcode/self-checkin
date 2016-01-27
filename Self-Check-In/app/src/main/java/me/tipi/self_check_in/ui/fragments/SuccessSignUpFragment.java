@@ -25,6 +25,8 @@ import butterknife.ButterKnife;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
+import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
+import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 
 public class SuccessSignUpFragment extends Fragment {
 
@@ -74,6 +76,8 @@ public class SuccessSignUpFragment extends Fragment {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(false));
+      bus.post(new RefreshShouldShowEvent(true));
+      bus.post(new SettingShouldShowEvent(false));
     }
   }
 }

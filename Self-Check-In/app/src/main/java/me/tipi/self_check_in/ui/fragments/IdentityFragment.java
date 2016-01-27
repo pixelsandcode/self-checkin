@@ -33,6 +33,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
+import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
@@ -58,6 +59,7 @@ import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.EmailConflictEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
+import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.Strings;
 import retrofit.Callback;
@@ -72,6 +74,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   @Inject Guest guest;
   @Inject AuthenticationService authenticationService;
   @Inject Tracker tracker;
+  @Inject TypefaceHelper typeface;
 
   @Bind(R.id.full_name) EditText fullNameTextView;
   @Bind(R.id.email) EditText emailTextView;
@@ -112,6 +115,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_identity, container, false);
     ButterKnife.bind(this, rootView);
+    typeface.setTypeface(container, getResources().getString(R.string.font_regular));
 
     final DatePickerBuilder dpb = new DatePickerBuilder()
         .setFragmentManager(getChildFragmentManager())
@@ -136,7 +140,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
         .onPositive(new MaterialDialog.SingleButtonCallback() {
           @Override public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
             tracker.send(new HitBuilders.EventBuilder("Matched User", "Choose me").build());
-            bus.post(new PagerChangeEvent(3));
+            bus.post(new PagerChangeEvent(2));
           }
         })
         .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -208,8 +212,9 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
-      bus.post(new BackShouldShowEvent(false));
+      bus.post(new BackShouldShowEvent(true));
       bus.post(new RefreshShouldShowEvent(true));
+      bus.post(new SettingShouldShowEvent(false));
     }
   }
 
