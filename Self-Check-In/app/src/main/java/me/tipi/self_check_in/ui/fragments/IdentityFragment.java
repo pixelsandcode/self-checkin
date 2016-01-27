@@ -207,6 +207,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
+    picasso.shutdown();
   }
 
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -325,7 +326,8 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
           picasso.load(Strings.makeAvatarUrl(matchedUser.doc_key))
               .resize(200, 200).centerCrop()
               .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-              .placeholder(R.drawable.avatar_placeholder).into(avatar);
+              .placeholder(R.drawable.avatar_placeholder)
+              .error(R.drawable.fail_photo).into(avatar);
           name.setText(matchedUser.name);
           matchUserDialog.show();
         }

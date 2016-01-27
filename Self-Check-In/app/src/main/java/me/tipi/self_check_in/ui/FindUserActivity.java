@@ -8,11 +8,16 @@
 
 package me.tipi.self_check_in.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.drivemode.android.typeface.TypefaceHelper;
@@ -117,6 +122,40 @@ public class FindUserActivity extends AppCompatActivity {
       // Otherwise, select the previous step.
       viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
     }
+  }
+
+  @Override public boolean dispatchTouchEvent(MotionEvent ev) {
+    View view = getCurrentFocus();
+
+    int x = (int) ev.getX();
+    int y = (int) ev.getY();
+
+    if(view instanceof EditText){
+      EditText innerView = (EditText) getCurrentFocus();
+
+      if (ev.getAction() == MotionEvent.ACTION_UP &&
+          !getLocationOnScreen(innerView).contains(x, y)) {
+
+        InputMethodManager input = (InputMethodManager)
+            getSystemService(Context.INPUT_METHOD_SERVICE);
+        input.hideSoftInputFromWindow(view.getWindowToken(), 0);
+      }
+    }
+    return super.dispatchTouchEvent(ev);
+  }
+
+  protected Rect getLocationOnScreen(EditText mEditText) {
+    Rect mRect = new Rect();
+    int[] location = new int[2];
+
+    mEditText.getLocationOnScreen(location);
+
+    mRect.left = location[0];
+    mRect.top = location[1];
+    mRect.right = location[0] + mEditText.getWidth();
+    mRect.bottom = location[1] + mEditText.getHeight();
+
+    return mRect;
   }
 
   /**
