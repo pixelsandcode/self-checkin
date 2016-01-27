@@ -207,7 +207,6 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
-    picasso.shutdown();
   }
 
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {

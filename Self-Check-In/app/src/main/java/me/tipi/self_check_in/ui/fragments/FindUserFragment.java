@@ -187,7 +187,7 @@ public class FindUserFragment extends Fragment {
 
         @Override public void failure(RetrofitError error) {
 
-          if (error.getResponse().getStatus() == 401) {
+          if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
             Timber.d("authentication failed");
             bus.post(new AuthenticationFailedEvent());
           } else {
