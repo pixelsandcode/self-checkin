@@ -14,7 +14,6 @@
 
   <style name="hintText">
     <item name="android:textColor">#979797</item>
-    <item name="android:textSize">16sp</item>
   </style>
 
   <style name="Theme.Tipi.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>

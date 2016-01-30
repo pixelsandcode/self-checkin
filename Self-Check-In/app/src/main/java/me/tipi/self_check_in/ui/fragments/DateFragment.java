@@ -56,6 +56,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   @Bind(R.id.check_in_input_layout) TextInputLayout checkInLayout;
   @Bind(R.id.nights_number_input_layout) TextInputLayout nightNumberLayout;
   @Bind(R.id.passport_input_layout) TextInputLayout passportLayout;
+  @Bind(R.id.reference_input_layout) TextInputLayout referenceLayout;
 
   public Calendar checkInDate = null;
   public String dateString;

@@ -86,16 +86,15 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_below="@+id/passport_input_layout"
-      android:layout_marginTop="@dimen/normal_margin"
-      app:hintTextAppearance="@style/hintText">
+      android:layout_marginTop="@dimen/normal_margin">
 
     <EditText
         android:id="@+id/reference"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/first_key_line"
-        android:hint="@string/reference_code"
         android:paddingLeft="@dimen/normal_padding"
+        android:hint="@string/reference_code"
         android:paddingRight="@dimen/normal_padding"
         android:imeOptions="actionDone"
         android:inputType="textNoSuggestions"/>
