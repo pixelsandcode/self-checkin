@@ -214,7 +214,7 @@ public class SignUpActivity extends AppCompatActivity {
   @OnClick(R.id.resetBtn)
   public void startOver() {
     reset();
-    bus.post(new PagerChangeEvent(0));
+    //bus.post(new PagerChangeEvent(0));
   }
 
   /**
@@ -468,8 +468,6 @@ public class SignUpActivity extends AppCompatActivity {
       guest.passportNumber = null;
       guest.referenceCode = null;
     }
-
-
 
     Intent intent = getIntent();
     finish();

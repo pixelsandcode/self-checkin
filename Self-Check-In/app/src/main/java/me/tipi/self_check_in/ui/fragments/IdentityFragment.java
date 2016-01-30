@@ -301,23 +301,24 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     authenticationService.findUser(enteredEmail, new Callback<FindResponse>() {
       @Override public void success(FindResponse findResponse, Response response) {
         User matchedUser = findResponse.data;
-        Timber.d("Found user: %s", matchedUser.toString());
-
-        RelativeLayout dialogView = (RelativeLayout) matchUserDialog.getCustomView();
-        if (dialogView != null) {
-          ImageView avatar = (ImageView) dialogView.findViewById(R.id.avatar);
-          TextView name = (TextView) dialogView.findViewById(R.id.user_name);
-          picasso.load(Strings.makeAvatarUrl(matchedUser.doc_key))
-              .resize(200, 200).centerCrop()
-              .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-              .placeholder(R.drawable.avatar_placeholder)
-              .error(R.drawable.fail_photo).into(avatar);
-          name.setText(matchedUser.name);
-          matchUserDialog.show();
-        }
-
         guest.user_key = matchedUser.doc_key;
         guest.email = enteredEmail;
+        Timber.d("Found user: %s", matchedUser.toString());
+
+        if (getActivity() != null) {
+          RelativeLayout dialogView = (RelativeLayout) matchUserDialog.getCustomView();
+          if (dialogView != null) {
+            ImageView avatar = (ImageView) dialogView.findViewById(R.id.avatar);
+            TextView name = (TextView) dialogView.findViewById(R.id.user_name);
+            picasso.load(Strings.makeAvatarUrl(matchedUser.doc_key))
+                .resize(200, 200).centerCrop()
+                .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+                .placeholder(R.drawable.avatar_placeholder)
+                .error(R.drawable.fail_photo).into(avatar);
+            name.setText(matchedUser.name);
+            matchUserDialog.show();
+          }
+        }
       }
 
       @Override public void failure(RetrofitError error) {
