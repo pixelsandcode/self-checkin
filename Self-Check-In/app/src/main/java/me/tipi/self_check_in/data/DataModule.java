@@ -69,6 +69,11 @@ public final class DataModule {
     return prefs.getString(ApiConstants.USER_NAME);
   }
 
+  @Provides @Singleton @Named(ApiConstants.HOSTEL_NAME)
+  Preference<String> provideHostelName(RxSharedPreferences prefs) {
+    return prefs.getString(ApiConstants.HOSTEL_NAME);
+  }
+
   /**
    * Provide password preference.
    *

@@ -47,6 +47,7 @@ import me.tipi.self_check_in.data.api.models.Booking;
 import me.tipi.self_check_in.data.api.models.ClaimRequest;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
+import me.tipi.self_check_in.data.api.models.LoginResponse;
 import me.tipi.self_check_in.ui.adapters.LoginAdapter;
 import me.tipi.self_check_in.ui.events.AuthenticationFailedEvent;
 import me.tipi.self_check_in.ui.events.AuthenticationPassedEvent;
@@ -252,8 +253,8 @@ public class FindUserActivity extends AppCompatActivity {
    * Login.
    */
   private void login() {
-    authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<Response>() {
-      @Override public void success(Response response, Response response2) {
+    authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
+      @Override public void success(LoginResponse response, Response response2) {
         Timber.d("LoggedIn");
         bus.post(new AuthenticationPassedEvent());
       }

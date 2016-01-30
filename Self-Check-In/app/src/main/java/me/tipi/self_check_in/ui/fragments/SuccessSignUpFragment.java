@@ -14,16 +14,21 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
@@ -32,6 +37,10 @@ public class SuccessSignUpFragment extends Fragment {
 
   @Inject Bus bus;
   @Inject Tracker tracker;
+  @Inject @Named(ApiConstants.HOSTEL_NAME)
+  Preference<String> hostelName;
+
+  @Bind(R.id.meet) TextView meetView;
 
   /**
    * Instantiates a new Success sign up fragment.
@@ -57,6 +66,7 @@ public class SuccessSignUpFragment extends Fragment {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_success_sign_up, container, false);
     ButterKnife.bind(this, rootView);
+    meetView.setText(String.format(getResources().getString(R.string.meet_text), hostelName.get()));
     return rootView;
   }
 

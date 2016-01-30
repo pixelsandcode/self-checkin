@@ -33,4 +33,5 @@ public class ApiConstants {
   public static final String PASSWORD = "password";
   public static final String AVATAR = "avatar";
   public static final String PASSPORT = "passport";
+  public static final String HOSTEL_NAME = "hostelName";
 }

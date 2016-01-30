@@ -38,6 +38,7 @@ import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
+import me.tipi.self_check_in.data.api.models.LoginResponse;
 import me.tipi.self_check_in.ui.fragments.LoginFragment;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
   @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
   @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
+  @Inject @Named(ApiConstants.HOSTEL_NAME) Preference<String> hostelName;
+
   @Inject AppContainer appContainer;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
@@ -144,12 +147,13 @@ public class MainActivity extends AppCompatActivity {
    */
   public void login() {
     loading.show();
-    authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<Response>() {
-      @Override public void success(Response response, Response response2) {
+    authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
+      @Override public void success(LoginResponse response, Response response2) {
         loading.dismiss();
         Timber.d("LoggedIn");
         avatarPath.delete();
         passportPath.delete();
+        hostelName.set(response.data.name);
         tracker.send(new HitBuilders.TimingBuilder("Login", "Logged In", System.currentTimeMillis()).build());
         startActivity(new Intent(MainActivity.this, SignUpActivity.class));
         finish();

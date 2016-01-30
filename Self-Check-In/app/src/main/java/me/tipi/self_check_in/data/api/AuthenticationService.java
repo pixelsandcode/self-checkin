@@ -13,8 +13,8 @@ import me.tipi.self_check_in.data.api.models.ClaimRequest;
 import me.tipi.self_check_in.data.api.models.CountryResponse;
 import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
+import me.tipi.self_check_in.data.api.models.LoginResponse;
 import retrofit.Callback;
-import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Multipart;
@@ -33,7 +33,7 @@ public interface AuthenticationService {
    * @param cb          the cb
    */
   @POST(ApiConstants.LOGIN)
-  void login(@Body LoginRequest userRequest, Callback<Response> cb);
+  void login(@Body LoginRequest userRequest, Callback<LoginResponse> cb);
 
   /**
    * Gets suggested countries.
