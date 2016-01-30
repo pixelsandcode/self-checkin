@@ -35,8 +35,7 @@ public class SettingActivity extends AppCompatActivity {
 
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
-  @Inject @Named(ApiConstants.USER_NAME)
-  Preference<String> username;
+  @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
 
   @Bind(R.id.version) TextView versionTextView;
@@ -67,6 +66,7 @@ public class SettingActivity extends AppCompatActivity {
   }
 
   public void goToDownload(View view) {
+    tracker.send(new HitBuilders.EventBuilder("Download", "Tapped").build());
     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Tipime/self-checkin/releases"));
     startActivity(browserIntent);
   }
@@ -74,6 +74,7 @@ public class SettingActivity extends AppCompatActivity {
   public void logout(View view) {
     username.delete();
     password.delete();
+    tracker.send(new HitBuilders.EventBuilder("Logout", "Tapped").build());
     startActivity(new Intent(this, MainActivity.class));
     finish();
   }

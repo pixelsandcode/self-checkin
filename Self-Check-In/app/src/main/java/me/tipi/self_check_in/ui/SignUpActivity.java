@@ -414,6 +414,7 @@ public class SignUpActivity extends AppCompatActivity {
    * @param view the view
    */
   public void goToFindActivity(View view) {
+    tracker.send(new HitBuilders.EventBuilder("Process", "Find").build());
     guest.time = System.currentTimeMillis();
     startActivity(new Intent(this, FindUserActivity.class));
   }
@@ -424,6 +425,7 @@ public class SignUpActivity extends AppCompatActivity {
    * @param view the view
    */
   public void goToIdentity(View view) {
+    tracker.send(new HitBuilders.EventBuilder("Process", "Create").build());
     guest.time = System.currentTimeMillis();
     viewPager.setCurrentItem(1);
   }
