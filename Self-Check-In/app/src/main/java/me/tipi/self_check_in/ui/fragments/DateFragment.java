@@ -185,6 +185,12 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       checkInLayout.setError(getString(R.string.error_less_than_today));
       cancel = true;
       checkInDate = null;
+    } else if (nightsNumberView.getText().toString().trim().length() > 3) {
+      nightNumberLayout.setErrorEnabled(true);
+      nightNumberLayout.setError(getString(R.string.error_check_out_more_than_one_year));
+      cancel = true;
+      focusView = nightsNumberView;
+      enteredNights = 0;
     } else if (Integer.parseInt(nightsNumberView.getText().toString()) <= 0) {
       nightNumberLayout.setErrorEnabled(true);
       nightNumberLayout.setError(getString(R.string.error_check_out_before_check_in));

@@ -239,6 +239,9 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     nameLayout.setErrorEnabled(false);
     emailLayout.setErrorEnabled(false);
     birthdayLayout.setErrorEnabled(false);
+    nameLayout.setError(null);
+    emailLayout.setError(null);
+    birthdayLayout.setError(null);
 
     boolean cancel = false;
     View focusView = null;
@@ -268,7 +271,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
       emailLayout.setError(getString(R.string.error_invalid_email));
       focusView = emailTextView;
       cancel = true;
-    } else if (dob != null) {
+    } else if (dob != null && !TextUtils.isEmpty(birthDayPickerView.getText().toString().trim())) {
       if (dob.after(new Date())) {
         birthdayLayout.setError(getString(R.string.birthday_error));
         focusView = birthDayPickerView;
@@ -277,7 +280,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
         dob = null;
       }
 
-      if (dob.before(cal.getTime())) {
+      if (dob != null && dob.before(cal.getTime())) {
         birthdayLayout.setError(getString(R.string.birthday_error_old));
         focusView = birthDayPickerView;
         cancel = true;
