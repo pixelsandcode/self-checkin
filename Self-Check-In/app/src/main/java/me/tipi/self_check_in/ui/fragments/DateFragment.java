@@ -162,8 +162,8 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     checkInLayout.setErrorEnabled(false);
     nightNumberLayout.setErrorEnabled(false);
     passportLayout.setErrorEnabled(false);
-    enteredReference = referenceTextView.getText().toString();
-    enteredPassport = passportEditText.getText().toString();
+    enteredReference = referenceTextView.getText().toString().trim();
+    enteredPassport = passportEditText.getText().toString().trim();
 
     boolean cancel = false;
     View focusView = null;
@@ -191,10 +191,16 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       cancel = true;
       focusView = nightsNumberView;
       enteredNights = 0;
+    } else if (Integer.parseInt(nightsNumberView.getText().toString()) > 365) {
+      nightNumberLayout.setErrorEnabled(true);
+      nightNumberLayout.setError(getString(R.string.error_check_out_more_than_one_year));
+      cancel = true;
+      focusView = nightsNumberView;
+      enteredNights = 0;
     } else if (!isLogin && TextUtils.isEmpty(enteredPassport)) {
       passportLayout.setErrorEnabled(true);
       passportLayout.setError(getString(R.string.error_field_required));
-      focusView = referenceTextView;
+      focusView = passportEditText;
       cancel = true;
     }
 

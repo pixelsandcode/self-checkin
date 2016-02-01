@@ -37,7 +37,7 @@
         android:layout_centerHorizontal="true"
         android:hint="@string/full_name"
         android:imeOptions="actionNext"
-        android:inputType="textCapWords"
+        android:inputType="textCapWords|textNoSuggestions"
         android:textSize="@dimen/font_normal"
         android:paddingLeft="@dimen/normal_padding"
         android:paddingRight="@dimen/normal_padding"/>

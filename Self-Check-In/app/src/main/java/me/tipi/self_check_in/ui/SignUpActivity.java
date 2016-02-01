@@ -144,10 +144,14 @@ public class SignUpActivity extends AppCompatActivity {
       // If the user is currently looking at the first step, allow the system to handle the
       // Back button. This calls finish() on this activity and pops the back stack.
       super.onBackPressed();
+    } else if (viewPager.getCurrentItem() == 5) {
+      reset();
     } else {
       // Otherwise, select the previous step.
       viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
     }
+
+
   }
 
   @Override protected void onDestroy() {
@@ -323,14 +327,15 @@ public class SignUpActivity extends AppCompatActivity {
             }
 
             @Override public void failure(RetrofitError error) {
-              if (error.getResponse().getStatus() == 409) {
-                loading.dismiss();
-                viewPager.setCurrentItem(1, true);
-                bus.post(new EmailConflictEvent());
-              } else if (error.getResponse().getStatus() == 401) {
-                login();
-              }
-              else {
+              if (error.getResponse() != null) {
+                if (error.getResponse().getStatus() == 409) {
+                  loading.dismiss();
+                  viewPager.setCurrentItem(1, true);
+                  bus.post(new EmailConflictEvent());
+                } else if (error.getResponse().getStatus() == 401) {
+                  login();
+                }
+              } else {
                 loading.dismiss();
                 Snackbar.make(appContainer.bind(SignUpActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
               }

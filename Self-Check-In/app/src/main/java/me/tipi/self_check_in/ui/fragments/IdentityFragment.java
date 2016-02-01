@@ -39,6 +39,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -144,13 +146,15 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
         .positiveColorRes(R.color.secondaryAccent)
         .cancelable(false)
         .onPositive(new MaterialDialog.SingleButtonCallback() {
-          @Override public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+          @Override
+          public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
             tracker.send(new HitBuilders.EventBuilder("Matched User", "Choose me").build());
             bus.post(new PagerChangeEvent(2));
           }
         })
         .onNegative(new MaterialDialog.SingleButtonCallback() {
-          @Override public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+          @Override
+          public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
             emailTextView.setText("");
             guest.email = null;
             guest.user_key = null;
@@ -217,7 +221,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
         guest.country = Strings.getPostStringSplit(enteredHomeTown, "-");
       }
 
-      if (dob != null) {
+      if (dob != null && !TextUtils.isEmpty(birthDayPickerView.getText().toString().trim())) {
         guest.dob = dob;
       }
 
@@ -240,12 +244,20 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     View focusView = null;
 
     enteredEmail = emailTextView.getText().toString();
-    enteredFullName = fullNameTextView.getText().toString();
-    enteredHomeTown = homeTownACView.getText().toString();
+    enteredFullName = fullNameTextView.getText().toString().trim();
+    enteredHomeTown = homeTownACView.getText().toString().trim();
+
+    Calendar cal = Calendar.getInstance();
+    cal.set(Calendar.YEAR, 1900);
+
 
     // Check for validation
     if (TextUtils.isEmpty(enteredFullName)) {
       nameLayout.setError(getString(R.string.error_field_required));
+      focusView = fullNameTextView;
+      cancel = true;
+    } else if (!validateFullName(enteredFullName)) {
+      nameLayout.setError(getString(R.string.error_invalid_full_name));
       focusView = fullNameTextView;
       cancel = true;
     } else if (TextUtils.isEmpty(enteredEmail)) {
@@ -261,6 +273,15 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
         birthdayLayout.setError(getString(R.string.birthday_error));
         focusView = birthDayPickerView;
         cancel = true;
+        birthDayPickerView.setText("");
+        dob = null;
+      }
+
+      if (dob.before(cal.getTime())) {
+        birthdayLayout.setError(getString(R.string.birthday_error_old));
+        focusView = birthDayPickerView;
+        cancel = true;
+        birthDayPickerView.setText("");
         dob = null;
       }
     }
@@ -272,6 +293,15 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
     }
 
     return cancel;
+  }
+
+  public static boolean validateFullName(String fullName) {
+
+    String regex = "^[\\p{L} .'-]+$";
+    Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
+    Matcher matcher = pattern.matcher(fullName);
+    return matcher.find();
+
   }
 
   @Override public void onDialogDateSet(int reference, int year, int monthOfYear, int dayOfMonth) {
