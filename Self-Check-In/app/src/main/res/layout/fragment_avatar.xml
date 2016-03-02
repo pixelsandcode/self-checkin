@@ -27,7 +27,7 @@
       android:layout_centerHorizontal="true"
       android:layout_marginTop="@dimen/second_key_line"
       android:scaleType="centerCrop"
-      android:src="@drawable/avatar_button"/>
+      android:src="@drawable/camera_icon"/>
 
   <TextView
       android:id="@+id/avatar_hint"
@@ -51,6 +51,7 @@
       android:background="@drawable/submit_button_background"
       android:text="@string/next"
       android:textColor="@color/white"
-      android:textSize="@dimen/font_normal"/>
+      android:textSize="@dimen/font_normal"
+      android:visibility="gone"/>
 
 </RelativeLayout>

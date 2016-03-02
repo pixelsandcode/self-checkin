@@ -20,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -69,6 +70,7 @@ public class PassportFragment extends Fragment {
   @Bind(R.id.scan) ImageView passportView;
   @Bind(R.id.title) TextView titleView;
   @Bind(R.id.avatar_hint) TextView hintView;
+  @Bind(R.id.continue_btn) Button continueButton;
 
   Uri uriSavedPassportImage;
 
@@ -127,6 +129,7 @@ public class PassportFragment extends Fragment {
           passportPath.set(imageFile.getPath());
           titleView.setText(getResources().getString(R.string.scan_success_title));
           hintView.setText("Tap on image to rescan\n passport");
+          continueButton.setVisibility(View.VISIBLE);
         } catch (Exception e) {
           titleView.setText(getResources().getString(R.string.avatar_fail_titel));
           picasso.load(R.drawable.fail_photo).into(passportView);

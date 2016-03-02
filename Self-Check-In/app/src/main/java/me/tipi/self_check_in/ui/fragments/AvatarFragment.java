@@ -21,6 +21,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -70,6 +71,7 @@ public class AvatarFragment extends Fragment {
   @Bind(R.id.avatar) ImageView avatarView;
   @Bind(R.id.title) TextView titleView;
   @Bind(R.id.avatar_hint) TextView hintView;
+  @Bind(R.id.continue_btn) Button continueButton;
 
   Uri uriSavedImage;
 
@@ -129,6 +131,8 @@ public class AvatarFragment extends Fragment {
           avatarPath.set(imageFile.getPath());
           titleView.setText(getResources().getString(R.string.avatar_success_title));
           hintView.setText(getResources().getString(R.string.avatar_success_hint));
+          continueButton.setVisibility(View.VISIBLE);
+
 
         } catch (Exception e) {
           titleView.setText(getResources().getString(R.string.avatar_fail_titel));
