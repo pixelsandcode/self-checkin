@@ -309,6 +309,14 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
 
   @Override public void onDialogDateSet(int reference, int year, int monthOfYear, int dayOfMonth) {
     Calendar calendar = Calendar.getInstance();
+    int yearLength = (int) Math.log10(year) + 1;
+    if (yearLength == 2) {
+      if (year < 50) {
+        year = year + 2000;
+      } else if (year >= 50) {
+        year = year + 1900;
+      }
+    }
     birthDayPickerView.setText(String.format("%d - %d - %d", dayOfMonth, monthOfYear + 1, year));
     calendar.set(year, monthOfYear, dayOfMonth);
     dob = calendar.getTime();
