@@ -10,10 +10,12 @@ package me.tipi.self_check_in.data.api;
 
 import me.tipi.self_check_in.data.api.models.ApiResponse;
 import me.tipi.self_check_in.data.api.models.ClaimRequest;
+import me.tipi.self_check_in.data.api.models.ClaimResponse;
 import me.tipi.self_check_in.data.api.models.CountryResponse;
 import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
 import me.tipi.self_check_in.data.api.models.LoginResponse;
+import me.tipi.self_check_in.data.api.models.NoteRequest;
 import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.GET;
@@ -83,7 +85,7 @@ public interface AuthenticationService {
       @Part("booking[reference_number]") String referenceNumber,
       @Part("booking[from]") String from,
       @Part("booking[to]") String to,
-      Callback<ApiResponse> cb);
+      Callback<ClaimResponse> cb);
 
   /**
    * Claim.
@@ -96,8 +98,11 @@ public interface AuthenticationService {
   void claim(
       @Path("user_key") String userKey,
       @Body ClaimRequest claimRequest,
-      Callback<ApiResponse> cb);
+      Callback<ClaimResponse> cb);
 
   @GET(ApiConstants.TERMS)
   void getTerms(@Path("hostel_key") String hostelKey, Callback<LoginResponse> cb);
+
+  @POST(ApiConstants.NOTE)
+  void sendNote(@Path("guest_key") String guestKey, @Body NoteRequest noteRequest, Callback<ApiResponse> cb);
 }

@@ -21,6 +21,7 @@ import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LandingFragment;
 import me.tipi.self_check_in.ui.fragments.LoginFragment;
 import me.tipi.self_check_in.ui.fragments.PassportFragment;
+import me.tipi.self_check_in.ui.fragments.QuestionFragment;
 import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
 
 @Module(
@@ -38,7 +39,8 @@ import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
         DateFragment.class,
         SuccessSignUpFragment.class,
         HomeTownAutoCompleteAdapter.class,
-        HostelTermsFragment.class
+        HostelTermsFragment.class,
+        QuestionFragment.class
     },
 
     complete = false,

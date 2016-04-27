@@ -53,9 +53,9 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
-import me.tipi.self_check_in.data.api.models.ApiResponse;
 import me.tipi.self_check_in.data.api.models.Booking;
 import me.tipi.self_check_in.data.api.models.ClaimRequest;
+import me.tipi.self_check_in.data.api.models.ClaimResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
 import me.tipi.self_check_in.data.api.models.LoginResponse;
@@ -152,7 +152,7 @@ public class SignUpActivity extends AppCompatActivity {
       // If the user is currently looking at the first step, allow the system to handle the
       // Back button. This calls finish() on this activity and pops the back stack.
       super.onBackPressed();
-    } else if (viewPager.getCurrentItem() == 6) {
+    } else if (viewPager.getCurrentItem() == 7) {
       reset();
     } else if (viewPager.getCurrentItem() == 4) {
       viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
@@ -323,11 +323,11 @@ public class SignUpActivity extends AppCompatActivity {
           guest.referenceCode != null ? guest.referenceCode : null,
           dateFormat.format(guest.checkInDate),
           dateFormat.format(guest.checkOutDate),
-          new Callback<ApiResponse>() {
-            @Override public void success(ApiResponse apiResponse, Response response) {
+          new Callback<ClaimResponse>() {
+            @Override public void success(ClaimResponse apiResponse, Response response) {
               loading.dismiss();
               Timber.d("Good");
-
+              guest.guest_key = apiResponse.data.guest_key;
               // Send overall success time
               long elapsed = Math.abs(guest.time - System.currentTimeMillis());
               long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
@@ -348,6 +348,9 @@ public class SignUpActivity extends AppCompatActivity {
                   bus.post(new EmailConflictEvent());
                 } else if (error.getResponse().getStatus() == 401) {
                   login();
+                } else {
+                  loading.dismiss();
+                  Snackbar.make(appContainer.bind(SignUpActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
                 }
               } else {
                 loading.dismiss();
@@ -370,10 +373,11 @@ public class SignUpActivity extends AppCompatActivity {
                 guest.referenceCode,
                 dateFormat.format(guest.checkInDate),
                 dateFormat.format(guest.checkOutDate))),
-        new Callback<ApiResponse>() {
-          @Override public void success(ApiResponse apiResponse, Response response) {
+        new Callback<ClaimResponse>() {
+          @Override public void success(ClaimResponse apiResponse, Response response) {
             loading.dismiss();
             Timber.d("Claimed");
+            guest.guest_key = apiResponse.data.guest_key;
             tracker.send(new HitBuilders.EventBuilder("Check-in", "Claim").build());
 
             // Send overall success time

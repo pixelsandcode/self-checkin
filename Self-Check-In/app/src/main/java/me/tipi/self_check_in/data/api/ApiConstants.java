@@ -25,6 +25,7 @@ public class ApiConstants {
   public static final String FIND = "/dashboard/users/find";
   public static final String CLAIM = "/dashboard/users/{user_key}/claim";
   public static final String TERMS = "/hostels/{hostel_key}/terms";
+  public static final String NOTE = "/dashboard/guests/{guest_key}/notes/append";
 
   // Images
   public static final String AVATAR_URL = "/user/%s/savatar";

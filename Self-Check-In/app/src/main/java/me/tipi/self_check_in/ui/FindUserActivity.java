@@ -42,9 +42,9 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
-import me.tipi.self_check_in.data.api.models.ApiResponse;
 import me.tipi.self_check_in.data.api.models.Booking;
 import me.tipi.self_check_in.data.api.models.ClaimRequest;
+import me.tipi.self_check_in.data.api.models.ClaimResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
 import me.tipi.self_check_in.data.api.models.LoginResponse;
@@ -119,7 +119,7 @@ public class FindUserActivity extends AppCompatActivity {
       // If the user is currently looking at the first step, allow the system to handle the
       // Back button. This calls finish() on this activity and pops the back stack.
       super.onBackPressed();
-    } else if(viewPager.getCurrentItem() == 3) {
+    } else if(viewPager.getCurrentItem() == 4) {
       reset();
     } else {
       // Otherwise, select the previous step.
@@ -186,10 +186,11 @@ public class FindUserActivity extends AppCompatActivity {
                 guest.referenceCode,
                 dateFormat.format(guest.checkInDate),
                 dateFormat.format(guest.checkOutDate))),
-        new Callback<ApiResponse>() {
-          @Override public void success(ApiResponse apiResponse, Response response) {
+        new Callback<ClaimResponse>() {
+          @Override public void success(ClaimResponse apiResponse, Response response) {
             loading.dismiss();
             Timber.d("Claimed");
+            guest.guest_key = apiResponse.data.guest_key;
             viewPager.setCurrentItem(3);
             tracker.send(new HitBuilders.EventBuilder("Check-in", "Claim").build());
 

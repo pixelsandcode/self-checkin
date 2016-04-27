@@ -90,4 +90,9 @@
   <string name="error_invalid_full_name">This name is invalid</string>
   <string name="agree">agree</string>
   <string name="terms"><![CDATA[Terms & Conditions]]></string>
+  <string name="about_you">About You</string>
+  <string name="next_travel">Where are you travelling next?</string>
+  <string name="how_long">How long you are staying in the country</string>
+  <string name="visit_farser">Are you visiting Fraser island?</string>
+  <string name="need_job">Are you looking for a job?</string>
 </resources>

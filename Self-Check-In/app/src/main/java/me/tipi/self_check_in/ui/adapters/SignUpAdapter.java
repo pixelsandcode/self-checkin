@@ -19,6 +19,7 @@ import me.tipi.self_check_in.ui.fragments.HostelTermsFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LandingFragment;
 import me.tipi.self_check_in.ui.fragments.PassportFragment;
+import me.tipi.self_check_in.ui.fragments.QuestionFragment;
 import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
 
 public class SignUpAdapter extends FragmentStatePagerAdapter {
@@ -51,6 +52,8 @@ public class SignUpAdapter extends FragmentStatePagerAdapter {
       case 5:
         return PassportFragment.newInstance(context);
       case 6:
+        return QuestionFragment.newInstance(context);
+      case 7:
         return SuccessSignUpFragment.newInstance(context);
       default:
         return null;
@@ -58,6 +61,6 @@ public class SignUpAdapter extends FragmentStatePagerAdapter {
   }
 
   @Override public int getCount() {
-    return 7;
+    return 8;
   }
 }

@@ -1,0 +1,123 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:paddingLeft="@dimen/second_key_line"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:paddingRight="@dimen/second_key_line"
+    tools:context="me.tipi.self_check_in.ui.fragments.QuestionFragment"
+    tools:ignore="ContentDescription">
+
+  <TextView
+      android:id="@+id/title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/second_key_line"
+      android:text="@string/about_you"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_large"/>
+
+  <android.support.design.widget.TextInputLayout
+      android:id="@+id/first_input_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/title"
+      android:layout_marginTop="@dimen/second_key_line"
+      app:hintTextAppearance="@style/hintText">
+
+    <EditText
+        android:id="@+id/first_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/next_travel"
+        android:imeOptions="actionNext"
+        android:inputType="textAutoCorrect"
+        android:textSize="@dimen/font_normal"
+        android:paddingLeft="@dimen/normal_padding"
+        android:paddingRight="@dimen/normal_padding"/>
+  </android.support.design.widget.TextInputLayout>
+
+
+  <android.support.design.widget.TextInputLayout
+      android:id="@+id/second_input_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/first_input_layout"
+      android:layout_marginTop="@dimen/normal_margin"
+      app:hintTextAppearance="@style/hintText">
+
+    <EditText
+        android:id="@+id/second_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/how_long"
+        android:imeOptions="actionNext"
+        android:inputType="textNoSuggestions"
+        android:textSize="@dimen/font_normal"
+        android:paddingLeft="@dimen/normal_padding"
+        android:paddingRight="@dimen/normal_padding"/>
+  </android.support.design.widget.TextInputLayout>
+
+
+  <android.support.design.widget.TextInputLayout
+      android:id="@+id/third_input_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/second_input_layout"
+      android:layout_marginTop="@dimen/normal_margin"
+      app:hintTextAppearance="@style/hintText">
+
+    <EditText
+        android:id="@+id/third_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/visit_farser"
+        android:imeActionId="@+id/next"
+        android:imeOptions="actionNext"
+        android:inputType="none"
+        android:textSize="@dimen/font_normal"
+        android:paddingLeft="@dimen/normal_padding"
+        android:paddingRight="@dimen/normal_padding"/>
+  </android.support.design.widget.TextInputLayout>
+
+  <android.support.design.widget.TextInputLayout
+      android:id="@+id/forth_input_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/third_input_layout"
+      android:layout_marginTop="@dimen/normal_margin"
+      app:hintTextAppearance="@style/hintText">
+
+    <EditText
+        android:id="@+id/forth_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/need_job"
+        android:imeOptions="actionNext"
+        android:inputType="none"
+        android:textSize="@dimen/font_normal"
+        android:paddingLeft="@dimen/normal_padding"
+        android:paddingRight="@dimen/normal_padding"/>
+  </android.support.design.widget.TextInputLayout>
+
+  <Button
+      android:id="@+id/continue_btn"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="@dimen/first_key_line"
+      android:background="@drawable/submit_button_background"
+      android:text="@string/next"
+      android:textColor="@color/white"
+      android:textSize="@dimen/font_normal"/>
+
+</RelativeLayout>

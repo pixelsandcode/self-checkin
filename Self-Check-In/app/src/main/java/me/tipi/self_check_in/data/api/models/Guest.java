@@ -25,6 +25,7 @@ public final class Guest {
   public Date checkInDate;
   public Date checkOutDate;
   public long time;
+  public String guest_key;
 
   /**
    * Instantiates a new Guest.
