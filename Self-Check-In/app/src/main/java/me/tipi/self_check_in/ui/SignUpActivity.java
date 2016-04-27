@@ -79,12 +79,20 @@ public class SignUpActivity extends AppCompatActivity {
 
   @Inject Bus bus;
   @Inject Guest guest;
-  @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
-  @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
+  @Inject
+  @Named(ApiConstants.AVATAR)
+  Preference<String> avatarPath;
+  @Inject
+  @Named(ApiConstants.PASSPORT)
+  Preference<String> passportPath;
   @Inject AppContainer appContainer;
   @Inject AuthenticationService authenticationService;
-  @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
-  @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
+  @Inject
+  @Named(ApiConstants.USER_NAME)
+  Preference<String> username;
+  @Inject
+  @Named(ApiConstants.PASSWORD)
+  Preference<String> password;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
 
@@ -144,14 +152,15 @@ public class SignUpActivity extends AppCompatActivity {
       // If the user is currently looking at the first step, allow the system to handle the
       // Back button. This calls finish() on this activity and pops the back stack.
       super.onBackPressed();
-    } else if (viewPager.getCurrentItem() == 5) {
+    } else if (viewPager.getCurrentItem() == 6) {
       reset();
+    } else if (viewPager.getCurrentItem() == 4) {
+      viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+      viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
     } else {
       // Otherwise, select the previous step.
       viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
     }
-
-
   }
 
   @Override protected void onDestroy() {
@@ -184,7 +193,7 @@ public class SignUpActivity extends AppCompatActivity {
     int x = (int) ev.getX();
     int y = (int) ev.getY();
 
-    if(view instanceof EditText){
+    if (view instanceof EditText) {
       EditText innerView = (EditText) getCurrentFocus();
 
       if (ev.getAction() == MotionEvent.ACTION_UP &&
@@ -237,12 +246,17 @@ public class SignUpActivity extends AppCompatActivity {
   public void backClicked() {
     View view = this.getCurrentFocus();
     if (view != null) {
-      InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+      InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
       imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     if (viewPager.getCurrentItem() != 0) {
-      viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+      if (viewPager.getCurrentItem() == 4) {
+        viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+      } else {
+        viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+      }
     }
 
     tracker.send(new HitBuilders.EventBuilder("Sign up", "Back").build());
@@ -323,7 +337,7 @@ public class SignUpActivity extends AppCompatActivity {
                   .setLabel("Sign Up")
                   .setValue(diffSeconds).build());
               tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
-              viewPager.setCurrentItem(5, true);
+              viewPager.setCurrentItem(6, true);
             }
 
             @Override public void failure(RetrofitError error) {
@@ -370,7 +384,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .setAction("Check-In")
                 .setLabel("Claim")
                 .setValue(diffSeconds).build());
-            viewPager.setCurrentItem(5);
+            viewPager.setCurrentItem(6);
           }
 
           @Override public void failure(RetrofitError error) {

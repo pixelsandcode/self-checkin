@@ -74,6 +74,11 @@ public final class DataModule {
     return prefs.getString(ApiConstants.HOSTEL_NAME);
   }
 
+  @Provides @Singleton @Named(ApiConstants.HOSTEL_KEY)
+  Preference<String> provideHostelKey(RxSharedPreferences prefs) {
+    return prefs.getString(ApiConstants.HOSTEL_KEY);
+  }
+
   /**
    * Provide password preference.
    *

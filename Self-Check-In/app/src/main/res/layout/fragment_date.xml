@@ -100,6 +100,20 @@
         android:inputType="textNoSuggestions"/>
   </android.support.design.widget.TextInputLayout>
 
+  <TextView
+      android:id="@+id/terms"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/submit_btn"
+      android:layout_marginBottom="@dimen/first_key_line"
+      android:textColorLink="@color/colorAccent"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_normal"
+      android:gravity="center"
+      android:layout_marginRight="@dimen/second_key_line"
+      android:layout_marginLeft="@dimen/second_key_line"
+      tools:text="By tapping next I agree"/>
+
   <Button
       android:id="@+id/submit_btn"
       android:layout_width="match_parent"

@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import me.tipi.self_check_in.ui.fragments.AvatarFragment;
 import me.tipi.self_check_in.ui.fragments.DateFragment;
+import me.tipi.self_check_in.ui.fragments.HostelTermsFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LandingFragment;
 import me.tipi.self_check_in.ui.fragments.PassportFragment;
@@ -44,10 +45,12 @@ public class SignUpAdapter extends FragmentStatePagerAdapter {
       case 2:
         return DateFragment.newInstance(context);
       case 3:
-        return AvatarFragment.newInstance(context);
+        return HostelTermsFragment.newInstance(context);
       case 4:
-        return PassportFragment.newInstance(context);
+        return AvatarFragment.newInstance(context);
       case 5:
+        return PassportFragment.newInstance(context);
+      case 6:
         return SuccessSignUpFragment.newInstance(context);
       default:
         return null;
@@ -55,6 +58,6 @@ public class SignUpAdapter extends FragmentStatePagerAdapter {
   }
 
   @Override public int getCount() {
-    return 6;
+    return 7;
   }
 }

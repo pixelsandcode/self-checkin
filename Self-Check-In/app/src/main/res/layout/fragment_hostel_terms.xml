@@ -1,0 +1,56 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/second_key_line"
+    android:paddingRight="@dimen/second_key_line"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context="me.tipi.self_check_in.ui.fragments.DateFragment"
+    tools:ignore="ContentDescription">
+
+  <TextView
+      android:id="@+id/title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/second_key_line"
+      android:text="@string/terms"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_large"/>
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/title"
+      android:clipToPadding="true"
+      android:layout_above="@+id/agree_btn"
+      android:paddingTop="@dimen/first_key_line"
+      android:paddingBottom="@dimen/first_key_line">
+
+    <TextView
+        android:id="@+id/hostel_terms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        tools:text="@string/login_title"
+        android:textColor="@color/main_text"
+        android:textSize="@dimen/font_normal"
+        />
+
+  </ScrollView>
+
+  <Button
+      android:id="@+id/agree_btn"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="@dimen/first_key_line"
+      android:background="@drawable/submit_button_background"
+      android:text="@string/agree"
+      android:textColor="@color/white"
+      android:textSize="@dimen/font_normal"/>
+
+  </RelativeLayout>

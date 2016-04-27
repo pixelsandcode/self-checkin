@@ -16,6 +16,7 @@ import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.fragments.AvatarFragment;
 import me.tipi.self_check_in.ui.fragments.DateFragment;
 import me.tipi.self_check_in.ui.fragments.FindUserFragment;
+import me.tipi.self_check_in.ui.fragments.HostelTermsFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LandingFragment;
 import me.tipi.self_check_in.ui.fragments.LoginFragment;
@@ -36,7 +37,8 @@ import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
         FindUserFragment.class,
         DateFragment.class,
         SuccessSignUpFragment.class,
-        HomeTownAutoCompleteAdapter.class
+        HomeTownAutoCompleteAdapter.class,
+        HostelTermsFragment.class
     },
 
     complete = false,

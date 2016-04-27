@@ -24,6 +24,7 @@ public class ApiConstants {
   public static final String SIGN_UP = "/dashboard/users/signup";
   public static final String FIND = "/dashboard/users/find";
   public static final String CLAIM = "/dashboard/users/{user_key}/claim";
+  public static final String TERMS = "/hostels/{hostel_key}/terms";
 
   // Images
   public static final String AVATAR_URL = "/user/%s/savatar";
@@ -34,4 +35,5 @@ public class ApiConstants {
   public static final String AVATAR = "avatar";
   public static final String PASSPORT = "passport";
   public static final String HOSTEL_NAME = "hostelName";
+  public static final String HOSTEL_KEY = "hostelKey";
 }

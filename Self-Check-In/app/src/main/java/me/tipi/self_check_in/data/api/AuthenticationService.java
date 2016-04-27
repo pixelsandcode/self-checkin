@@ -97,4 +97,7 @@ public interface AuthenticationService {
       @Path("user_key") String userKey,
       @Body ClaimRequest claimRequest,
       Callback<ApiResponse> cb);
+
+  @GET(ApiConstants.TERMS)
+  void getTerms(@Path("hostel_key") String hostelKey, Callback<LoginResponse> cb);
 }

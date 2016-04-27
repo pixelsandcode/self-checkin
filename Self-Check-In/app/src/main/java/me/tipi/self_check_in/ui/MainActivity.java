@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
   @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
   @Inject @Named(ApiConstants.HOSTEL_NAME) Preference<String> hostelName;
+  @Inject @Named(ApiConstants.HOSTEL_KEY) Preference<String> hostelKey;
 
   @Inject AppContainer appContainer;
   @Inject Tracker tracker;
@@ -154,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
         avatarPath.delete();
         passportPath.delete();
         hostelName.set(response.data.name);
+        hostelKey.set(response.data.doc_key);
         tracker.send(new HitBuilders.TimingBuilder("Login", "Logged In", System.currentTimeMillis()).build());
         startActivity(new Intent(MainActivity.this, SignUpActivity.class));
         finish();

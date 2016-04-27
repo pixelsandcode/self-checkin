@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'spoon'
 android {
     signingConfigs {
         release {
@@ -81,8 +80,6 @@ dependencies {
     }
 
 
-
-    androidTestCompile 'com.squareup.spoon:spoon-client:1.2.0'
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.0'
     compile 'com.google.android.gms:play-services-analytics:8.3.0'

@@ -9,15 +9,22 @@
 package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
@@ -57,6 +64,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   @Bind(R.id.nights_number_input_layout) TextInputLayout nightNumberLayout;
   @Bind(R.id.passport_input_layout) TextInputLayout passportLayout;
   @Bind(R.id.reference_input_layout) TextInputLayout referenceLayout;
+  @Bind(R.id.terms) TextView termsTextView;
 
   public Calendar checkInDate = null;
   public String dateString;
@@ -89,7 +97,9 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_date, container, false);
     ButterKnife.bind(this, rootView);
-    typeface.setTypeface(container, getResources().getString(R.string.font_regular));
+    if (typeface != null) {
+      typeface.setTypeface(container, getResources().getString(R.string.font_regular));
+    }
 
     // Check-in date date picker
     checkInDateView.setInputType(InputType.TYPE_NULL);
@@ -109,6 +119,28 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
         fromDb.show();
       }
     });
+
+    SpannableString ss = new SpannableString("By tapping 'Next' I agree to the Hostels Terms & Conditions");
+    ClickableSpan clickableSpan = new ClickableSpan() {
+      @Override
+      public void onClick(View textView) {
+        if (isLogin) {
+          bus.post(new PagerChangeEvent(2));
+        } else {
+          bus.post(new PagerChangeEvent(3));
+        }
+      }
+      @Override
+      public void updateDrawState(TextPaint ds) {
+        super.updateDrawState(ds);
+        ds.setUnderlineText(false);
+      }
+    };
+    ss.setSpan(clickableSpan, 41, 59, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+    termsTextView.setText(ss);
+    termsTextView.setMovementMethod(LinkMovementMethod.getInstance());
+    termsTextView.setHighlightColor(Color.TRANSPARENT);
 
     return rootView;
   }
@@ -147,7 +179,7 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       if (isLogin) {
         bus.post(new ClaimEvent());
       } else {
-        bus.post(new PagerChangeEvent(3));
+        bus.post(new PagerChangeEvent(4));
       }
     }
   }

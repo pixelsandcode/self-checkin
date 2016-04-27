@@ -186,7 +186,7 @@ public class AvatarFragment extends Fragment {
   public void continueToIdentity() {
     if (avatarPath.isSet()) {
       Timber.v(avatarPath.get());
-      bus.post(new PagerChangeEvent(4));
+      bus.post(new PagerChangeEvent(5));
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie first!", Snackbar.LENGTH_LONG).show();
     }

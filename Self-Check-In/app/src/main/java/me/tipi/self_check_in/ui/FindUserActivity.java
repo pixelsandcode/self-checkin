@@ -119,7 +119,7 @@ public class FindUserActivity extends AppCompatActivity {
       // If the user is currently looking at the first step, allow the system to handle the
       // Back button. This calls finish() on this activity and pops the back stack.
       super.onBackPressed();
-    } else if(viewPager.getCurrentItem() == 2) {
+    } else if(viewPager.getCurrentItem() == 3) {
       reset();
     } else {
       // Otherwise, select the previous step.
@@ -190,7 +190,7 @@ public class FindUserActivity extends AppCompatActivity {
           @Override public void success(ApiResponse apiResponse, Response response) {
             loading.dismiss();
             Timber.d("Claimed");
-            viewPager.setCurrentItem(2);
+            viewPager.setCurrentItem(3);
             tracker.send(new HitBuilders.EventBuilder("Check-in", "Claim").build());
 
             // Send overall success time

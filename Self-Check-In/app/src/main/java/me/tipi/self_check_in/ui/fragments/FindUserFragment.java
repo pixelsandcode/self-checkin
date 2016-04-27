@@ -103,7 +103,9 @@ public class FindUserFragment extends Fragment {
     View rootView = inflater.inflate(R.layout.fragment_find_user, container, false);
     ButterKnife.bind(this, rootView);
     Timber.d("ViewCreated");
-    typeface.setTypeface(container, getResources().getString(R.string.font_regular));
+    if (typeface != null) {
+      typeface.setTypeface(container, getResources().getString(R.string.font_regular));
+    }
 
     loading = new MaterialDialog.Builder(getActivity())
         .content("Please wait")
