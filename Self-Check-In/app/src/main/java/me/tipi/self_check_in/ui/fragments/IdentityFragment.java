@@ -149,6 +149,7 @@ public class IdentityFragment extends Fragment implements DatePickerDialogFragme
           @Override
           public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
             tracker.send(new HitBuilders.EventBuilder("Matched User", "Choose me").build());
+            guest.guest_key = "0";
             bus.post(new PagerChangeEvent(2));
           }
         })

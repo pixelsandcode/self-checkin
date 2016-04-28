@@ -29,6 +29,7 @@ import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.ApiResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.NoteRequest;
+import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -51,9 +52,9 @@ public class QuestionFragment extends Fragment {
   @Bind(R.id.forth_question) EditText forthQuestionView;
 
   private String guestKey;
-  private String guestName;
   MaterialDialog thirdDialog;
   MaterialDialog fourthDialog;
+  MaterialDialog loading;
 
   public QuestionFragment() {
     // Required empty public constructor
@@ -135,6 +136,13 @@ public class QuestionFragment extends Fragment {
         }
       }
     });
+
+    loading = new MaterialDialog.Builder(getActivity())
+        .content("Loading")
+        .cancelable(false)
+        .progress(true, 0)
+        .build();
+
     return rootView;
   }
 
@@ -149,12 +157,12 @@ public class QuestionFragment extends Fragment {
     super.onPause();
     bus.unregister(this);
   }
+
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       if (guest != null) {
         guestKey = guest.guest_key;
-        guestName = guest.name;
       }
     }
   }
@@ -188,19 +196,34 @@ public class QuestionFragment extends Fragment {
     }
 
     Timber.d("guest_key is: %s", guestKey);
-    authenticationService.sendNote(guestKey, new NoteRequest(note), new Callback<ApiResponse>() {
-      @Override public void success(ApiResponse apiResponse, Response response) {
-        Timber.d("note sent");
-        if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
-          bus.post(new PagerChangeEvent(4));
-        } else {
-          bus.post(new PagerChangeEvent(7));
+    if (TextUtils.isEmpty(note) || note.equals("")) {
+      navigateToSuccessPage();
+    } else {
+      loading.show();
+      authenticationService.sendNote(guestKey, new NoteRequest(note), new Callback<ApiResponse>() {
+        @Override public void success(ApiResponse apiResponse, Response response) {
+          Timber.d("note sent");
+          loading.dismiss();
+          navigateToSuccessPage();
         }
-      }
 
-      @Override public void failure(RetrofitError error) {
+        @Override public void failure(RetrofitError error) {
+          loading.dismiss();
+          Timber.e(error.getMessage());
+        }
+      });
+    }
+  }
 
+  private void navigateToSuccessPage() {
+    if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
+      if (getActivity() instanceof SignUpActivity) {
+        bus.post(new PagerChangeEvent(7));
+      } else {
+        bus.post(new PagerChangeEvent(4));
       }
-    });
+    } else {
+      bus.post(new PagerChangeEvent(7));
+    }
   }
 }

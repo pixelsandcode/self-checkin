@@ -67,7 +67,7 @@ public class SettingActivity extends AppCompatActivity {
 
   public void goToDownload(View view) {
     tracker.send(new HitBuilders.EventBuilder("Download", "Tapped").build());
-    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Tipime/self-checkin/releases"));
+    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(ApiConstants.BASE_DOWNLOAD_PAGE));
     startActivity(browserIntent);
   }
 

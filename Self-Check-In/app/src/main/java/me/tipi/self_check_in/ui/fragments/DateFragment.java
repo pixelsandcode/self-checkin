@@ -43,6 +43,7 @@ import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.models.Guest;
+import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
@@ -125,7 +126,12 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
       @Override
       public void onClick(View textView) {
         if (isLogin) {
-          bus.post(new PagerChangeEvent(2));
+          if (getActivity() instanceof SignUpActivity) {
+            bus.post(new PagerChangeEvent(3));
+          } else {
+            bus.post(new PagerChangeEvent(2));
+          }
+
         } else {
           bus.post(new PagerChangeEvent(3));
         }
