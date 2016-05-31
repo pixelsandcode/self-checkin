@@ -62,7 +62,7 @@ public final class ApiModule {
         .setClient(client) //
         .setEndpoint(endpoint)
         .setRequestInterceptor(headers)
-        .setLogLevel(RestAdapter.LogLevel.FULL)
+        .setLogLevel(RestAdapter.LogLevel.NONE)
         .setLog(new AndroidLog("TipiSelfRetrofit"))
         .build();
   }

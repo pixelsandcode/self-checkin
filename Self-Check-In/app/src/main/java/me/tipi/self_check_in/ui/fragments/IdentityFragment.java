@@ -8,7 +8,11 @@
 
 package me.tipi.self_check_in.ui.fragments;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -22,14 +26,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -37,6 +43,7 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -67,7 +74,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import timber.log.Timber;
 
-public class IdentityFragment extends Fragment implements CalendarDatePickerDialogFragment.OnDateSetListener {
+public class IdentityFragment extends Fragment {
 
   @Inject Picasso picasso;
   @Inject Bus bus;
@@ -119,21 +126,13 @@ public class IdentityFragment extends Fragment implements CalendarDatePickerDial
     ButterKnife.bind(this, rootView);
     typeface.setTypeface(container, getResources().getString(R.string.font_regular));
 
-    // Date picker setup
-    final CalendarDatePickerDialogFragment cdp = new CalendarDatePickerDialogFragment()
-        .setOnDateSetListener(IdentityFragment.this)
-        .setFirstDayOfWeek(Calendar.SUNDAY)
-        .setPreselectedDate(1980, 5, 15)
-        .setDoneText("Set")
-        .setCancelText("Cancel");
-
     birthDayPickerView.setInputType(InputType.TYPE_NULL);
 
     birthDayPickerView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
       @Override public void onFocusChange(View v, boolean hasFocus) {
         if (hasFocus) {
           if (birthDayPickerView.getText().toString().equals("")) {
-            cdp.show(getActivity().getSupportFragmentManager(), IdentityFragment.class.getSimpleName());
+            showDobDialog();
           }
         }
       }
@@ -141,7 +140,7 @@ public class IdentityFragment extends Fragment implements CalendarDatePickerDial
 
     birthDayPickerView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        cdp.show(getActivity().getSupportFragmentManager(), IdentityFragment.class.getSimpleName());
+        showDobDialog();
       }
     });
 
@@ -326,6 +325,50 @@ public class IdentityFragment extends Fragment implements CalendarDatePickerDial
     return cancel;
   }
 
+  private void showDobDialog() {
+    DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), android.R.style.Theme_Holo_Light_Dialog,
+        new DatePickerDialog.OnDateSetListener() {
+          @Override
+          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            birthdayLayout.setError(null);
+            Calendar calendar = Calendar.getInstance();
+            birthDayPickerView.setText(String.format(Locale.US, "%d - %d - %d", dayOfMonth, monthOfYear + 1, year));
+            calendar.set(year, monthOfYear, dayOfMonth);
+            dob = calendar.getTime();
+          }
+        }, 1985, 6, 15);
+    DatePicker datePicker = datePickerDialog.getDatePicker();
+    datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    styleDatePicker(datePicker);
+    datePickerDialog.show();
+  }
+
+  private void styleDatePicker(DatePicker datePicker) {
+    datePicker.setCalendarViewShown(false);
+    datePicker.setSpinnersShown(true);
+    LinearLayout llFirst = (LinearLayout) datePicker.getChildAt(0);
+    LinearLayout llSecond = (LinearLayout) llFirst.getChildAt(0);
+    for (int i = 0; i < llSecond.getChildCount(); i++) {
+      NumberPicker picker = (NumberPicker) llSecond.getChildAt(i); // Numberpickers in llSecond
+      Field[] pickerFields = NumberPicker.class.getDeclaredFields();
+      for (Field pf : pickerFields) {
+        if (pf.getName().equals("mSelectionDivider")) {
+          pf.setAccessible(true);
+          try {
+            pf.set(picker, getResources().getDrawable(R.drawable.picker_divider));
+          } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+          } catch (Resources.NotFoundException e) {
+            e.printStackTrace();
+          } catch (IllegalAccessException e) {
+            e.printStackTrace();
+          }
+          break;
+        }
+      }
+    }
+  }
+
   public static boolean validateFullName(String fullName) {
 
     String regex = "^[\\p{L} .'-]+$";
@@ -333,15 +376,6 @@ public class IdentityFragment extends Fragment implements CalendarDatePickerDial
     Matcher matcher = pattern.matcher(fullName);
     return matcher.find();
 
-  }
-
-  @Override
-  public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
-    birthdayLayout.setError(null);
-    Calendar calendar = Calendar.getInstance();
-    birthDayPickerView.setText(String.format(Locale.US, "%d - %d - %d", dayOfMonth, monthOfYear + 1, year));
-    calendar.set(year, monthOfYear, dayOfMonth);
-    dob = calendar.getTime();
   }
 
   /**
