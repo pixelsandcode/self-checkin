@@ -20,6 +20,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -82,6 +83,7 @@ public class IdentityFragment extends Fragment implements CalendarDatePickerDial
   @Bind(R.id.name_input_layout) TextInputLayout nameLayout;
   @Bind(R.id.email_input_layout) TextInputLayout emailLayout;
   @Bind(R.id.birthday_input_layout) TextInputLayout birthdayLayout;
+  @Bind(R.id.hometown_input_layout) TextInputLayout homeTownLayout;
 
 
   public Date dob = null;
@@ -89,6 +91,7 @@ public class IdentityFragment extends Fragment implements CalendarDatePickerDial
   public String enteredFullName;
   public String enteredHomeTown;
   MaterialDialog matchUserDialog;
+  private boolean hasSelectedHometown;
 
   /**
    * Instantiates a new Identity fragment.
@@ -116,6 +119,7 @@ public class IdentityFragment extends Fragment implements CalendarDatePickerDial
     ButterKnife.bind(this, rootView);
     typeface.setTypeface(container, getResources().getString(R.string.font_regular));
 
+    // Date picker setup
     final CalendarDatePickerDialogFragment cdp = new CalendarDatePickerDialogFragment()
         .setOnDateSetListener(IdentityFragment.this)
         .setFirstDayOfWeek(Calendar.SUNDAY)
@@ -185,6 +189,13 @@ public class IdentityFragment extends Fragment implements CalendarDatePickerDial
       }
     });
 
+    homeTownACView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        hasSelectedHometown = true;
+        homeTownLayout.setError(null);
+      }
+    });
+
     return rootView;
   }
 
@@ -219,9 +230,9 @@ public class IdentityFragment extends Fragment implements CalendarDatePickerDial
       guest.name = enteredFullName;
       guest.email = enteredEmail;
 
-      if (!TextUtils.isEmpty(enteredHomeTown)) {
-        guest.city = Strings.getPreStringSplit(enteredHomeTown, "-");
-        guest.country = Strings.getPostStringSplit(enteredHomeTown, "-");
+      if (!TextUtils.isEmpty(enteredHomeTown) && hasSelectedHometown && enteredHomeTown.contains("-")) {
+        guest.city = Strings.getPreStringSplit(enteredHomeTown, "-").trim();
+        guest.country = Strings.getPostStringSplit(enteredHomeTown, "-").trim();
       }
 
       if (dob != null && !TextUtils.isEmpty(birthDayPickerView.getText().toString().trim())) {
@@ -249,13 +260,14 @@ public class IdentityFragment extends Fragment implements CalendarDatePickerDial
     boolean cancel = false;
     View focusView = null;
 
+
+
     enteredEmail = emailTextView.getText().toString();
     enteredFullName = fullNameTextView.getText().toString().trim();
     enteredHomeTown = homeTownACView.getText().toString().trim();
 
     Calendar cal = Calendar.getInstance();
     cal.set(Calendar.YEAR, 1900);
-
 
     // Check for validation
     if (TextUtils.isEmpty(enteredFullName)) {
@@ -273,6 +285,19 @@ public class IdentityFragment extends Fragment implements CalendarDatePickerDial
     } else if (!Strings.isValidEmail(enteredEmail)) {
       emailLayout.setError(getString(R.string.error_invalid_email));
       focusView = emailTextView;
+      cancel = true;
+    } else if (TextUtils.isEmpty(enteredHomeTown)) {
+      homeTownACView.setError(getString(R.string.error_field_required));
+      focusView = homeTownACView;
+      cancel = true;
+    } else if (!hasSelectedHometown) {
+      homeTownLayout.setError(getString(R.string.home_town_error));
+      focusView = homeTownACView;
+      cancel = true;
+      homeTownACView.setText("");
+    } else if (dob == null || TextUtils.isEmpty(birthDayPickerView.getText().toString().trim())) {
+      birthdayLayout.setError(getString(R.string.error_field_required));
+      focusView = birthDayPickerView;
       cancel = true;
     } else if (dob != null && !TextUtils.isEmpty(birthDayPickerView.getText().toString().trim())) {
       if (dob.after(new Date())) {
@@ -312,6 +337,7 @@ public class IdentityFragment extends Fragment implements CalendarDatePickerDial
 
   @Override
   public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
+    birthdayLayout.setError(null);
     Calendar calendar = Calendar.getInstance();
     birthDayPickerView.setText(String.format(Locale.US, "%d - %d - %d", dayOfMonth, monthOfYear + 1, year));
     calendar.set(year, monthOfYear, dayOfMonth);

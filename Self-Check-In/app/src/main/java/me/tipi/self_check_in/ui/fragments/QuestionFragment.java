@@ -170,10 +170,10 @@ public class QuestionFragment extends Fragment {
   @OnClick(R.id.continue_btn)
   public void sendNote() {
     String note = "";
-    String enteredFirst = firstQuestionView.getText().toString();
-    String enteredSecond = secondQuestionView.getText().toString();
-    String enteredThird = thirdQuestionView.getText().toString();
-    String enteredFourth = forthQuestionView.getText().toString();
+    String enteredFirst = firstQuestionView.getText().toString().trim();
+    String enteredSecond = secondQuestionView.getText().toString().trim();
+    String enteredThird = thirdQuestionView.getText().toString().trim();
+    String enteredFourth = forthQuestionView.getText().toString().trim();
 
     if (!TextUtils.isEmpty(enteredFirst)) {
       note = note + String.format("Travelling to %s. ", enteredFirst);

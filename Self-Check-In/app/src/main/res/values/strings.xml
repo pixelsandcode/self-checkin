@@ -95,4 +95,5 @@
   <string name="how_long">How long you are staying in the country</string>
   <string name="visit_farser">Are you visiting Fraser island?</string>
   <string name="need_job">Are you looking for a job?</string>
+  <string name="home_town_error">Please choose your City/Country from drop down list</string>
 </resources>
