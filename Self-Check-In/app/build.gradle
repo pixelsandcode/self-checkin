@@ -18,7 +18,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
-        setProperty("archivesBaseName", "tipi-check-in-$versionName")
+        setProperty("archivesBaseName", "base-check-in-$versionName")
     }
     buildTypes {
         debug {
@@ -78,6 +78,8 @@ dependencies {
     compile('com.doomonafireball.betterpickers:library:1.6.0') {
         exclude group: 'com.android.support', module: 'support-v4'
     }
+
+    compile 'com.brucetoo.pickview:library:1.1.1'
 
 
     testCompile 'junit:junit:4.12'

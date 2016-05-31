@@ -11,8 +11,8 @@ package me.tipi.self_check_in.data.api;
 public class ApiConstants {
 
   // Api Ips
-//  public static final String API_URL = "http://api.tipi.me/v1";
-//  public static final String API_IMAGE_URL = "http://api.tipi.me/cdn";
+  /*public static final String API_URL = "http://api.tipi.me/v1";
+  public static final String API_IMAGE_URL = "http://api.tipi.me/cdn";*/
 
   // Api Stg
   public static final String API_URL = "http://stg.api.tipi.me/v1";
