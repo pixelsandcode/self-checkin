@@ -26,14 +26,14 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
-import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
+import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -50,7 +50,7 @@ import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 
-public class DateFragment extends Fragment implements DatePickerDialogFragment.DatePickerDialogHandler {
+public class DateFragment extends Fragment implements CalendarDatePickerDialogFragment.OnDateSetListener {
 
   @Inject Bus bus;
   @Inject Guest guest;
@@ -64,7 +64,6 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
   @Bind(R.id.check_in_input_layout) TextInputLayout checkInLayout;
   @Bind(R.id.nights_number_input_layout) TextInputLayout nightNumberLayout;
   @Bind(R.id.passport_input_layout) TextInputLayout passportLayout;
-  @Bind(R.id.reference_input_layout) TextInputLayout referenceLayout;
   @Bind(R.id.terms) TextView termsTextView;
 
   public Calendar checkInDate = null;
@@ -106,18 +105,20 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     checkInDateView.setInputType(InputType.TYPE_NULL);
     Calendar today = Calendar.getInstance();
     checkInDate = today;
-    dateString = String.format("%d - %d - %d", today.get(Calendar.DAY_OF_MONTH), today.get(Calendar.MONTH) + 1, today.get(Calendar.YEAR));
+    dateString = String.format(Locale.US, "%d - %d - %d", today.get(Calendar.DAY_OF_MONTH), today.get(Calendar.MONTH) + 1, today.get(Calendar.YEAR));
     checkInDateView.setText(dateString);
+
+    final CalendarDatePickerDialogFragment cdp = new CalendarDatePickerDialogFragment()
+        .setOnDateSetListener(DateFragment.this)
+        .setFirstDayOfWeek(Calendar.SUNDAY)
+        .setPreselectedDate(today.get(Calendar.YEAR), today.get(Calendar.MONTH) + 1, today.get(Calendar.DAY_OF_MONTH))
+        .setDoneText("Set")
+        .setCancelText("Cancel");
 
     checkInDateView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        DatePickerBuilder fromDb = new DatePickerBuilder()
-            .setFragmentManager(getChildFragmentManager())
-            .setStyleResId(R.style.BetterPickersDialogFragment_Light)
-            .setTargetFragment(DateFragment.this)
-            .setReference(10);
-        fromDb.show();
+        cdp.show(getActivity().getSupportFragmentManager(), DateFragment.class.getSimpleName());
       }
     });
 
@@ -272,13 +273,12 @@ public class DateFragment extends Fragment implements DatePickerDialogFragment.D
     }
   }
 
-  @Override public void onDialogDateSet(int reference, int year, int monthOfYear, int dayOfMonth) {
+  @Override
+  public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
     Calendar calendar = Calendar.getInstance();
     calendar.set(year, monthOfYear, dayOfMonth);
-    dateString = String.format("%d - %d - %d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
-    if (reference == 10) {
-      checkInDateView.setText(dateString);
-      checkInDate = calendar;
-    }
+    dateString = String.format(Locale.US, "%d - %d - %d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
+    checkInDateView.setText(dateString);
+    checkInDate = calendar;
   }
 }
