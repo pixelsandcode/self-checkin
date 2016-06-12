@@ -45,7 +45,7 @@
       android:background="?android:attr/selectableItemBackground"
       android:clickable="true"
       android:padding="@dimen/second_key_line"
-      android:src="@drawable/ic_arrow_back_white_24dp"
+      android:src="@drawable/ic_arrow_back_pink_24dp"
       android:visibility="gone"/>
 
 

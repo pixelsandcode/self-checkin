@@ -3,95 +3,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingRight="@dimen/second_key_line"
-    android:paddingLeft="@dimen/second_key_line"
-    android:paddingTop="@dimen/first_key_line"
     tools:context="me.tipi.self_check_in.ui.fragments.LandingFragment">
-
-  <ImageView
-      android:id="@+id/logo"
-      android:layout_width="@dimen/logo_size"
-      android:layout_height="@dimen/logo_size"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/normal_margin"
-      android:contentDescription="@string/app_name"
-      android:scaleType="fitCenter"
-      android:src="@drawable/logo"/>
 
 
   <TextView
       android:id="@+id/title"
-      android:layout_width="match_parent"
+      android:layout_width="350dp"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/logo"
-      android:layout_marginTop="@dimen/second_key_line"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/first_key_line"
       android:gravity="center"
-      android:text="@string/tipi_check_in"
-      android:textColor="@color/main_text"
-      android:textSize="@dimen/font_large"/>
-
-
-  <TextView
-      android:id="@+id/sub_title"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/title"
-      android:layout_marginTop="8dp"
-      android:gravity="center"
-      android:text="@string/fill_details_text"
-      android:textColor="@color/main_text"
-      android:textSize="@dimen/font_normal"/>
-
-
-  <TextView
-      android:id="@+id/checked_in"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_above="@+id/button_container"
-      android:gravity="center"
-      android:padding="@dimen/first_key_line"
       android:text="@string/checked_in_text"
       android:textColor="@color/main_text"
-      android:textSize="@dimen/font_normal"/>
+      android:textSize="@dimen/font_extra_large"/>
 
-  <LinearLayout
-      android:id="@+id/button_container"
+  <Button
+      android:id="@+id/yes_btn"
       android:layout_width="match_parent"
-      android:layout_height="48dp"
-      android:layout_marginBottom="@dimen/first_key_line"
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/no_btn"
+      android:layout_marginBottom="@dimen/second_key_line"
+      android:layout_marginLeft="@dimen/proceed_button_margin"
+      android:layout_marginRight="@dimen/proceed_button_margin"
+      android:background="@drawable/next_button_bg"
+      android:onClick="goToFindActivity"
+      android:padding="@dimen/first_key_line"
+      android:text="@string/yes"
+      android:textColor="@color/colorAccent"
+      android:textSize="@dimen/font_normal"
+      android:textStyle="bold"/>
+
+  <Button
+      android:id="@+id/no_btn"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
-      android:background="@drawable/submit_button_background"
-      android:orientation="horizontal">
+      android:layout_marginBottom="@dimen/second_key_line"
+      android:layout_marginLeft="@dimen/proceed_button_margin"
+      android:layout_marginRight="@dimen/proceed_button_margin"
+      android:background="@drawable/next_button_bg"
+      android:onClick="goToIdentity"
+      android:padding="@dimen/first_key_line"
+      android:text="@string/no"
+      android:textColor="@color/colorAccent"
+      android:textSize="@dimen/font_normal"
+      android:textStyle="bold"/>
 
-    <Button
-        android:id="@+id/login_button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:background="@android:color/transparent"
-        android:gravity="center"
-        android:onClick="goToFindActivity"
-        android:text="@string/yes"
-        android:textColor="@color/white"/>
-
-    <View
-        android:layout_width="1dp"
-        android:layout_height="32dp"
-        android:layout_gravity="center"
-        android:background="#33000000"/>
-
-    <Button
-        android:id="@+id/sign_up_button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:background="@android:color/transparent"
-        android:gravity="center"
-        android:onClick="goToIdentity"
-        android:text="@string/no"
-        android:textColor="@color/white"/>
-
-  </LinearLayout>
 </RelativeLayout>

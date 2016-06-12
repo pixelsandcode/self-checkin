@@ -148,7 +148,7 @@ public class SignUpActivity extends AppCompatActivity {
       super.onBackPressed();
     } else if (viewPager.getCurrentItem() == 7) {
       reset();
-    } else if (viewPager.getCurrentItem() == 4) {
+    } else if (viewPager.getCurrentItem() == 5) {
       viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
       viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
     } else {
@@ -221,7 +221,6 @@ public class SignUpActivity extends AppCompatActivity {
   @OnClick(R.id.resetBtn)
   public void startOver() {
     reset();
-    //bus.post(new PagerChangeEvent(0));
   }
 
   /**
@@ -245,7 +244,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     if (viewPager.getCurrentItem() != 0) {
-      if (viewPager.getCurrentItem() == 4) {
+      if (viewPager.getCurrentItem() == 5) {
         viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
       } else {
@@ -444,9 +443,14 @@ public class SignUpActivity extends AppCompatActivity {
   public void goToIdentity(View view) {
     tracker.send(new HitBuilders.EventBuilder("Process", "Create").build());
     guest.time = System.currentTimeMillis();
-    viewPager.setCurrentItem(1);
+    viewPager.setCurrentItem(2);
   }
 
+  /**
+   * Go to landing.
+   *
+   * @param view the view
+   */
   public void goToLanding(View view) {
     viewPager.setCurrentItem(1);
   }
