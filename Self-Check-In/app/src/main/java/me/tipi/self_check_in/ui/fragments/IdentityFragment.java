@@ -238,7 +238,7 @@ public class IdentityFragment extends Fragment {
         guest.dob = dob;
       }
 
-      bus.post(new PagerChangeEvent(2));
+      bus.post(new PagerChangeEvent(3));
     }
   }
 
