@@ -48,7 +48,7 @@ public class SettingActivity extends AppCompatActivity {
     ButterKnife.bind(this);
 
     typeface.setTypeface(this, getResources().getString(R.string.font_regular));
-    versionTextView.setText(String.format("Version %s", BuildConfig.VERSION_NAME));
+    versionTextView.setText(String.format("Current Version %s", BuildConfig.VERSION_NAME));
 
     Timber.d("Created");
   }
