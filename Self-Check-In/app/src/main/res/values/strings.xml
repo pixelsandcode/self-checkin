@@ -20,7 +20,7 @@
   <string name="birthday">Birthday</string>
   <string name="passport_number">Passport Number</string>
   <string name="continue_text">Continue</string>
-  <string name="reference_code">Reference Code (optional)</string>
+  <string name="reference_code">Booking Reference (optional)</string>
   <string name="birthday_error">You haven\'t born yet?!!</string>
   <string name="birthday_error_old">You are too old to travel, Sorry!!!</string>
   <string name="choose_another_photo_text">Picture wasn\'t taken!</string>
