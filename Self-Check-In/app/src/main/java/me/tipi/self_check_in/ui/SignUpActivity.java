@@ -26,11 +26,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.drivemode.android.typeface.TypefaceHelper;
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -94,13 +92,11 @@ public class SignUpActivity extends AppCompatActivity {
   @Named(ApiConstants.PASSWORD)
   Preference<String> password;
   @Inject Tracker tracker;
-  @Inject TypefaceHelper typeface;
 
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
   @Bind(R.id.settingBtn) ImageView settingButton;
   @Bind(R.id.resetBtn) ImageView resetButton;
   @Bind(R.id.backBtn) ImageView backButtonView;
-  @Bind(R.id.tipi_description) TextView description;
 
   MaterialDialog loading;
 
@@ -118,8 +114,6 @@ public class SignUpActivity extends AppCompatActivity {
         .cancelable(false)
         .progress(true, 0)
         .build();
-
-    typeface.setTypeface(description, getString(R.string.font_medium));
 
 
     guest.user_key = null;
@@ -450,6 +444,10 @@ public class SignUpActivity extends AppCompatActivity {
   public void goToIdentity(View view) {
     tracker.send(new HitBuilders.EventBuilder("Process", "Create").build());
     guest.time = System.currentTimeMillis();
+    viewPager.setCurrentItem(1);
+  }
+
+  public void goToLanding(View view) {
     viewPager.setCurrentItem(1);
   }
 

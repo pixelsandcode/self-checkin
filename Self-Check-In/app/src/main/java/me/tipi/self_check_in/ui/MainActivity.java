@@ -18,9 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.drivemode.android.typeface.TypefaceHelper;
@@ -31,7 +29,6 @@ import com.google.android.gms.analytics.Tracker;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
@@ -59,9 +56,8 @@ public class MainActivity extends AppCompatActivity {
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
 
-  @Bind(R.id.main_logo) TextView mainLogoView;
-  @Bind(R.id.forgot_password_text) TextView forgotPassView;
-  @Bind(R.id.reset_password_button) Button resetPasswordButton;
+  //@Bind(R.id.forgot_password_text) TextView forgotPassView;
+  //@Bind(R.id.reset_password_button) Button resetPasswordButton;
 
   MaterialDialog loading;
 
@@ -137,10 +133,9 @@ public class MainActivity extends AppCompatActivity {
    * Show login fragment.
    */
   public void showLoginFragment() {
-    mainLogoView.setVisibility(View.INVISIBLE);
     getFragmentManager().beginTransaction().replace(R.id.container, LoginFragment.newInstance(this)).commit();
-    forgotPassView.setVisibility(View.VISIBLE);
-    resetPasswordButton.setVisibility(View.VISIBLE);
+    //forgotPassView.setVisibility(View.VISIBLE);
+    //resetPasswordButton.setVisibility(View.VISIBLE);
   }
 
   /**

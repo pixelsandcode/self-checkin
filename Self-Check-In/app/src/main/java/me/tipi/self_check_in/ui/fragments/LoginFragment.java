@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.drivemode.android.typeface.TypefaceHelper;
 import com.f2prateek.rx.preferences.Preference;
@@ -43,7 +42,6 @@ public class LoginFragment extends Fragment {
 
   @Bind(R.id.email) EditText emailText;
   @Bind(R.id.password) EditText passwordText;
-  @Bind(R.id.sub_title) TextView subTitleView;
   @Bind(R.id.email_input_layout) TextInputLayout emailLayout;
   @Bind(R.id.password_input_layout) TextInputLayout passwordLayout;
 
@@ -72,7 +70,6 @@ public class LoginFragment extends Fragment {
     View rootView = inflater.inflate(R.layout.fragment_login, container, false);
     ButterKnife.bind(this, rootView);
     typeface.setTypeface((ViewGroup) rootView, getResources().getString(R.string.font_regular));
-    typeface.setTypeface(subTitleView, getResources().getString(R.string.font_light));
 
     if (username.isSet() && password.isSet()) {
       emailText.setText(username.get());

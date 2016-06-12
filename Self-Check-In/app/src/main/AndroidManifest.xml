@@ -29,7 +29,6 @@
     <activity
         android:name=".ui.MainActivity"
         android:configChanges="screenSize|orientation"
-        android:screenOrientation="landscape"
         android:windowSoftInputMode="adjustPan">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -40,14 +39,12 @@
     <activity
         android:name=".ui.SignUpActivity"
         android:configChanges="screenSize|orientation"
-        android:screenOrientation="landscape"
         android:windowSoftInputMode="adjustPan">
     </activity>
     <activity
         android:name=".ui.FindUserActivity"
         android:configChanges="screenSize|orientation"
         android:parentActivityName=".ui.SignUpActivity"
-        android:screenOrientation="landscape"
         android:windowSoftInputMode="adjustPan">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
@@ -71,7 +68,6 @@
         android:name=".ui.SettingActivity"
         android:label="@string/title_activity_setting"
         android:configChanges="screenSize|orientation"
-        android:screenOrientation="landscape"
         android:windowSoftInputMode="adjustPan">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"

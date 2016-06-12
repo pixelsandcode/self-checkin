@@ -1,0 +1,35 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="me.tipi.self_check_in.ui.fragments.MainFragment">
+
+  <ImageView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:scaleType="centerCrop"
+      android:src="@drawable/background_main"/>
+
+  <ImageView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/main_icon"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="192dp"/>
+
+  <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/next_button_bg_white"
+      android:text="@string/tap_to_check_in"
+      android:textColor="@color/white"
+      android:onClick="goToLanding"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="@dimen/third_key_line"
+      android:layout_marginRight="@dimen/proceed_button_margin"
+      android:layout_marginLeft="@dimen/proceed_button_margin"
+      android:textSize="@dimen/font_large"/>
+
+</RelativeLayout>
