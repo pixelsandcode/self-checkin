@@ -128,13 +128,13 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       public void onClick(View textView) {
         if (isLogin) {
           if (getActivity() instanceof SignUpActivity) {
-            bus.post(new PagerChangeEvent(3));
+            bus.post(new PagerChangeEvent(4));
           } else {
             bus.post(new PagerChangeEvent(2));
           }
 
         } else {
-          bus.post(new PagerChangeEvent(3));
+          bus.post(new PagerChangeEvent(4));
         }
       }
       @Override
@@ -186,7 +186,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       if (isLogin) {
         bus.post(new ClaimEvent());
       } else {
-        bus.post(new PagerChangeEvent(4));
+        bus.post(new PagerChangeEvent(5));
       }
     }
   }

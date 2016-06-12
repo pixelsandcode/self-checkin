@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/second_key_line"
-    android:paddingRight="@dimen/second_key_line"
     android:focusable="true"
     android:focusableInTouchMode="true"
     tools:context="me.tipi.self_check_in.ui.fragments.DateFragment"
@@ -13,105 +11,143 @@
 
   <TextView
       android:id="@+id/title"
-      android:layout_width="wrap_content"
+      android:layout_width="350dp"
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/second_key_line"
-      android:text="@string/check_in_details"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:gravity="center"
+      android:text="@string/booking_info"
       android:textColor="@color/main_text"
-      android:textSize="@dimen/font_large"/>
+      android:textSize="@dimen/font_extra_large"/>
 
-  <android.support.design.widget.TextInputLayout
-      android:id="@+id/check_in_input_layout"
+  <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/title"
-      android:layout_marginTop="@dimen/second_key_line"
-      app:hintTextAppearance="@style/hintText">
+      android:layout_centerInParent="true"
+      android:layout_marginLeft="120dp"
+      android:layout_marginRight="120dp"
+      android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/check_in_date"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/check_in"
-        android:paddingLeft="@dimen/normal_padding"
-        android:paddingRight="@dimen/normal_padding"
-        android:imeOptions="actionNext"
-        android:inputType="date"/>
-  </android.support.design.widget.TextInputLayout>
+        android:paddingTop="@dimen/normal_padding"
+        android:text="@string/check_in"
+        android:textAllCaps="true"
+        android:textColor="@color/label_text"
+        android:textSize="@dimen/font_normal"/>
 
-  <android.support.design.widget.TextInputLayout
-      android:id="@+id/nights_number_input_layout"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/check_in_input_layout"
-      android:layout_marginTop="@dimen/normal_margin"
-      app:hintTextAppearance="@style/hintText">
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/check_in_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/nights_number"
+      <EditText
+          android:id="@+id/check_in_date"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:imeOptions="actionNext"
+          android:inputType="date"
+          android:paddingLeft="@dimen/first_key_line"
+          android:paddingRight="@dimen/first_key_line"
+          android:textColor="@color/main_text"
+          android:textSize="@dimen/font_large"
+          tools:text="Ashkan Hesaraki"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:digits="1234567890"
-        android:hint="@string/number_of_nights"
-        android:paddingLeft="@dimen/normal_padding"
-        android:paddingRight="@dimen/normal_padding"
-        android:imeOptions="actionNext"
-        android:inputType="phone"/>
-  </android.support.design.widget.TextInputLayout>
+        android:paddingTop="@dimen/normal_padding"
+        android:text="@string/number_of_nights"
+        android:textAllCaps="true"
+        android:textColor="@color/label_text"
+        android:textSize="@dimen/font_normal"/>
 
-  <android.support.design.widget.TextInputLayout
-      android:id="@+id/passport_input_layout"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/nights_number_input_layout"
-      android:layout_marginTop="@dimen/normal_margin"
-      app:hintTextAppearance="@style/hintText">
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/nights_number_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/passport"
+      <EditText
+          android:id="@+id/nights_number"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:digits="1234567890"
+          android:imeOptions="actionNext"
+          android:inputType="phone"
+          android:paddingLeft="@dimen/first_key_line"
+          android:paddingRight="@dimen/first_key_line"
+          android:textColor="@color/main_text"
+          android:textSize="@dimen/font_large"
+          tools:text="Ashkan Hesaraki"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/birthday"
-        android:hint="@string/passport_number"
-        android:paddingLeft="@dimen/normal_padding"
-        android:paddingRight="@dimen/normal_padding"
-        android:imeOptions="actionNext"
-        android:inputType="textNoSuggestions"/>
-  </android.support.design.widget.TextInputLayout>
+        android:paddingTop="@dimen/normal_padding"
+        android:text="@string/passport_number"
+        android:textAllCaps="true"
+        android:textColor="@color/label_text"
+        android:textSize="@dimen/font_normal"/>
 
-  <android.support.design.widget.TextInputLayout
-      android:id="@+id/reference_input_layout"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/passport_input_layout"
-      android:layout_marginTop="@dimen/normal_margin">
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/passport_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/reference"
+      <EditText
+          android:id="@+id/passport"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:imeOptions="actionNext"
+          android:inputType="textNoSuggestions"
+          android:paddingLeft="@dimen/first_key_line"
+          android:paddingRight="@dimen/first_key_line"
+          android:textColor="@color/main_text"
+          android:textSize="@dimen/font_large"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/first_key_line"
-        android:paddingLeft="@dimen/normal_padding"
-        android:hint="@string/reference_code"
-        android:paddingRight="@dimen/normal_padding"
-        android:imeOptions="actionDone"
-        android:inputType="textNoSuggestions"/>
-  </android.support.design.widget.TextInputLayout>
+        android:paddingTop="@dimen/normal_padding"
+        android:text="@string/reference_code"
+        android:textAllCaps="true"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/font_normal"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/reference_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+      <EditText
+          android:id="@+id/reference"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:imeOptions="actionDone"
+          android:inputType="textNoSuggestions"
+          android:paddingLeft="@dimen/first_key_line"
+          android:paddingRight="@dimen/first_key_line"
+          android:textColor="@color/main_text"
+          android:textSize="@dimen/font_large"/>
+    </android.support.design.widget.TextInputLayout>
+  </LinearLayout>
 
   <TextView
       android:id="@+id/terms"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_above="@+id/submit_btn"
-      android:layout_marginBottom="@dimen/first_key_line"
-      android:textColorLink="@color/colorAccent"
-      android:textColor="@color/main_text"
-      android:textSize="@dimen/font_normal"
-      android:gravity="center"
-      android:layout_marginRight="@dimen/second_key_line"
+      android:layout_marginBottom="@dimen/normal_margin"
       android:layout_marginLeft="@dimen/second_key_line"
+      android:layout_marginRight="@dimen/second_key_line"
+      android:layout_alignParentBottom="true"
+      android:gravity="center"
+      android:textColor="@color/main_text"
+      android:textColorLink="@color/colorAccent"
+      android:textSize="@dimen/font_normal"
       tools:text="By tapping next I agree"/>
 
   <Button
@@ -119,10 +155,14 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
-      android:layout_marginBottom="@dimen/first_key_line"
-      android:background="@drawable/submit_button_background"
+      android:background="@drawable/next_button_bg"
+      android:padding="@dimen/first_key_line"
+      android:layout_marginLeft="@dimen/proceed_button_margin"
+      android:layout_marginRight="@dimen/proceed_button_margin"
+      android:layout_marginBottom="@dimen/second_key_line"
       android:text="@string/next"
-      android:textColor="@color/white"
-      android:textSize="@dimen/font_normal"/>
+      android:textColor="@color/colorAccent"
+      android:textSize="@dimen/font_normal"
+      android:textStyle="bold"/>
 
 </RelativeLayout>

@@ -34,6 +34,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/normal_padding"
         android:text="@string/full_name"
+        android:textAllCaps="true"
         android:textColor="@color/label_text"
         android:textSize="@dimen/font_normal"/>
 
@@ -60,6 +61,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/normal_padding"
         android:text="@string/booking_email"
+        android:textAllCaps="true"
         android:textColor="@color/label_text"
         android:textSize="@dimen/font_normal"/>
 
@@ -86,6 +88,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/normal_padding"
         android:text="@string/home_town"
+        android:textAllCaps="true"
         android:textColor="@color/label_text"
         android:textSize="@dimen/font_normal"/>
 
@@ -112,6 +115,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/normal_padding"
         android:text="@string/birthday"
+        android:textAllCaps="true"
         android:textColor="@color/label_text"
         android:textSize="@dimen/font_normal"/>
 
@@ -138,11 +142,11 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
-      android:background="@drawable/next_button_bg"
-      android:padding="@dimen/first_key_line"
+      android:layout_marginBottom="@dimen/second_key_line"
       android:layout_marginLeft="@dimen/proceed_button_margin"
       android:layout_marginRight="@dimen/proceed_button_margin"
-      android:layout_marginBottom="@dimen/second_key_line"
+      android:background="@drawable/next_button_bg"
+      android:padding="@dimen/first_key_line"
       android:text="@string/next"
       android:textColor="@color/colorAccent"
       android:textSize="@dimen/font_normal"
