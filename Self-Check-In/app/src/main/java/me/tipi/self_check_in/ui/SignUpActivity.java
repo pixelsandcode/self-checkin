@@ -484,7 +484,7 @@ public class SignUpActivity extends AppCompatActivity {
   /**
    * Reset.
    */
-  private void reset() {
+  public void reset() {
     avatarPath.delete();
     passportPath.delete();
     if (guest != null) {

@@ -10,11 +10,11 @@ package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
@@ -24,11 +24,13 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
+import me.tipi.self_check_in.ui.FindUserActivity;
+import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
@@ -39,8 +41,6 @@ public class SuccessSignUpFragment extends Fragment {
   @Inject Tracker tracker;
   @Inject @Named(ApiConstants.HOSTEL_NAME)
   Preference<String> hostelName;
-
-  @Bind(R.id.meet) TextView meetView;
 
   /**
    * Instantiates a new Success sign up fragment.
@@ -66,7 +66,6 @@ public class SuccessSignUpFragment extends Fragment {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_success_sign_up, container, false);
     ButterKnife.bind(this, rootView);
-    meetView.setText(String.format(getResources().getString(R.string.meet_text), hostelName.get()));
     return rootView;
   }
 
@@ -88,6 +87,25 @@ public class SuccessSignUpFragment extends Fragment {
       bus.post(new BackShouldShowEvent(false));
       bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
+    }
+
+    new Handler().postDelayed(new Runnable() {
+      @Override public void run() {
+        startOver();
+      }
+    }, 15000);
+  }
+
+  @OnClick(R.id.continue_btn)
+  public void finishTapped() {
+    startOver();
+  }
+
+  private void startOver() {
+    if (getActivity() instanceof SignUpActivity) {
+      ((SignUpActivity)getActivity()).reset();
+    } else {
+      ((FindUserActivity)getActivity()).reset();
     }
   }
 }

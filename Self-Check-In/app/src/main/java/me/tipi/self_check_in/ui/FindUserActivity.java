@@ -233,7 +233,7 @@ public class FindUserActivity extends AppCompatActivity {
   /**
    * Reset.
    */
-  private void reset() {
+  public void reset() {
 
     if (guest != null) {
       guest.user_key = null;

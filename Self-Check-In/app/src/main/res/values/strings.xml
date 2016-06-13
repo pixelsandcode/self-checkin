@@ -90,7 +90,7 @@
   <string name="error_invalid_full_name">This name is invalid</string>
   <string name="agree">agree</string>
   <string name="terms"><![CDATA[Terms & Conditions]]></string>
-  <string name="about_you">About You</string>
+  <string name="about_you">Tell us about you</string>
   <string name="next_travel">Where are you travelling next?</string>
   <string name="how_long">How long you are staying in the country</string>
   <string name="visit_farser">Are you visiting Fraser island?</string>
@@ -105,4 +105,6 @@
   <string name="scan_your_passport_or_drivers_license">Scan your Passport Or Drivers License</string>
   <string name="scan">Scan</string>
   <string name="retry">Retry</string>
+  <string name="thanks_for_checking_in_on_tipi">Thanks for checking-in on Tipi</string>
+  <string name="next_check_in">Next Check-in</string>
 </resources>

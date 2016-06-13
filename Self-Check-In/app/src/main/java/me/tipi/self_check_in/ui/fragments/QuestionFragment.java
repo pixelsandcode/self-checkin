@@ -218,12 +218,12 @@ public class QuestionFragment extends Fragment {
   private void navigateToSuccessPage() {
     if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
       if (getActivity() instanceof SignUpActivity) {
-        bus.post(new PagerChangeEvent(7));
+        bus.post(new PagerChangeEvent(8));
       } else {
         bus.post(new PagerChangeEvent(4));
       }
     } else {
-      bus.post(new PagerChangeEvent(7));
+      bus.post(new PagerChangeEvent(8));
     }
   }
 }
