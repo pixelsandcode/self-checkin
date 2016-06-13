@@ -4,54 +4,74 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:paddingLeft="@dimen/second_key_line"
-    android:paddingRight="@dimen/second_key_line"
     tools:context="me.tipi.self_check_in.ui.fragments.PassportFragment"
     tools:ignore="ContentDescription">
 
   <TextView
       android:id="@+id/title"
-      android:layout_width="wrap_content"
+      android:text="@string/scan_your_passport_or_drivers_license"
+      android:layout_width="350dp"
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/second_key_line"
-      android:text="@string/scan_passport"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:gravity="center"
       android:textColor="@color/main_text"
-      android:textSize="@dimen/font_large"/>
+      android:textSize="@dimen/font_extra_large"/>
 
   <ImageView
       android:id="@+id/scan"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/title"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/second_key_line"
+      android:layout_centerInParent="true"
       android:scaleType="centerCrop"
-      android:src="@drawable/camera_icon"/>
+      android:src="@drawable/scan_passport_guide"/>
 
-  <TextView
-      android:id="@+id/avatar_hint"
-      android:layout_width="wrap_content"
+  <Button
+      android:id="@+id/scan_btn"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/scan"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/second_key_line"
-      android:gravity="center"
-      android:text="@string/take_scan_hint"
-      android:textColor="@color/main_text"
+      android:layout_alignParentBottom="true"
+      android:background="@drawable/next_button_bg"
+      android:padding="@dimen/first_key_line"
+      android:layout_marginLeft="@dimen/proceed_button_margin"
+      android:layout_marginRight="@dimen/proceed_button_margin"
+      android:layout_marginBottom="@dimen/second_key_line"
+      android:text="@string/scan"
+      android:textColor="@color/colorAccent"
       android:textSize="@dimen/font_normal"
-      />
+      android:textStyle="bold"/>
 
   <Button
       android:id="@+id/continue_btn"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true"
-      android:layout_marginBottom="@dimen/first_key_line"
-      android:background="@drawable/submit_button_background"
-      android:text="@string/submit"
-      android:textColor="@color/white"
+      android:layout_above="@+id/retry_btn"
+      android:layout_marginBottom="@dimen/second_key_line"
+      android:layout_marginLeft="@dimen/proceed_button_margin"
+      android:layout_marginRight="@dimen/proceed_button_margin"
+      android:background="@drawable/next_button_bg"
+      android:padding="@dimen/first_key_line"
+      android:text="@string/next"
+      android:textColor="@color/colorAccent"
       android:textSize="@dimen/font_normal"
+      android:textStyle="bold"
+      android:visibility="gone"
+      />
+
+  <Button
+      android:id="@+id/retry_btn"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="@dimen/second_key_line"
+      android:layout_marginLeft="@dimen/proceed_button_margin"
+      android:layout_marginRight="@dimen/proceed_button_margin"
+      android:background="@drawable/next_button_bg"
+      android:padding="@dimen/first_key_line"
+      android:text="@string/retry"
+      android:textColor="@color/colorAccent"
+      android:textSize="@dimen/font_normal"
+      android:textStyle="bold"
       android:visibility="gone"/>
 
 </RelativeLayout>

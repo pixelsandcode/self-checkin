@@ -69,8 +69,9 @@ public class PassportFragment extends Fragment {
 
   @Bind(R.id.scan) ImageView passportView;
   @Bind(R.id.title) TextView titleView;
-  @Bind(R.id.avatar_hint) TextView hintView;
+  @Bind(R.id.retry_btn) Button retryButton;
   @Bind(R.id.continue_btn) Button continueButton;
+  @Bind(R.id.scan_btn) Button scanButton;
 
   Uri uriSavedPassportImage;
 
@@ -123,12 +124,12 @@ public class PassportFragment extends Fragment {
         try {
           File imageFile = FileHelper.getResizedFile(getActivity(), uriSavedPassportImage,
               Build.VERSION.SDK_INT, 500, 500);
-          picasso.load(imageFile).resize(400, 200).centerCrop()
+          picasso.load(imageFile).resize(600, 400).centerCrop()
               .into(passportView);
           // Save taken photo path to show later if not signed up
           passportPath.set(imageFile.getPath());
-          titleView.setText(getResources().getString(R.string.scan_success_title));
-          hintView.setText("Tap on image to rescan\n passport");
+          scanButton.setVisibility(View.GONE);
+          retryButton.setVisibility(View.VISIBLE);
           continueButton.setVisibility(View.VISIBLE);
         } catch (Exception e) {
           titleView.setText(getResources().getString(R.string.avatar_fail_titel));
@@ -151,11 +152,10 @@ public class PassportFragment extends Fragment {
   /**
    * On launch camera.
    */
-  @OnClick(R.id.scan)
+  @OnClick({R.id.scan, R.id.scan_btn, R.id.retry_btn})
   public void onLaunchCamera() {
     // create Intent to take a picture and return control to the calling application
     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    intent.putExtra("android.intent.extras.CAMERA_FACING", android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT);
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
 
     //folder stuff
@@ -189,7 +189,7 @@ public class PassportFragment extends Fragment {
    */
   private void setPassportImage() {
     if (passportPath != null && passportPath.isSet() && passportPath.get() != null && passportView != null) {
-      picasso.load(new File(passportPath.get())).resize(400, 200).centerCrop()
+      picasso.load(new File(passportPath.get())).resize(600, 400).centerCrop()
           .placeholder(R.drawable.avatar_button).into(passportView);
     }
   }

@@ -50,7 +50,6 @@ import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
-import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
@@ -70,7 +69,6 @@ public class AvatarFragment extends Fragment {
 
   @Bind(R.id.avatar) ImageView avatarView;
   @Bind(R.id.title) TextView titleView;
-  @Bind(R.id.avatar_hint) TextView hintView;
   @Bind(R.id.continue_btn) Button continueButton;
 
   Uri uriSavedImage;
@@ -115,6 +113,7 @@ public class AvatarFragment extends Fragment {
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
+    Timber.d("AVATAR : %S", "BUS UNREGISTERED");
   }
 
   @Override
@@ -124,16 +123,12 @@ public class AvatarFragment extends Fragment {
         try {
           File imageFile = FileHelper.getResizedFile(getActivity(), uriSavedImage,
               Build.VERSION.SDK_INT, 500, 500);
-          picasso.load(imageFile).resize(150, 150).centerCrop()
+          picasso.load(imageFile).resize(300, 300).centerCrop()
               .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
               .into(avatarView);
           // Save taken photo path to show later if not signed up
           avatarPath.set(imageFile.getPath());
-          titleView.setText(getResources().getString(R.string.avatar_success_title));
-          hintView.setText(getResources().getString(R.string.avatar_success_hint));
-          continueButton.setVisibility(View.VISIBLE);
-
-
+          continueToIdentity();
         } catch (Exception e) {
           titleView.setText(getResources().getString(R.string.avatar_fail_titel));
         }
@@ -148,7 +143,7 @@ public class AvatarFragment extends Fragment {
       bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
       if (avatarPath.isSet() && avatarPath.get() != null && avatarView != null) {
-        picasso.load(new File(avatarPath.get())).resize(150, 150).centerCrop()
+        picasso.load(new File(avatarPath.get())).resize(300, 300).centerCrop()
             .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
             .placeholder(R.drawable.avatar_placeholder).into(avatarView);
       }
@@ -158,7 +153,7 @@ public class AvatarFragment extends Fragment {
   /**
    * On launch camera.
    */
-  @OnClick(R.id.avatar)
+  @OnClick({ R.id.avatar, R.id.continue_btn})
   public void onLaunchCamera() {
     // create Intent to take a picture and return control to the calling application
     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -179,14 +174,10 @@ public class AvatarFragment extends Fragment {
     tracker.send(new HitBuilders.EventBuilder("Image", "Take avatar").build());
   }
 
-  /**
-   * Continue to identity.
-   */
-  @OnClick(R.id.continue_btn)
   public void continueToIdentity() {
     if (avatarPath.isSet()) {
       Timber.v(avatarPath.get());
-      bus.post(new PagerChangeEvent(5));
+      ((SignUpActivity)getActivity()).changePage(6);
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie first!", Snackbar.LENGTH_LONG).show();
     }

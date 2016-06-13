@@ -265,6 +265,10 @@ public class SignUpActivity extends AppCompatActivity {
     viewPager.setCurrentItem(event.page, true);
   }
 
+  public void changePage(int pageNumber) {
+    viewPager.setCurrentItem(pageNumber, true);
+  }
+
   /**
    * On back shown.
    *
@@ -330,7 +334,7 @@ public class SignUpActivity extends AppCompatActivity {
                   .setLabel("Sign Up")
                   .setValue(diffSeconds).build());
               tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
-              viewPager.setCurrentItem(6, true);
+              viewPager.setCurrentItem(7, true);
             }
 
             @Override public void failure(RetrofitError error) {
@@ -381,7 +385,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .setAction("Check-In")
                 .setLabel("Claim")
                 .setValue(diffSeconds).build());
-            viewPager.setCurrentItem(6);
+            viewPager.setCurrentItem(7);
           }
 
           @Override public void failure(RetrofitError error) {

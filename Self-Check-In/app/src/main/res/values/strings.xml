@@ -100,4 +100,9 @@
   <string name="setting">Setting</string>
   <string name="your_details">Your Details</string>
   <string name="booking_info">Booking Info</string>
+  <string name="take_a_selfie">Take a Selfie!</string>
+  <string name="camera">Camera</string>
+  <string name="scan_your_passport_or_drivers_license">Scan your Passport Or Drivers License</string>
+  <string name="scan">Scan</string>
+  <string name="retry">Retry</string>
 </resources>

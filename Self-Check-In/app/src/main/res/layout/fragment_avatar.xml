@@ -4,54 +4,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:paddingLeft="@dimen/second_key_line"
-    android:paddingRight="@dimen/second_key_line"
     tools:context="me.tipi.self_check_in.ui.fragments.AvatarFragment"
     tools:ignore="ContentDescription">
 
   <TextView
       android:id="@+id/title"
-      android:layout_width="wrap_content"
+      android:text="@string/take_a_selfie"
+      android:layout_width="350dp"
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/second_key_line"
-      android:text="@string/smile"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:gravity="center"
       android:textColor="@color/main_text"
-      android:textSize="@dimen/font_large"/>
+      android:textSize="@dimen/font_extra_large"/>
 
   <ImageView
       android:id="@+id/avatar"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/title"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/second_key_line"
+      android:layout_centerInParent="true"
       android:scaleType="centerCrop"
-      android:src="@drawable/camera_icon"/>
-
-  <TextView
-      android:id="@+id/avatar_hint"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/avatar"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/second_key_line"
-      android:gravity="center"
-      android:text="@string/take_selfie_hint"
-      android:textColor="@color/main_text"
-      android:textSize="@dimen/font_normal"
-      />
+      android:src="@drawable/avatar_button"/>
 
   <Button
       android:id="@+id/continue_btn"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
-      android:layout_marginBottom="@dimen/first_key_line"
-      android:background="@drawable/submit_button_background"
-      android:text="@string/next"
-      android:textColor="@color/white"
+      android:background="@drawable/next_button_bg"
+      android:padding="@dimen/first_key_line"
+      android:layout_marginLeft="@dimen/proceed_button_margin"
+      android:layout_marginRight="@dimen/proceed_button_margin"
+      android:layout_marginBottom="@dimen/second_key_line"
+      android:text="@string/camera"
+      android:textColor="@color/colorAccent"
       android:textSize="@dimen/font_normal"
-      android:visibility="gone"/>
+      android:textStyle="bold"/>
 
 </RelativeLayout>

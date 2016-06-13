@@ -79,8 +79,8 @@ public class LandingFragment extends Fragment {
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
-      bus.post(new SettingShouldShowEvent(true));
-      bus.post(new BackShouldShowEvent(false));
+      bus.post(new SettingShouldShowEvent(false));
+      bus.post(new BackShouldShowEvent(true));
       bus.post(new RefreshShouldShowEvent(false));
     }
   }
