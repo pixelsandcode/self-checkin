@@ -42,7 +42,7 @@
   <string name="find_account_title">Find Your Account</string>
   <string name="find_account_hint">Enter Tipi email to find\n your account</string>
   <string name="match_found_hint">Found a match</string>
-  <string name="no_match_hint">No matches found</string>
+  <string name="no_match_hint">No Matches Found</string>
   <string name="or">OR</string>
   <string name="sign_up">Sign up</string>
   <string name="dialog_me_text">This is Me</string>
@@ -97,7 +97,7 @@
   <string name="need_job">Are you looking for a job?</string>
   <string name="home_town_error">Please choose your City/Country from drop down list</string>
   <string name="tap_to_check_in">tap to check-in</string>
-  <string name="setting">Setting</string>
+  <string name="setting">Settings</string>
   <string name="your_details">Your Details</string>
   <string name="booking_info">Booking Info</string>
   <string name="take_a_selfie">Take a Selfie!</string>
@@ -107,4 +107,5 @@
   <string name="retry">Retry</string>
   <string name="thanks_for_checking_in_on_tipi">Thanks for checking-in on Tipi</string>
   <string name="next_check_in">Next Check-in</string>
+  <string name="enter_your_tipi_email">Enter your Tipi email ...</string>
 </resources>

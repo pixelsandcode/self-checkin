@@ -65,6 +65,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
   @Bind(R.id.nights_number_input_layout) TextInputLayout nightNumberLayout;
   @Bind(R.id.passport_input_layout) TextInputLayout passportLayout;
   @Bind(R.id.terms) TextView termsTextView;
+  @Bind(R.id.passport_label) TextView passportLabel;
 
   public Calendar checkInDate = null;
   public String dateString;
@@ -267,8 +268,10 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       isLogin = guest.user_key != null && !TextUtils.isEmpty(guest.user_key);
       if (isLogin) {
         passportLayout.setVisibility(View.GONE);
+        passportLabel.setVisibility(View.GONE);
       } else {
         passportLayout.setVisibility(View.VISIBLE);
+        passportLabel.setVisibility(View.VISIBLE);
       }
     }
   }

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/first_key_line"
     android:fitsSystemWindows="true"
     android:background="@color/white"
     tools:context="me.tipi.self_check_in.ui.SettingActivity"

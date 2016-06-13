@@ -87,13 +87,13 @@ public class SuccessSignUpFragment extends Fragment {
       bus.post(new BackShouldShowEvent(false));
       bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
-    }
 
-    new Handler().postDelayed(new Runnable() {
-      @Override public void run() {
-        startOver();
-      }
-    }, 15000);
+      new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+          startOver();
+        }
+      }, 15000);
+    }
   }
 
   @OnClick(R.id.continue_btn)
@@ -102,9 +102,9 @@ public class SuccessSignUpFragment extends Fragment {
   }
 
   private void startOver() {
-    if (getActivity() instanceof SignUpActivity) {
+    if (getActivity() != null && getActivity() instanceof SignUpActivity) {
       ((SignUpActivity)getActivity()).reset();
-    } else {
+    } else if (getActivity() != null){
       ((FindUserActivity)getActivity()).reset();
     }
   }

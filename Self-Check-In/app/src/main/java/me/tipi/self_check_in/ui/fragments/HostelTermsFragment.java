@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -45,7 +44,6 @@ public class HostelTermsFragment extends Fragment {
   Preference<String> hostelKey;
 
   @Bind(R.id.hostel_terms) TextView termsTextView;
-  MaterialDialog loading;
 
   public HostelTermsFragment() {
     // Required empty public constructor
@@ -62,25 +60,17 @@ public class HostelTermsFragment extends Fragment {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_hostel_terms, container, false);
     ButterKnife.bind(this, rootView);
-    loading = new MaterialDialog.Builder(getActivity())
-        .content("Loading")
-        .cancelable(false)
-        .progress(true, 0)
-        .build();
     loadTerms();
     return rootView;
   }
 
   private void loadTerms() {
-    loading.show();
     authenticationService.getTerms(hostelKey.get(), new Callback<LoginResponse>() {
       @Override public void success(LoginResponse loginResponse, Response response) {
         termsTextView.setText(loginResponse.data.terms);
-        loading.dismiss();
       }
 
       @Override public void failure(RetrofitError error) {
-        loading.dismiss();
         loadTerms();
       }
     });

@@ -5,41 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/white"
     tools:context="me.tipi.self_check_in.ui.FindUserActivity"
     tools:ignore="ContentDescription">
 
-  <ImageView
+  <me.tipi.self_check_in.ui.misc.ChangeSwipeViewPager
+      android:id="@+id/pager"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:scaleType="centerCrop"
-      android:src="@drawable/main_bg"/>
+      android:layout_height="match_parent"/>
 
-  <android.support.v7.widget.CardView
-      android:id="@+id/frame"
-      android:layout_width="@dimen/main_frame"
-      android:layout_height="wrap_content"
-      android:layout_centerInParent="true"
-      android:background="?android:attr/selectableItemBackground"
-      android:clickable="false">
-
-    <me.tipi.self_check_in.ui.misc.ChangeSwipeViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/main_frame_height"/>
-
-  </android.support.v7.widget.CardView>
-
-
-  <TextView
-      android:id="@+id/tipi_description"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_centerHorizontal="true"
-      android:textColor="@color/white"
-      android:text="@string/tipi_description_text"
-      android:textSize="@dimen/font_normal"
-      android:padding="@dimen/first_key_line"
-      android:layout_below="@id/frame"/>
   <ImageView
       android:id="@+id/resetBtn"
       android:layout_width="wrap_content"
@@ -48,7 +22,8 @@
       android:layout_alignParentRight="true"
       android:background="?android:attr/selectableItemBackground"
       android:clickable="true"
-      android:padding="@dimen/second_key_line"
-      android:src="@drawable/ic_refresh"/>
+      android:padding="@dimen/first_key_line"
+      android:src="@drawable/ic_refresh"
+      android:tint="@color/colorAccent"/>
 
 </RelativeLayout>

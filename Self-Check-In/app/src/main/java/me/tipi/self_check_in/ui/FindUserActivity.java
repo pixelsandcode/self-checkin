@@ -91,8 +91,6 @@ public class FindUserActivity extends AppCompatActivity {
         .progress(true, 0)
         .build();
 
-
-
     adapter = new LoginAdapter(getSupportFragmentManager(), this);
     viewPager.setAdapter(adapter);
     viewPager.setSwipingEnabled(false);

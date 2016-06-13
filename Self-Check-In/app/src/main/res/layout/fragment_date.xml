@@ -84,6 +84,7 @@
     </android.support.design.widget.TextInputLayout>
 
     <TextView
+        android:id="@+id/passport_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/normal_padding"
