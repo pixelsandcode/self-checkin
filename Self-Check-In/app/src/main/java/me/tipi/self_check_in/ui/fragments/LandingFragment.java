@@ -11,6 +11,7 @@ package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,9 +27,11 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.ui.AppContainer;
+import me.tipi.self_check_in.ui.FindUserActivity;
+import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
-import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import timber.log.Timber;
 
@@ -81,7 +84,21 @@ public class LandingFragment extends Fragment {
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new SettingShouldShowEvent(false));
       bus.post(new BackShouldShowEvent(true));
-      bus.post(new RefreshShouldShowEvent(false));
+      //bus.post(new RefreshShouldShowEvent(false));
+
+      new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+          startOver();
+        }
+      }, ApiConstants.START_OVER_TIME);
+    }
+  }
+
+  private void startOver() {
+    if (getActivity() != null && getActivity() instanceof SignUpActivity) {
+      ((SignUpActivity)getActivity()).reset();
+    } else if (getActivity() != null){
+      ((FindUserActivity)getActivity()).reset();
     }
   }
 

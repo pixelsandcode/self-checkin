@@ -41,7 +41,7 @@ public class SignUpAdapter extends FragmentStatePagerAdapter {
   @Override public Fragment getItem(int position) {
     switch (position) {
       case 0:
-        return new MainFragment();
+        return MainFragment.newInstance(context);
       case 1:
         return LandingFragment.newInstance(context);
       case 2:

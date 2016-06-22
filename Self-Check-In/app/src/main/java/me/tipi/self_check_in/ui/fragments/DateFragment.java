@@ -11,6 +11,7 @@ package me.tipi.self_check_in.ui.fragments;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
@@ -42,12 +43,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.models.Guest;
+import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
-import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 
 public class DateFragment extends Fragment implements CalendarDatePickerDialogFragment.OnDateSetListener {
@@ -263,7 +265,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(true));
-      bus.post(new RefreshShouldShowEvent(true));
+      //bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
       isLogin = guest.user_key != null && !TextUtils.isEmpty(guest.user_key);
       if (isLogin) {
@@ -273,6 +275,12 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
         passportLayout.setVisibility(View.VISIBLE);
         passportLabel.setVisibility(View.VISIBLE);
       }
+
+      new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+          startOver();
+        }
+      }, ApiConstants.START_OVER_TIME);
     }
   }
 
@@ -283,5 +291,13 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
     dateString = String.format(Locale.US, "%d - %d - %d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
     checkInDateView.setText(dateString);
     checkInDate = calendar;
+  }
+
+  private void startOver() {
+    if (getActivity() != null && getActivity() instanceof SignUpActivity) {
+      ((SignUpActivity)getActivity()).reset();
+    } else if (getActivity() != null){
+      ((FindUserActivity)getActivity()).reset();
+    }
   }
 }

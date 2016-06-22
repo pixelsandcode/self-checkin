@@ -3,6 +3,7 @@ package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +26,9 @@ import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.LoginResponse;
+import me.tipi.self_check_in.ui.FindUserActivity;
+import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
-import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -92,13 +94,27 @@ public class HostelTermsFragment extends Fragment {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(false));
-      bus.post(new RefreshShouldShowEvent(true));
+      //bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
+
+      new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+          startOver();
+        }
+      }, ApiConstants.START_OVER_TIME);
     }
   }
 
   @OnClick(R.id.agree_btn)
   public void agreeClicked() {
     getActivity().onBackPressed();
+  }
+
+  private void startOver() {
+    if (getActivity() != null && getActivity() instanceof SignUpActivity) {
+      ((SignUpActivity)getActivity()).reset();
+    } else if (getActivity() != null){
+      ((FindUserActivity)getActivity()).reset();
+    }
   }
 }

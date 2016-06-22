@@ -10,10 +10,12 @@ package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -46,9 +48,9 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.ui.AppContainer;
+import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
-import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.util.FileHelper;
@@ -143,9 +145,15 @@ public class PassportFragment extends Fragment {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(true));
-      bus.post(new RefreshShouldShowEvent(true));
+      //bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
       setPassportImage();
+
+      new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+          startOver();
+        }
+      }, ApiConstants.START_OVER_TIME);
     }
   }
 
@@ -156,6 +164,7 @@ public class PassportFragment extends Fragment {
   public void onLaunchCamera() {
     // create Intent to take a picture and return control to the calling application
     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    intent.putExtra("android.intent.extras.CAMERA_FACING", Camera.CameraInfo.CAMERA_FACING_BACK);
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
 
     //folder stuff
@@ -191,6 +200,14 @@ public class PassportFragment extends Fragment {
     if (passportPath != null && passportPath.isSet() && passportPath.get() != null && passportView != null) {
       picasso.load(new File(passportPath.get())).resize(600, 400).centerCrop()
           .placeholder(R.drawable.avatar_button).into(passportView);
+    }
+  }
+
+  private void startOver() {
+    if (getActivity() != null && getActivity() instanceof SignUpActivity) {
+      ((SignUpActivity)getActivity()).reset();
+    } else if (getActivity() != null){
+      ((FindUserActivity)getActivity()).reset();
     }
   }
 

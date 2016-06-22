@@ -23,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -106,6 +107,7 @@ public class SignUpActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_sign_up);
+    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     SelfCheckInApp.get(this).inject(this);
     ButterKnife.bind(this);
 
@@ -247,6 +249,8 @@ public class SignUpActivity extends AppCompatActivity {
       if (viewPager.getCurrentItem() == 5) {
         viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+      } else if (viewPager.getCurrentItem() == 1 ){
+        reset();
       } else {
         viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
       }
@@ -320,6 +324,7 @@ public class SignUpActivity extends AppCompatActivity {
           guest.referenceCode != null ? guest.referenceCode : null,
           dateFormat.format(guest.checkInDate),
           dateFormat.format(guest.checkOutDate),
+          guest.gender,
           new Callback<ClaimResponse>() {
             @Override public void success(ClaimResponse apiResponse, Response response) {
               loading.dismiss();

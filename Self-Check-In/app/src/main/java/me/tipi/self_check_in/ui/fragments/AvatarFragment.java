@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -48,9 +49,9 @@ import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.AppContainer;
+import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
-import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.FileHelper;
@@ -121,7 +122,7 @@ public class AvatarFragment extends Fragment {
     if (requestCode == CAPTURE_IMAGE_REQUEST_CODE) {
       if (resultCode == SignUpActivity.RESULT_OK) {
         try {
-          File imageFile = FileHelper.getResizedFile(getActivity(), uriSavedImage,
+          File imageFile = FileHelper.getResizedFileRotated(getActivity(), uriSavedImage,
               Build.VERSION.SDK_INT, 500, 500);
           picasso.load(imageFile).resize(300, 300).centerCrop()
               .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
@@ -140,13 +141,19 @@ public class AvatarFragment extends Fragment {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(true));
-      bus.post(new RefreshShouldShowEvent(true));
+      //bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
       if (avatarPath.isSet() && avatarPath.get() != null && avatarView != null) {
         picasso.load(new File(avatarPath.get())).resize(300, 300).centerCrop()
             .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
             .placeholder(R.drawable.avatar_placeholder).into(avatarView);
       }
+
+      new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+          startOver();
+        }
+      }, ApiConstants.START_OVER_TIME);
     }
   }
 
@@ -180,6 +187,14 @@ public class AvatarFragment extends Fragment {
       ((SignUpActivity)getActivity()).changePage(6);
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie first!", Snackbar.LENGTH_LONG).show();
+    }
+  }
+
+  private void startOver() {
+    if (getActivity() != null && getActivity() instanceof SignUpActivity) {
+      ((SignUpActivity)getActivity()).reset();
+    } else if (getActivity() != null){
+      ((FindUserActivity)getActivity()).reset();
     }
   }
 }

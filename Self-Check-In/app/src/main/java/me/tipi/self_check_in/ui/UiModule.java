@@ -20,6 +20,7 @@ import me.tipi.self_check_in.ui.fragments.HostelTermsFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LandingFragment;
 import me.tipi.self_check_in.ui.fragments.LoginFragment;
+import me.tipi.self_check_in.ui.fragments.MainFragment;
 import me.tipi.self_check_in.ui.fragments.PassportFragment;
 import me.tipi.self_check_in.ui.fragments.QuestionFragment;
 import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
@@ -40,7 +41,8 @@ import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
         SuccessSignUpFragment.class,
         HomeTownAutoCompleteAdapter.class,
         HostelTermsFragment.class,
-        QuestionFragment.class
+        QuestionFragment.class,
+        MainFragment.class
     },
 
     complete = false,

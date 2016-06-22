@@ -19,6 +19,7 @@ public final class Guest {
   public String email;
   public String city;
   public String country;
+  public int gender;
   public Date dob;
   public String referenceCode;
   public String passportNumber;

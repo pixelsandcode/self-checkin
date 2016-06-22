@@ -16,8 +16,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.drivemode.android.typeface.TypefaceHelper;
@@ -51,6 +53,7 @@ import me.tipi.self_check_in.data.api.models.LoginResponse;
 import me.tipi.self_check_in.ui.adapters.LoginAdapter;
 import me.tipi.self_check_in.ui.events.AuthenticationFailedEvent;
 import me.tipi.self_check_in.ui.events.AuthenticationPassedEvent;
+import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.misc.ChangeSwipeViewPager;
@@ -71,6 +74,7 @@ public class FindUserActivity extends AppCompatActivity {
   @Inject TypefaceHelper typeface;
 
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
+  @Bind(R.id.backBtn) ImageView backButtonView;
 
   public LoginAdapter adapter;
   private MaterialDialog loading;
@@ -79,6 +83,7 @@ public class FindUserActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_find_user);
+    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     SelfCheckInApp.get(this).inject(this);
     ButterKnife.bind(this);
     Timber.d("Created");
@@ -217,6 +222,39 @@ public class FindUserActivity extends AppCompatActivity {
   @OnClick(R.id.resetBtn)
   public void startOver() {
     reset();
+  }
+
+  /**
+   * Back clicked.
+   */
+  @OnClick(R.id.backBtn)
+  public void backClicked() {
+    View view = this.getCurrentFocus();
+    if (view != null) {
+      InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    if (viewPager.getCurrentItem() == 0) {
+      // If the user is currently looking at the first step, allow the system to handle the
+      // Back button. This calls finish() on this activity and pops the back stack.
+      super.onBackPressed();
+    } else if(viewPager.getCurrentItem() == 4) {
+      reset();
+    } else {
+      // Otherwise, select the previous step.
+      viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+    }
+  }
+
+  /**
+   * On back shown.
+   *
+   * @param event the event
+   */
+  @Subscribe
+  public void onBackShown(BackShouldShowEvent event) {
+    backButtonView.setVisibility(event.show ? View.VISIBLE : View.GONE);
   }
 
   /**

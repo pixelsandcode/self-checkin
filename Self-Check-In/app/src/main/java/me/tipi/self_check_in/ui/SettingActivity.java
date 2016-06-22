@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.drivemode.android.typeface.TypefaceHelper;
@@ -44,6 +45,7 @@ public class SettingActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_setting);
+    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     SelfCheckInApp.get(this).inject(this);
     ButterKnife.bind(this);
 

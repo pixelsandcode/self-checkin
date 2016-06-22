@@ -85,6 +85,7 @@ public interface AuthenticationService {
       @Part("booking[reference_number]") String referenceNumber,
       @Part("booking[from]") String from,
       @Part("booking[to]") String to,
+      @Part("gender") int gender,
       Callback<ClaimResponse> cb);
 
   /**

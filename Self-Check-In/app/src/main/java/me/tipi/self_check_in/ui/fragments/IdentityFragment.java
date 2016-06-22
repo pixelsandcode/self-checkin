@@ -14,6 +14,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -31,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -57,15 +59,17 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.User;
+import me.tipi.self_check_in.ui.FindUserActivity;
+import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.EmailConflictEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
-import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.Strings;
@@ -91,6 +95,7 @@ public class IdentityFragment extends Fragment {
   @Bind(R.id.email_input_layout) TextInputLayout emailLayout;
   @Bind(R.id.birthday_input_layout) TextInputLayout birthdayLayout;
   @Bind(R.id.hometown_input_layout) TextInputLayout homeTownLayout;
+  @Bind(R.id.radioSex) RadioGroup radioGroup;
 
 
   public Date dob = null;
@@ -215,8 +220,14 @@ public class IdentityFragment extends Fragment {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(true));
-      bus.post(new RefreshShouldShowEvent(true));
+      //bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
+
+      new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+          startOver();
+        }
+      }, ApiConstants.START_OVER_TIME);
     }
   }
 
@@ -236,6 +247,12 @@ public class IdentityFragment extends Fragment {
 
       if (dob != null && !TextUtils.isEmpty(birthDayPickerView.getText().toString().trim())) {
         guest.dob = dob;
+      }
+
+      if (radioGroup.getCheckedRadioButtonId() == R.id.radioFemale) {
+        guest.gender = 0;
+      } else {
+        guest.gender = 1;
       }
 
       bus.post(new PagerChangeEvent(3));
@@ -427,5 +444,13 @@ public class IdentityFragment extends Fragment {
         }
       }
     });
+  }
+
+  private void startOver() {
+    if (getActivity() != null && getActivity() instanceof SignUpActivity) {
+      ((SignUpActivity)getActivity()).reset();
+    } else if (getActivity() != null){
+      ((FindUserActivity)getActivity()).reset();
+    }
   }
 }
