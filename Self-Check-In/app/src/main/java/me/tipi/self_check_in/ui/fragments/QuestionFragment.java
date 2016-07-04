@@ -56,6 +56,7 @@ public class QuestionFragment extends Fragment {
   @Bind(R.id.second_question) EditText secondQuestionView;
   @Bind(R.id.third_question) EditText thirdQuestionView;
   @Bind(R.id.forth_question) EditText forthQuestionView;
+  @Bind(R.id.country_question) EditText countryQuestion;
 
   private String guestKey;
   MaterialDialog thirdDialog;
@@ -190,6 +191,11 @@ public class QuestionFragment extends Fragment {
     String enteredSecond = secondQuestionView.getText().toString().trim();
     String enteredThird = thirdQuestionView.getText().toString().trim();
     String enteredFourth = forthQuestionView.getText().toString().trim();
+    String enteredCountry = countryQuestion.getText().toString().trim();
+
+    if (!TextUtils.isEmpty(enteredCountry)) {
+      note = note + String.format("Coming from %s. ", enteredCountry);
+    }
 
     if (!TextUtils.isEmpty(enteredFirst)) {
       note = note + String.format("Travelling to %s. ", enteredFirst);
