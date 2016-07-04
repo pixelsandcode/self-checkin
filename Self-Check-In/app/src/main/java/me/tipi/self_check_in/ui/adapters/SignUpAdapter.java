@@ -47,13 +47,13 @@ public class SignUpAdapter extends FragmentStatePagerAdapter {
       case 2:
         return IdentityFragment.newInstance(context);
       case 3:
-        return DateFragment.newInstance(context);
-      case 4:
-        return HostelTermsFragment.newInstance(context);
-      case 5:
-        return AvatarFragment.newInstance(context);
-      case 6:
         return PassportFragment.newInstance(context);
+      case 4:
+        return DateFragment.newInstance(context);
+      case 5:
+        return HostelTermsFragment.newInstance(context);
+      case 6:
+        return AvatarFragment.newInstance(context);
       case 7:
         return QuestionFragment.newInstance(context);
       case 8:

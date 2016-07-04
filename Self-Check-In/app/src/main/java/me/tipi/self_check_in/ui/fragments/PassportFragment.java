@@ -59,8 +59,8 @@ import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
+import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
-import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.util.ImageParameters;
 import me.tipi.self_check_in.util.ImageUtility;
 import timber.log.Timber;
@@ -249,18 +249,10 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   @Override
   public void onPictureTaken(byte[] data, Camera camera) {
     int rotation = getPhotoRotation();
-    //        Log.d(TAG, "normal orientation: " + orientation);
-    //        Log.d(TAG, "Rotate Picture by: " + rotation);
-    /*getFragmentManager()
-        .beginTransaction()
-        .replace(
-            R.id.fragment_container,
-            EditSavePhotoFragment.newInstance(data, rotation, mImageParameters.createCopy()),
-            EditSavePhotoFragment.TAG)
-        .addToBackStack(null)
-        .commit();*/
 
     rotatePicture(rotation, data);
+    passportView.setVisibility(View.VISIBLE);
+    mPreviewView.setVisibility(View.GONE);
     setSafeToTakePhoto(true);
   }
 
@@ -304,7 +296,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   public void continueToCheckIn() {
     if (passportPath.isSet()) {
       Timber.v(passportPath.get());
-      bus.post(new SubmitEvent());
+      bus.post(new PagerChangeEvent(4));
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please Scan your passport first!", Snackbar.LENGTH_LONG).show();
     }
@@ -376,7 +368,6 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
 
     // Nulls out callbacks, stops face detection
     mCamera.stopPreview();
-    mCamera= null;
   }
 
   private int getFrontCameraID() {
@@ -411,6 +402,9 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     passportView.setImageBitmap(bitmap);
     Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
     passportPath.set(photoUri.getPath());
+    scanButton.setVisibility(View.GONE);
+    retryButton.setVisibility(View.VISIBLE);
+    continueButton.setVisibility(View.VISIBLE);
   }
 
   /**
