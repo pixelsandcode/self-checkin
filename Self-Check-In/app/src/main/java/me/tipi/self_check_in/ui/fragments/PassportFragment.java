@@ -9,23 +9,33 @@
 package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.OrientationEventListener;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.drivemode.android.typeface.TypefaceHelper;
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
@@ -34,9 +44,7 @@ import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -53,14 +61,17 @@ import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
-import me.tipi.self_check_in.util.FileHelper;
+import me.tipi.self_check_in.util.ImageParameters;
+import me.tipi.self_check_in.util.ImageUtility;
 import timber.log.Timber;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PassportFragment extends Fragment {
-  public final static int CAPTURE_PASSPORT_REQUEST_CODE = 1035;
+@SuppressWarnings("deprecation")
+public class PassportFragment extends Fragment implements SurfaceHolder.Callback, Camera.PictureCallback {
+
+  public static final String TAG = PassportFragment.class.getSimpleName();
 
   @Inject Picasso picasso;
   @Inject AppContainer appContainer;
@@ -70,12 +81,23 @@ public class PassportFragment extends Fragment {
   @Inject TypefaceHelper typeface;
 
   @Bind(R.id.scan) ImageView passportView;
-  @Bind(R.id.title) TextView titleView;
   @Bind(R.id.retry_btn) Button retryButton;
   @Bind(R.id.continue_btn) Button continueButton;
-  @Bind(R.id.scan_btn) Button scanButton;
+  @Bind(R.id.surface_view) SurfaceView mPreviewView;
+  @Bind(R.id.scan_btn) ImageButton scanButton;
 
-  Uri uriSavedPassportImage;
+  MaterialDialog dialog;
+
+  private int mCameraID;
+  private String mFlashMode;
+  private Camera mCamera;
+  private SurfaceHolder mSurfaceHolder;
+
+  private boolean mIsSafeToTakePhoto = false;
+
+  private ImageParameters mImageParameters;
+
+  private CameraOrientationListener mOrientationListener;
 
   /**
    * Instantiates a new Passport fragment.
@@ -96,6 +118,13 @@ public class PassportFragment extends Fragment {
     return fragment;
   }
 
+  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    mCameraID = getBackCameraID();
+    mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;
+    mImageParameters = new ImageParameters();
+  }
+
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
@@ -103,12 +132,58 @@ public class PassportFragment extends Fragment {
     ButterKnife.bind(this, rootView);
     Timber.d("OnCreateView");
     typeface.setTypeface(container, getResources().getString(R.string.font_regular));
+
+    dialog = new MaterialDialog.Builder(getActivity())
+        .content("Saving Photo")
+        .cancelable(false)
+        .progress(true, 0)
+        .build();
     setPassportImage();
     return rootView;
   }
 
+  @Override
+  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    mOrientationListener.enable();
+    mPreviewView.getHolder().addCallback(PassportFragment.this);
+
+
+    mImageParameters.mIsPortrait =
+        getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+
+      ViewTreeObserver observer = mPreviewView.getViewTreeObserver();
+      observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+          mImageParameters.mPreviewWidth = mPreviewView.getWidth();
+          mImageParameters.mPreviewHeight = mPreviewView.getHeight();
+
+          mImageParameters.mCoverWidth = mImageParameters.mCoverHeight
+              = mImageParameters.calculateCoverWidthHeight();
+
+
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            mPreviewView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+          } else {
+            mPreviewView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+          }
+        }
+      });
+  }
+
+  @Override public void onAttach(Context context) {
+    super.onAttach(context);
+    mOrientationListener = new CameraOrientationListener(context);
+  }
+
   @Override public void onResume() {
     super.onResume();
+
+    if (mCamera == null) {
+      restartPreview();
+    }
+
     bus.register(this);
     tracker.setScreenName(getClass().getSimpleName());
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -119,33 +194,24 @@ public class PassportFragment extends Fragment {
     bus.unregister(this);
   }
 
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode == CAPTURE_PASSPORT_REQUEST_CODE) {
-      if (resultCode == SignUpActivity.RESULT_OK) {
-        try {
-          File imageFile = FileHelper.getResizedFile(getActivity(), uriSavedPassportImage,
-              Build.VERSION.SDK_INT, 500, 500);
-          picasso.load(imageFile).resize(600, 400).centerCrop()
-              .into(passportView);
-          // Save taken photo path to show later if not signed up
-          passportPath.set(imageFile.getPath());
-          scanButton.setVisibility(View.GONE);
-          retryButton.setVisibility(View.VISIBLE);
-          continueButton.setVisibility(View.VISIBLE);
-        } catch (Exception e) {
-          titleView.setText(getResources().getString(R.string.avatar_fail_titel));
-          picasso.load(R.drawable.fail_photo).into(passportView);
-        }
-      }
+  @Override public void onStop() {
+
+    mOrientationListener.disable();
+
+    // stop the preview
+    if (mCamera != null) {
+      stopCameraPreview();
+      mCamera.release();
+      mCamera = null;
     }
+
+    super.onStop();
   }
 
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(true));
-      //bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
       setPassportImage();
 
@@ -157,27 +223,78 @@ public class PassportFragment extends Fragment {
     }
   }
 
+  @Override
+  public void surfaceCreated(SurfaceHolder holder) {
+    mSurfaceHolder = holder;
+
+    getCamera(mCameraID);
+    startCameraPreview();
+  }
+
+  @Override
+  public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+  }
+
+  @Override
+  public void surfaceDestroyed(SurfaceHolder holder) {
+    // The surface is destroyed with the visibility of the SurfaceView is set to View.Invisible
+  }
+
+  /**
+   * A picture has been taken
+   * @param data
+   * @param camera
+   */
+  @Override
+  public void onPictureTaken(byte[] data, Camera camera) {
+    int rotation = getPhotoRotation();
+    //        Log.d(TAG, "normal orientation: " + orientation);
+    //        Log.d(TAG, "Rotate Picture by: " + rotation);
+    /*getFragmentManager()
+        .beginTransaction()
+        .replace(
+            R.id.fragment_container,
+            EditSavePhotoFragment.newInstance(data, rotation, mImageParameters.createCopy()),
+            EditSavePhotoFragment.TAG)
+        .addToBackStack(null)
+        .commit();*/
+
+    rotatePicture(rotation, data);
+    setSafeToTakePhoto(true);
+  }
+
+  private int getPhotoRotation() {
+    int rotation;
+    int orientation = mOrientationListener.getRememberedNormalOrientation();
+    Camera.CameraInfo info = new Camera.CameraInfo();
+    Camera.getCameraInfo(mCameraID, info);
+
+    if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+      rotation = (info.orientation - orientation + 360) % 360;
+    } else {
+      rotation = (info.orientation + orientation) % 360;
+    }
+
+    return rotation;
+  }
+
   /**
    * On launch camera.
    */
-  @OnClick({R.id.scan, R.id.scan_btn, R.id.retry_btn})
-  public void onLaunchCamera() {
-    // create Intent to take a picture and return control to the calling application
-    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    intent.putExtra("android.intent.extras.CAMERA_FACING", Camera.CameraInfo.CAMERA_FACING_BACK);
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-
-    //folder stuff
-    File imagesFolder = new File(Environment.getExternalStorageDirectory(), "GuestPassports");
-    imagesFolder.mkdirs();
-
-    File image = new File(imagesFolder, "scan_" + timeStamp + ".jpg");
-    uriSavedPassportImage = Uri.fromFile(image);
-
-    intent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedPassportImage);
-    // Start the image capture intent to take photo
-    startActivityForResult(intent, CAPTURE_PASSPORT_REQUEST_CODE);
+  @OnClick({R.id.scan_btn})
+  public void onTakePhoto() {
+    takePicture();
     tracker.send(new HitBuilders.EventBuilder("Image", "Take passport").build());
+  }
+
+  @OnClick({R.id.retry_btn})
+  public void retryTapped() {
+    scanButton.setVisibility(View.VISIBLE);
+    retryButton.setVisibility(View.GONE);
+    continueButton.setVisibility(View.GONE);
+    mPreviewView.setVisibility(View.VISIBLE);
+    passportView.setImageResource(R.drawable.passport_guide);
   }
 
   /**
@@ -196,10 +313,10 @@ public class PassportFragment extends Fragment {
   /**
    * Sets passport image.
    */
+  @SuppressWarnings("ConstantConditions")
   private void setPassportImage() {
     if (passportPath != null && passportPath.isSet() && passportPath.get() != null && passportView != null) {
-      picasso.load(new File(passportPath.get())).resize(600, 400).centerCrop()
-          .placeholder(R.drawable.avatar_button).into(passportView);
+      picasso.load(new File(passportPath.get())).resize(600, 400).centerCrop().into(passportView);
     }
   }
 
@@ -211,4 +328,221 @@ public class PassportFragment extends Fragment {
     }
   }
 
+  private void getCamera(int cameraID) {
+    try {
+      mCamera = Camera.open(cameraID);
+    } catch (Exception e) {
+      Log.d(TAG, "Can't open camera with id " + cameraID);
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Restart the camera preview
+   */
+  private void restartPreview() {
+    if (mCamera != null) {
+      stopCameraPreview();
+      mCamera.release();
+      mCamera = null;
+    }
+
+    getCamera(mCameraID);
+    startCameraPreview();
+  }
+
+  /**
+   * Start the camera preview
+   */
+  private void startCameraPreview() {
+    determineDisplayOrientation();
+
+    try {
+      mCamera.setPreviewDisplay(mSurfaceHolder);
+      mCamera.startPreview();
+
+      setSafeToTakePhoto(true);
+    } catch (IOException e) {
+      Log.d(TAG, "Can't start camera preview due to IOException " + e);
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Stop the camera preview
+   */
+  private void stopCameraPreview() {
+    setSafeToTakePhoto(false);
+
+    // Nulls out callbacks, stops face detection
+    mCamera.stopPreview();
+    mCamera= null;
+  }
+
+  private int getFrontCameraID() {
+    PackageManager pm = getActivity().getPackageManager();
+    if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
+      return Camera.CameraInfo.CAMERA_FACING_FRONT;
+    }
+
+    return 0;
+  }
+
+  private int getBackCameraID() {
+    return Camera.CameraInfo.CAMERA_FACING_BACK;
+  }
+
+  private void rotatePicture(int rotation, byte[] data) {
+    Bitmap bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
+//        Log.d(TAG, "original bitmap width " + bitmap.getWidth() + " height " + bitmap.getHeight());
+    if (rotation != 0) {
+      Bitmap oldBitmap = bitmap;
+
+      Matrix matrix = new Matrix();
+      matrix.postRotate(rotation);
+
+      bitmap = Bitmap.createBitmap(
+          oldBitmap, 0, 0, oldBitmap.getWidth(), oldBitmap.getHeight(), matrix, false
+      );
+
+      oldBitmap.recycle();
+    }
+
+    passportView.setImageBitmap(bitmap);
+    Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
+    passportPath.set(photoUri.getPath());
+  }
+
+  /**
+   * Determine the current display orientation and rotate the camera preview
+   * accordingly
+   */
+  private void determineDisplayOrientation() {
+    Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+    Camera.getCameraInfo(mCameraID, cameraInfo);
+
+    // Clockwise rotation needed to align the window display to the natural position
+    int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+    int degrees = 0;
+
+    switch (rotation) {
+      case Surface.ROTATION_0: {
+        degrees = 0;
+        break;
+      }
+      case Surface.ROTATION_90: {
+        degrees = 90;
+        break;
+      }
+      case Surface.ROTATION_180: {
+        degrees = 180;
+        break;
+      }
+      case Surface.ROTATION_270: {
+        degrees = 270;
+        break;
+      }
+    }
+
+    int displayOrientation;
+
+    // CameraInfo.Orientation is the angle relative to the natural position of the device
+    // in clockwise rotation (angle that is rotated clockwise from the natural position)
+    if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+      // Orientation is angle of rotation when facing the camera for
+      // the camera image to match the natural orientation of the device
+      displayOrientation = (cameraInfo.orientation + degrees) % 360;
+      displayOrientation = (360 - displayOrientation) % 360;
+    } else {
+      displayOrientation = (cameraInfo.orientation - degrees + 360) % 360;
+    }
+
+    mImageParameters.mDisplayOrientation = displayOrientation;
+    mImageParameters.mLayoutOrientation = degrees;
+
+    mCamera.setDisplayOrientation(mImageParameters.mDisplayOrientation);
+  }
+
+  /**
+   * Take a picture
+   */
+  private void takePicture() {
+
+    if (mIsSafeToTakePhoto) {
+      setSafeToTakePhoto(false);
+
+      mOrientationListener.rememberOrientation();
+
+      // Shutter callback occurs after the image is captured. This can
+      // be used to trigger a sound to let the user know that image is taken
+      Camera.ShutterCallback shutterCallback = null;
+
+      // Raw callback occurs when the raw image data is available
+      Camera.PictureCallback raw = null;
+
+      // postView callback occurs when a scaled, fully processed
+      // postView image is available.
+      Camera.PictureCallback postView = null;
+
+      // jpeg callback occurs when the compressed image is available
+      mCamera.takePicture(shutterCallback, raw, postView, this);
+    }
+  }
+
+  private void setSafeToTakePhoto(final boolean isSafeToTakePhoto) {
+    mIsSafeToTakePhoto = isSafeToTakePhoto;
+  }
+
+  /**
+   * When orientation changes, onOrientationChanged(int) of the listener will be called
+   */
+  private static class CameraOrientationListener extends OrientationEventListener {
+
+    private int mCurrentNormalizedOrientation;
+    private int mRememberedNormalOrientation;
+
+    public CameraOrientationListener(Context context) {
+      super(context, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    public void onOrientationChanged(int orientation) {
+      if (orientation != ORIENTATION_UNKNOWN) {
+        mCurrentNormalizedOrientation = normalize(orientation);
+      }
+    }
+
+    /**
+     * @param degrees Amount of clockwise rotation from the device's natural position
+     * @return Normalized degrees to just 0, 90, 180, 270
+     */
+    private int normalize(int degrees) {
+      if (degrees > 315 || degrees <= 45) {
+        return 0;
+      }
+
+      if (degrees > 45 && degrees <= 135) {
+        return 90;
+      }
+
+      if (degrees > 135 && degrees <= 225) {
+        return 180;
+      }
+
+      if (degrees > 225 && degrees <= 315) {
+        return 270;
+      }
+
+      throw new RuntimeException("The physics as we know them are no more. Watch out for anomalies.");
+    }
+
+    public void rememberOrientation() {
+      mRememberedNormalOrientation = mCurrentNormalizedOrientation;
+    }
+
+    public int getRememberedNormalOrientation() {
+      rememberOrientation();
+      return mRememberedNormalOrientation;
+    }
+  }
 }

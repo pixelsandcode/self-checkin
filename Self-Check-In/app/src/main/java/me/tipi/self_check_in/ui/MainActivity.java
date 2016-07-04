@@ -27,6 +27,7 @@ import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -85,16 +86,20 @@ public class MainActivity extends AppCompatActivity {
     Timber.d("Created");
   }
 
-  @Override protected void onPause() {
-    super.onPause();
-    Timber.d("Paused");
-  }
-
   @Override protected void onResume() {
     super.onResume();
     Timber.d("Resumed");
     tracker.setScreenName(getResources().getString(R.string.hostel_login));
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
+  }
+
+  @Override protected void onPause() {
+    super.onPause();
+    Timber.d("Paused");
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
   }
 
   @Override public boolean dispatchTouchEvent(MotionEvent ev) {

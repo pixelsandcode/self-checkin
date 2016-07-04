@@ -18,13 +18,29 @@
       android:textColor="@color/main_text"
       android:textSize="@dimen/font_extra_large"/>
 
+  <SurfaceView
+      android:id="@+id/surface_view"
+      android:layout_width="600dp"
+      android:layout_height="600dp"
+      android:layout_centerInParent="true"/>
+
   <ImageView
       android:id="@+id/avatar"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_width="300dp"
+      android:layout_height="300dp"
       android:layout_centerInParent="true"
       android:scaleType="centerCrop"
-      android:src="@drawable/avatar_button"/>
+      android:src="@drawable/avatar_guide"/>
+
+  <ImageButton
+      android:id="@+id/capture"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:background="@drawable/capture"
+      android:layout_marginBottom="@dimen/second_key_line"
+      android:textColor="@color/colorAccent"
+      android:layout_centerHorizontal="true"/>
 
   <Button
       android:id="@+id/continue_btn"
@@ -36,9 +52,10 @@
       android:layout_marginLeft="@dimen/proceed_button_margin"
       android:layout_marginRight="@dimen/proceed_button_margin"
       android:layout_marginBottom="@dimen/second_key_line"
-      android:text="@string/camera"
+      android:text="@string/next"
       android:textColor="@color/colorAccent"
       android:textSize="@dimen/font_normal"
-      android:textStyle="bold"/>
+      android:textStyle="bold"
+      android:visibility="gone"/>
 
 </RelativeLayout>

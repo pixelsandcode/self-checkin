@@ -1,6 +1,6 @@
 <resources>
-  <string name="app_name">Tipi Self-Check-In</string>
-  <string name="app_name_short">Self Check-in</string>
+  <string name="app_name">MAD Kiosk</string>
+  <string name="app_name_short">MAD Kiosk</string>
   <string name="app_description">Mobile Check-in for Travellers</string>
 
   <string name="login_title">Log-in to Your Tipi account …</string>
@@ -92,6 +92,7 @@
   <string name="terms"><![CDATA[Terms & Conditions]]></string>
   <string name="about_you">Tell us about you</string>
   <string name="next_travel">Where are you travelling next?</string>
+  <string name="previous_travel">Which country you have just come from?</string>
   <string name="how_long">How long you are staying in the country</string>
   <string name="visit_farser">Are you visiting Fraser island?</string>
   <string name="need_job">Are you looking for a job?</string>

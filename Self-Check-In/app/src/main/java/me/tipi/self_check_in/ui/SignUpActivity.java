@@ -36,6 +36,9 @@ import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.UpdateManager;
+
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -130,6 +133,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Override protected void onResume() {
     super.onResume();
     Timber.d("Resumed");
+    checkForCrashes();
     bus.register(this);
     tracker.setScreenName(getResources().getString(R.string.guest_landing));
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -139,6 +143,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Override protected void onPause() {
     super.onPause();
     Timber.d("Paused");
+    unregisterManagers();
     bus.unregister(this);
   }
 
@@ -161,6 +166,7 @@ public class SignUpActivity extends AppCompatActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
+    unregisterManagers();
     avatarPath.delete();
     passportPath.delete();
     if (guest != null) {
@@ -508,5 +514,18 @@ public class SignUpActivity extends AppCompatActivity {
     Intent intent = getIntent();
     finish();
     startActivity(intent);
+  }
+
+  private void checkForCrashes() {
+    CrashManager.register(this);
+  }
+
+  private void checkForUpdates() {
+    // Remove this for store builds!
+    UpdateManager.register(this);
+  }
+
+  private void unregisterManagers() {
+    UpdateManager.unregister();
   }
 }

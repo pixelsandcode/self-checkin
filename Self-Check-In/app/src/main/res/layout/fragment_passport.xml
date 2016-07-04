@@ -18,28 +18,28 @@
       android:textColor="@color/main_text"
       android:textSize="@dimen/font_extra_large"/>
 
+  <SurfaceView
+      android:id="@+id/surface_view"
+      android:layout_width="600dp"
+      android:layout_height="400dp"
+      android:layout_centerInParent="true"/>
+
   <ImageView
       android:id="@+id/scan"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_width="600dp"
+      android:layout_height="400dp"
       android:layout_centerInParent="true"
       android:scaleType="centerCrop"
-      android:src="@drawable/scan_passport_guide"/>
+      android:src="@drawable/passport_guide"/>
 
-  <Button
+  <ImageButton
       android:id="@+id/scan_btn"
-      android:layout_width="match_parent"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
-      android:background="@drawable/next_button_bg"
-      android:padding="@dimen/first_key_line"
-      android:layout_marginLeft="@dimen/proceed_button_margin"
-      android:layout_marginRight="@dimen/proceed_button_margin"
+      android:layout_centerHorizontal="true"
       android:layout_marginBottom="@dimen/second_key_line"
-      android:text="@string/scan"
-      android:textColor="@color/colorAccent"
-      android:textSize="@dimen/font_normal"
-      android:textStyle="bold"/>
+      android:background="@drawable/capture"/>
 
   <Button
       android:id="@+id/continue_btn"

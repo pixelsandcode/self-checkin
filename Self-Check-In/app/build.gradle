@@ -18,7 +18,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
-        setProperty("archivesBaseName", "base-check-in-$versionName")
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: HOCKEY_ID]
+        setProperty("archivesBaseName", "MAD-Kiosk-$versionName")
     }
     buildTypes {
         debug {
@@ -75,7 +76,6 @@ dependencies {
         transitive = true
     }
 
-
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.0'
     compile 'com.code-troopers.betterpickers:library:2.5.5'
@@ -91,6 +91,7 @@ dependencies {
     compile 'com.jakewharton.byteunits:byteunits:0.9.1'
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.3'
     compile 'com.f2prateek.rx.preferences:rx-preferences:1.0.0'
+    compile 'net.hockeyapp.android:HockeySDK:4.0.1'
 }
 
 repositories {
