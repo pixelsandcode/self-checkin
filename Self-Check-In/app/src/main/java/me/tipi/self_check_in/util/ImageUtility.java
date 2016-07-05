@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -58,12 +59,6 @@ public class ImageUtility {
     }
 
     public static Uri savePassportPicture(Context context, Bitmap bitmap) {
-        int cropHeight;
-        /*if (bitmap.getHeight() > bitmap.getWidth()) cropHeight = bitmap.getWidth();
-        else                                        cropHeight = bitmap.getHeight();*/
-
-        //bitmap = ThumbnailUtils.extractThumbnail(bitmap, bitmap.getWidth(), bitmap.getHeight(), ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-
         File mediaStorageDir = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 context.getString(R.string.app_name)
@@ -104,10 +99,10 @@ public class ImageUtility {
 
   public static Uri savePicture(Context context, Bitmap bitmap) {
     int cropHeight;
-        /*if (bitmap.getHeight() > bitmap.getWidth()) cropHeight = bitmap.getWidth();
-        else                                        cropHeight = bitmap.getHeight();*/
+        if (bitmap.getHeight() > bitmap.getWidth()) cropHeight = bitmap.getWidth();
+        else                                        cropHeight = bitmap.getHeight();
 
-    //bitmap = ThumbnailUtils.extractThumbnail(bitmap, bitmap.getWidth(), bitmap.getHeight(), ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+    bitmap = ThumbnailUtils.extractThumbnail(bitmap, cropHeight, cropHeight);
 
     File mediaStorageDir = new File(
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),

@@ -68,7 +68,7 @@ public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements
       protected FilterResults performFiltering(final CharSequence constraint) {
         final FilterResults filterResults = new FilterResults();
         if (constraint != null) {
-          if (constraint.toString().trim().length() > 2) {
+          if (constraint.toString().trim().length() > 1) {
             authenticationService.getSuggestedCountries(constraint.toString(), new Callback<CountryResponse>() {
               @Override public void success(CountryResponse countryResponse, Response response) {
                 HomeTownAutoCompleteAdapter.this.countries = countryResponse.data;

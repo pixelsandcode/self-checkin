@@ -61,6 +61,7 @@ import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
+import me.tipi.self_check_in.util.FileHelper;
 import me.tipi.self_check_in.util.ImageParameters;
 import me.tipi.self_check_in.util.ImageUtility;
 import timber.log.Timber;
@@ -194,20 +195,6 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     bus.unregister(this);
   }
 
-  @Override public void onStop() {
-
-    mOrientationListener.disable();
-
-    // stop the preview
-    if (mCamera != null) {
-      stopCameraPreview();
-      mCamera.release();
-      mCamera = null;
-    }
-
-    super.onStop();
-  }
-
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
@@ -220,6 +207,15 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
           startOver();
         }
       }, ApiConstants.START_OVER_TIME);
+    } else if (getActivity() != null && !isVisibleToUser) {
+      mOrientationListener.disable();
+
+      // stop the preview
+      if (mCamera != null) {
+        stopCameraPreview();
+        mCamera.release();
+        mCamera = null;
+      }
     }
   }
 
@@ -401,7 +397,8 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
 
     passportView.setImageBitmap(bitmap);
     Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
-    passportPath.set(photoUri.getPath());
+    File saved = FileHelper.getResizedFile(getActivity(), photoUri, Build.VERSION.SDK_INT, 600, 600);
+    passportPath.set(saved.getPath());
     scanButton.setVisibility(View.GONE);
     retryButton.setVisibility(View.VISIBLE);
     continueButton.setVisibility(View.VISIBLE);

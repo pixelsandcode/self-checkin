@@ -21,7 +21,7 @@ public class ApiConstants {
   // Download Page
   public static final String BASE_DOWNLOAD_PAGE = "https://github.com/pixelsandcode/self-checkin/releases";
 
-  public static final int START_OVER_TIME = 300000;
+  public static final int START_OVER_TIME = 420000;
 
   // Routes
   public static final String LOGIN = "/dashboard/login";

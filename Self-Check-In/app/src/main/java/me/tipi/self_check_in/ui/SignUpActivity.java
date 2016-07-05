@@ -252,7 +252,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     if (viewPager.getCurrentItem() != 0) {
-      if (viewPager.getCurrentItem() == 5) {
+      if (viewPager.getCurrentItem() == 6) {
         viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
       } else if (viewPager.getCurrentItem() == 1 ){

@@ -68,6 +68,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
   @Bind(R.id.passport_input_layout) TextInputLayout passportLayout;
   @Bind(R.id.terms) TextView termsTextView;
   @Bind(R.id.passport_label) TextView passportLabel;
+  @Bind(R.id.reference_label) TextView referenceLabel;
 
   public Calendar checkInDate = null;
   public String dateString;
@@ -103,6 +104,9 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
     if (typeface != null) {
       typeface.setTypeface(container, getResources().getString(R.string.font_regular));
     }
+
+    /*String text = "<font color=#313A46>REFERENCE NUMBER Number</font> <font color=#F33258>(OPTIONAL)</font>";
+    referenceLabel.setText(Html.fromHtml(text));*/
 
     // Check-in date date picker
     checkInDateView.setInputType(InputType.TYPE_NULL);

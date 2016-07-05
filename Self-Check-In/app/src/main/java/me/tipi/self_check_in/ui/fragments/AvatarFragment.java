@@ -9,27 +9,28 @@
 package me.tipi.self_check_in.ui.fragments;
 
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
-import android.media.ExifInterface;
-import android.media.MediaScannerConnection;
+import android.hardware.SensorManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -43,8 +44,7 @@ import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Calendar;
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -60,10 +60,17 @@ import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
+import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
+import me.tipi.self_check_in.util.FileHelper;
+import me.tipi.self_check_in.util.ImageParameters;
+import me.tipi.self_check_in.util.ImageUtility;
 import timber.log.Timber;
 
-@SuppressWarnings("deprecation") public class AvatarFragment extends Fragment implements SurfaceHolder.Callback {
+@SuppressWarnings("deprecation")
+public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, Camera.PictureCallback {
+
+  public static final String TAG = PassportFragment.class.getSimpleName();
 
   @Inject Picasso picasso;
   @Inject AppContainer appContainer;
@@ -73,19 +80,22 @@ import timber.log.Timber;
   @Inject TypefaceHelper typeface;
 
   @Bind(R.id.avatar) ImageView avatarView;
-  @Bind(R.id.surface_view) SurfaceView preview;
+  @Bind(R.id.surface_view) SurfaceView mPreviewView;
   @Bind(R.id.continue_btn) Button continueButton;
   @Bind(R.id.capture) ImageButton captureButton;
 
-  private SurfaceHolder previewHolder = null;
-  private Camera camera = null;
-  private boolean inPreview = false;
   MaterialDialog dialog;
-  int cameraId;
-  File imageFileFolder = null;
-  File imageFileName = null;
-  MediaScannerConnection msConn;
-  Bitmap bm;
+
+  private int mCameraID;
+  private String mFlashMode;
+  private Camera mCamera;
+  private SurfaceHolder mSurfaceHolder;
+
+  private boolean mIsSafeToTakePhoto = false;
+
+  private ImageParameters mImageParameters;
+
+  private CameraOrientationListener mOrientationListener;
 
   /**
    * Instantiates a new Avatar fragment.
@@ -106,6 +116,13 @@ import timber.log.Timber;
     return fragment;
   }
 
+  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    mCameraID = getFrontCameraID();
+    mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;
+    mImageParameters = new ImageParameters();
+  }
+
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
@@ -113,13 +130,6 @@ import timber.log.Timber;
     ButterKnife.bind(this, rootView);
     Timber.d("OnCreateView");
     typeface.setTypeface(container, getResources().getString(R.string.font_regular));
-    previewHolder = preview.getHolder();
-    previewHolder.addCallback(this);
-    previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
-    previewHolder.setFixedSize(getActivity().getWindow().getWindowManager()
-        .getDefaultDisplay().getWidth(), getActivity().getWindow().getWindowManager()
-        .getDefaultDisplay().getHeight());
 
     dialog = new MaterialDialog.Builder(getActivity())
         .content("Saving Photo")
@@ -130,20 +140,47 @@ import timber.log.Timber;
     return rootView;
   }
 
+  @Override
+  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    mOrientationListener.enable();
+    mPreviewView.getHolder().addCallback(AvatarFragment.this);
+
+
+    mImageParameters.mIsPortrait =
+        getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+
+    ViewTreeObserver observer = mPreviewView.getViewTreeObserver();
+    observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+      @Override
+      public void onGlobalLayout() {
+        mImageParameters.mPreviewWidth = mPreviewView.getWidth();
+        mImageParameters.mPreviewHeight = mPreviewView.getHeight();
+
+        mImageParameters.mCoverWidth = mImageParameters.mCoverHeight
+            = mImageParameters.calculateCoverWidthHeight();
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+          mPreviewView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        } else {
+          mPreviewView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        }
+      }
+    });
+  }
+
+  @Override public void onAttach(Context context) {
+    super.onAttach(context);
+    mOrientationListener = new CameraOrientationListener(context);
+  }
+
   @Override public void onResume() {
     super.onResume();
 
-    // Camera
-    for(int i=0; i<Camera.getNumberOfCameras(); i++){
-      Camera.CameraInfo info = new Camera.CameraInfo();
-      Camera.getCameraInfo(i, info);
-      if(info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT){
-        cameraId = i;
-        break;
-      }
+    if (mCamera == null) {
+      restartPreview();
     }
-
-    camera = Camera.open(cameraId);
 
     bus.register(this);
     tracker.setScreenName(getClass().getSimpleName());
@@ -151,51 +188,74 @@ import timber.log.Timber;
   }
 
   @Override public void onPause() {
-    if (inPreview) {
-      camera.stopPreview();
-    }
-
-    camera.release();
-    camera = null;
-    inPreview = false;
     super.onPause();
     bus.unregister(this);
     Timber.d("AVATAR : %S", "BUS UNREGISTERED");
   }
 
-  @Override public void surfaceCreated(SurfaceHolder holder) {
-    try {
-      camera.setPreviewDisplay(previewHolder);
-    } catch (Throwable t) {
-      Timber.e(t, "PreviewDemo %s", "Exception in setPreviewDisplay()");
+  @Override public void onStop() {
+
+    mOrientationListener.disable();
+
+    // stop the preview
+    if (mCamera != null) {
+      stopCameraPreview();
+      mCamera.release();
+      mCamera = null;
     }
+
+    super.onStop();
   }
 
-  @Override public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-    Camera.Parameters parameters = camera.getParameters();
-    Camera.Size size = getBestPreviewSize(width, height, parameters);
+  @Override
+  public void surfaceCreated(SurfaceHolder holder) {
+    mSurfaceHolder = holder;
 
-    if (size != null) {
-      parameters.setPreviewSize(size.width, size.height);
-      camera.setParameters(parameters);
-      camera.startPreview();
-      setCameraDisplayOrientation(getActivity(), cameraId, camera);
-      inPreview = true;
-    }
+    getCamera(mCameraID);
+    startCameraPreview();
   }
 
-  @Override public void surfaceDestroyed(SurfaceHolder holder) {
+  @Override
+  public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
   }
 
-  Camera.PictureCallback photoCallback = new Camera.PictureCallback() {
-    public void onPictureTaken(final byte[] data, final Camera camera) {
-      dialog.show();
-      onPictureTake(data, camera);
-    }
-  };
+  @Override
+  public void surfaceDestroyed(SurfaceHolder holder) {
+    // The surface is destroyed with the visibility of the SurfaceView is set to View.Invisible
+  }
 
-  public void onPictureTake(byte[] data, Camera camera) {
+  /**
+   * A picture has been taken
+   * @param data
+   * @param camera
+   */
+  @Override
+  public void onPictureTaken(byte[] data, Camera camera) {
+    int rotation = getPhotoRotation();
+
+    rotatePicture(rotation, data);
+    avatarView.setVisibility(View.VISIBLE);
+    mPreviewView.setVisibility(View.GONE);
+    setSafeToTakePhoto(true);
+  }
+
+  private int getPhotoRotation() {
+    int rotation;
+    int orientation = mOrientationListener.getRememberedNormalOrientation();
+    Camera.CameraInfo info = new Camera.CameraInfo();
+    Camera.getCameraInfo(mCameraID, info);
+
+    if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+      rotation = (info.orientation - orientation + 360) % 360;
+    } else {
+      rotation = (info.orientation + orientation) % 360;
+    }
+
+    return rotation;
+  }
+
+  /*public void onPictureTake(byte[] data, Camera camera) {
 
     if (data != null) {
       bm = BitmapFactory.decodeByteArray(data, 0, data.length);
@@ -204,7 +264,7 @@ import timber.log.Timber;
 
     avatarView.setVisibility(View.VISIBLE);
     preview.setVisibility(View.GONE);
-  }
+  }*/
 
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
@@ -231,10 +291,76 @@ import timber.log.Timber;
    */
   @OnClick({ R.id.avatar, R.id.capture})
   public void onLaunchCamera() {
-    camera.takePicture(null, null, photoCallback);
-    inPreview = false;
+    takePicture();
 
     tracker.send(new HitBuilders.EventBuilder("Image", "Take avatar").build());
+  }
+
+  private void getCamera(int cameraID) {
+    try {
+      mCamera = Camera.open(cameraID);
+    } catch (Exception e) {
+      Log.d(TAG, "Can't open camera with id " + cameraID);
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Restart the camera preview
+   */
+  private void restartPreview() {
+    if (mCamera != null) {
+      stopCameraPreview();
+      mCamera.release();
+      mCamera = null;
+    }
+
+    getCamera(mCameraID);
+    startCameraPreview();
+  }
+
+  /**
+   * Start the camera preview
+   */
+  private void startCameraPreview() {
+    determineDisplayOrientation();
+
+    try {
+      mCamera.setPreviewDisplay(mSurfaceHolder);
+      mCamera.startPreview();
+
+      setSafeToTakePhoto(true);
+    } catch (IOException e) {
+      Log.d(TAG, "Can't start camera preview due to IOException " + e);
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Stop the camera preview
+   */
+  private void stopCameraPreview() {
+    setSafeToTakePhoto(false);
+
+    // Nulls out callbacks, stops face detection
+    mCamera.stopPreview();
+  }
+
+  private int getFrontCameraID() {
+    for(int i = 0; i < Camera.getNumberOfCameras(); i++){
+      Camera.CameraInfo info = new Camera.CameraInfo();
+      Camera.getCameraInfo(i, info);
+      if(info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT){
+        mCameraID = i;
+        break;
+      }
+    }
+
+    return mCameraID;
+  }
+
+  private int getBackCameraID() {
+    return Camera.CameraInfo.CAMERA_FACING_BACK;
   }
 
   @OnClick(R.id.continue_btn)
@@ -245,7 +371,7 @@ import timber.log.Timber;
   public void continueToIdentity() {
     if (avatarPath.isSet()) {
       Timber.v(avatarPath.get());
-      ((SignUpActivity)getActivity()).changePage(6);
+      bus.post(new SubmitEvent());
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie first!", Snackbar.LENGTH_LONG).show();
     }
@@ -277,127 +403,159 @@ import timber.log.Timber;
     return (result);
   }
 
-  public static void setCameraDisplayOrientation(Activity activity, int cameraId, android.hardware.Camera camera) {
-    android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
-    android.hardware.Camera.getCameraInfo(cameraId, info);
-    int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-    int degrees = 0;
-    switch (rotation) {
-      case Surface.ROTATION_0:
-        degrees = 0;
-        break;
-      case Surface.ROTATION_90:
-        degrees = 90;
-        break;
-      case Surface.ROTATION_180:
-        degrees = 180;
-        break;
-      case Surface.ROTATION_270:
-        degrees = 270;
-        break;
+  private void rotatePicture(int rotation, byte[] data) {
+    Bitmap bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
+//        Log.d(TAG, "original bitmap width " + bitmap.getWidth() + " height " + bitmap.getHeight());
+    if (rotation != 0) {
+      Bitmap oldBitmap = bitmap;
+
+      Matrix matrix = new Matrix();
+      matrix.postRotate(rotation);
+
+      bitmap = Bitmap.createBitmap(
+          oldBitmap, 0, 0, oldBitmap.getWidth(), oldBitmap.getHeight(), matrix, false
+      );
+
+      oldBitmap.recycle();
     }
 
-    int result;
-    if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-      result = (info.orientation + degrees) % 360;
-      result = (360 - result) % 360; // compensate the mirror
-    } else { // back-facing
-      result = (info.orientation - degrees + 360) % 360;
-    }
-    camera.setDisplayOrientation(result);
-  }
-
-  public void savePhoto() {
-    // Create folder
-    imageFileFolder = new File(Environment.getExternalStorageDirectory(), "GuestAvatars");
-    imageFileFolder.mkdir();
-    FileOutputStream out;
-    Calendar c = Calendar.getInstance();
-    String date = fromInt(c.get(Calendar.MONTH)) + fromInt(c.get(Calendar.DAY_OF_MONTH)) + fromInt(c.get(Calendar.YEAR)) + fromInt(c.get(Calendar.HOUR_OF_DAY)) + fromInt(c.get(Calendar.MINUTE)) + fromInt(c.get(Calendar.SECOND));
-    imageFileName = new File(imageFileFolder, date + ".jpg");
-
-    try {
-      out = new FileOutputStream(imageFileName);
-      ExifInterface exif=new ExifInterface(imageFileName.toString());
-
-      // Rotate
-      Log.d("EXIF value", exif.getAttribute(ExifInterface.TAG_ORIENTATION));
-      if(exif.getAttribute(ExifInterface.TAG_ORIENTATION).equalsIgnoreCase("6")){
-        bm= rotate(bm, 90);
-      } else if(exif.getAttribute(ExifInterface.TAG_ORIENTATION).equalsIgnoreCase("8")){
-        bm= rotate(bm, 270);
-      } else if(exif.getAttribute(ExifInterface.TAG_ORIENTATION).equalsIgnoreCase("3")){
-        bm= rotate(bm, 180);
-      } else if(exif.getAttribute(ExifInterface.TAG_ORIENTATION).equalsIgnoreCase("0")){
-        bm= rotate(bm, 90);
-      }
-
-
-      // Crop
-      int previewHeight = preview.getHeight();
-      int previewWidth = preview.getWidth();
-      int imageHeight = avatarView.getHeight();
-      int imageWidth = avatarView.getWidth();
-
-      float ratio = Math.min((float) previewWidth / bm.getWidth(), (float) previewHeight / bm.getHeight());
-      int width = Math.round(ratio * bm.getWidth());
-      int height = Math.round(ratio * bm.getHeight());
-
-      Bitmap newBitmap = Bitmap.createScaledBitmap(bm, width, height, true);
-      int bitmapWidth = newBitmap.getWidth();
-      int bitmapHeight = newBitmap.getHeight();
-      int x = (bitmapWidth - imageWidth) / 2;
-      int y = (bitmapHeight - imageHeight) / 2;
-      int destinationWidth = bitmapWidth - (x * 2);
-      int destinationHeight = bitmapHeight - (y * 2);
-
-
-      bm = Bitmap.createBitmap(newBitmap, x, y, destinationWidth, destinationHeight);
-
-      bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
-      out.flush();
-      out.close();
-      scanPhoto(imageFileName.getPath());
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-
-    dialog.dismiss();
-    avatarPath.set(imageFileName.getPath());
-    captureButton.setVisibility(View.GONE);
-    continueButton.setVisibility(View.VISIBLE);
+    avatarView.setImageBitmap(bitmap);
+    Uri photoUri = ImageUtility.savePicture(getActivity(), bitmap);
+    File saved = FileHelper.getResizedFile(getActivity(), photoUri, Build.VERSION.SDK_INT, 500, 500);
+    avatarPath.set(saved.getPath());
     continueToIdentity();
   }
 
-  public void scanPhoto(final String imageFileName) {
-    msConn = new MediaScannerConnection(getActivity(), new MediaScannerConnection.MediaScannerConnectionClient() {
-      public void onMediaScannerConnected() {
-        msConn.scanFile(imageFileName, null);
-        Timber.i("msClient obj in Photo %s", "connection established");
-      }
+  /**
+   * Determine the current display orientation and rotate the camera preview
+   * accordingly
+   */
+  private void determineDisplayOrientation() {
+    Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+    Camera.getCameraInfo(mCameraID, cameraInfo);
 
-      public void onScanCompleted(String path, Uri uri) {
-        msConn.disconnect();
-        Timber.i("msClient obj in Photo %s","scan completed");
+    // Clockwise rotation needed to align the window display to the natural position
+    int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+    int degrees = 0;
+
+    switch (rotation) {
+      case Surface.ROTATION_0: {
+        degrees = 0;
+        break;
       }
-    });
-    msConn.connect();
+      case Surface.ROTATION_90: {
+        degrees = 90;
+        break;
+      }
+      case Surface.ROTATION_180: {
+        degrees = 180;
+        break;
+      }
+      case Surface.ROTATION_270: {
+        degrees = 270;
+        break;
+      }
+    }
+
+    int displayOrientation;
+
+    // CameraInfo.Orientation is the angle relative to the natural position of the device
+    // in clockwise rotation (angle that is rotated clockwise from the natural position)
+    if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+      // Orientation is angle of rotation when facing the camera for
+      // the camera image to match the natural orientation of the device
+      displayOrientation = (cameraInfo.orientation + degrees) % 360;
+      displayOrientation = (360 - displayOrientation) % 360;
+    } else {
+      displayOrientation = (cameraInfo.orientation - degrees + 360) % 360;
+    }
+
+    mImageParameters.mDisplayOrientation = displayOrientation;
+    mImageParameters.mLayoutOrientation = degrees;
+
+    mCamera.setDisplayOrientation(mImageParameters.mDisplayOrientation);
   }
 
-  public static Bitmap rotate(Bitmap bitmap, int degree) {
-    int w = bitmap.getWidth();
-    int h = bitmap.getHeight();
+  /**
+   * Take a picture
+   */
+  private void takePicture() {
 
-    Matrix mtx = new Matrix();
-    //       mtx.postRotate(degree);
-    mtx.setRotate(degree);
+    if (mIsSafeToTakePhoto) {
+      setSafeToTakePhoto(false);
 
-    return Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, true);
+      mOrientationListener.rememberOrientation();
+
+      // Shutter callback occurs after the image is captured. This can
+      // be used to trigger a sound to let the user know that image is taken
+      Camera.ShutterCallback shutterCallback = null;
+
+      // Raw callback occurs when the raw image data is available
+      Camera.PictureCallback raw = null;
+
+      // postView callback occurs when a scaled, fully processed
+      // postView image is available.
+      Camera.PictureCallback postView = null;
+
+      // jpeg callback occurs when the compressed image is available
+      mCamera.takePicture(shutterCallback, raw, postView, this);
+    }
   }
 
-  public String fromInt(int val) {
-    return String.valueOf(val);
+  private void setSafeToTakePhoto(final boolean isSafeToTakePhoto) {
+    mIsSafeToTakePhoto = isSafeToTakePhoto;
+  }
+
+  /**
+   * When orientation changes, onOrientationChanged(int) of the listener will be called
+   */
+  private static class CameraOrientationListener extends OrientationEventListener {
+
+    private int mCurrentNormalizedOrientation;
+    private int mRememberedNormalOrientation;
+
+    public CameraOrientationListener(Context context) {
+      super(context, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    public void onOrientationChanged(int orientation) {
+      if (orientation != ORIENTATION_UNKNOWN) {
+        mCurrentNormalizedOrientation = normalize(orientation);
+      }
+    }
+
+    /**
+     * @param degrees Amount of clockwise rotation from the device's natural position
+     * @return Normalized degrees to just 0, 90, 180, 270
+     */
+    private int normalize(int degrees) {
+      if (degrees > 315 || degrees <= 45) {
+        return 0;
+      }
+
+      if (degrees > 45 && degrees <= 135) {
+        return 90;
+      }
+
+      if (degrees > 135 && degrees <= 225) {
+        return 180;
+      }
+
+      if (degrees > 225 && degrees <= 315) {
+        return 270;
+      }
+
+      throw new RuntimeException("The physics as we know them are no more. Watch out for anomalies.");
+    }
+
+    public void rememberOrientation() {
+      mRememberedNormalOrientation = mCurrentNormalizedOrientation;
+    }
+
+    public int getRememberedNormalOrientation() {
+      rememberOrientation();
+      return mRememberedNormalOrientation;
+    }
   }
 }
