@@ -105,9 +105,6 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       typeface.setTypeface(container, getResources().getString(R.string.font_regular));
     }
 
-    /*String text = "<font color=#313A46>REFERENCE NUMBER Number</font> <font color=#F33258>(OPTIONAL)</font>";
-    referenceLabel.setText(Html.fromHtml(text));*/
-
     // Check-in date date picker
     checkInDateView.setInputType(InputType.TYPE_NULL);
     Calendar today = Calendar.getInstance();

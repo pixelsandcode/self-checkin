@@ -9,7 +9,6 @@
 package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -61,7 +60,6 @@ import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
-import me.tipi.self_check_in.util.FileHelper;
 import me.tipi.self_check_in.util.ImageParameters;
 import me.tipi.self_check_in.util.ImageUtility;
 import timber.log.Timber;
@@ -159,9 +157,6 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
         public void onGlobalLayout() {
           mImageParameters.mPreviewWidth = mPreviewView.getWidth();
           mImageParameters.mPreviewHeight = mPreviewView.getHeight();
-
-          mImageParameters.mCoverWidth = mImageParameters.mCoverHeight
-              = mImageParameters.calculateCoverWidthHeight();
 
 
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -366,15 +361,6 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     mCamera.stopPreview();
   }
 
-  private int getFrontCameraID() {
-    PackageManager pm = getActivity().getPackageManager();
-    if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
-      return Camera.CameraInfo.CAMERA_FACING_FRONT;
-    }
-
-    return 0;
-  }
-
   private int getBackCameraID() {
     return Camera.CameraInfo.CAMERA_FACING_BACK;
   }
@@ -397,8 +383,8 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
 
     passportView.setImageBitmap(bitmap);
     Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
-    File saved = FileHelper.getResizedFile(getActivity(), photoUri, Build.VERSION.SDK_INT, 600, 600);
-    passportPath.set(saved.getPath());
+    //File saved = FileHelper.getResizedFile(getActivity(), photoUri, Build.VERSION.SDK_INT, 600, 600);
+    passportPath.set(photoUri.getPath());
     scanButton.setVisibility(View.GONE);
     retryButton.setVisibility(View.VISIBLE);
     continueButton.setVisibility(View.VISIBLE);
