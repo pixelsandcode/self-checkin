@@ -182,6 +182,22 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
       restartPreview();
     }
 
+    if (getActivity() != null) {
+      bus.post(new BackShouldShowEvent(true));
+      bus.post(new SettingShouldShowEvent(false));
+      if (avatarPath.isSet() && avatarPath.get() != null && avatarView != null) {
+        picasso.load(new File(avatarPath.get())).resize(300, 300).centerCrop()
+            .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+            .placeholder(R.drawable.avatar_placeholder).into(avatarView);
+      }
+
+      new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+          startOver();
+        }
+      }, ApiConstants.START_OVER_TIME);
+    }
+
     bus.register(this);
     tracker.setScreenName(getClass().getSimpleName());
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -253,37 +269,6 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     }
 
     return rotation;
-  }
-
-  /*public void onPictureTake(byte[] data, Camera camera) {
-
-    if (data != null) {
-      bm = BitmapFactory.decodeByteArray(data, 0, data.length);
-      savePhoto();
-    }
-
-    avatarView.setVisibility(View.VISIBLE);
-    preview.setVisibility(View.GONE);
-  }*/
-
-  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-    if (getActivity() != null && isVisibleToUser) {
-      bus.post(new BackShouldShowEvent(true));
-      //bus.post(new RefreshShouldShowEvent(true));
-      bus.post(new SettingShouldShowEvent(false));
-      if (avatarPath.isSet() && avatarPath.get() != null && avatarView != null) {
-        picasso.load(new File(avatarPath.get())).resize(300, 300).centerCrop()
-            .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-            .placeholder(R.drawable.avatar_placeholder).into(avatarView);
-      }
-
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, ApiConstants.START_OVER_TIME);
-    }
   }
 
   /**

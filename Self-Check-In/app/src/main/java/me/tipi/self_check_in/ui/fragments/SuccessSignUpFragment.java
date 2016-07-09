@@ -36,6 +36,8 @@ import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 
 public class SuccessSignUpFragment extends Fragment {
 
+  public static final String TAG = SuccessSignUpFragment.class.getSimpleName();
+
   @Inject Bus bus;
   @Inject Tracker tracker;
   @Inject @Named(ApiConstants.HOSTEL_NAME)
@@ -71,6 +73,16 @@ public class SuccessSignUpFragment extends Fragment {
   @Override public void onResume() {
     super.onResume();
     bus.register(this);
+    if (getActivity() != null) {
+      bus.post(new BackShouldShowEvent(false));
+      bus.post(new SettingShouldShowEvent(false));
+
+      new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+          startOver();
+        }
+      }, 15000);
+    }
     tracker.setScreenName("Success");
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
@@ -82,17 +94,6 @@ public class SuccessSignUpFragment extends Fragment {
 
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
-    if (getActivity() != null && isVisibleToUser) {
-      bus.post(new BackShouldShowEvent(false));
-      //bus.post(new RefreshShouldShowEvent(true));
-      bus.post(new SettingShouldShowEvent(false));
-
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, 15000);
-    }
   }
 
   @OnClick(R.id.continue_btn)

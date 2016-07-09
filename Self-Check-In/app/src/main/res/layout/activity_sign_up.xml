@@ -9,8 +9,8 @@
     tools:context="me.tipi.self_check_in.ui.SignUpActivity"
     tools:ignore="ContentDescription">
 
-  <me.tipi.self_check_in.ui.misc.ChangeSwipeViewPager
-      android:id="@+id/pager"
+  <FrameLayout
+      android:id="@+id/container_main"
       android:layout_width="match_parent"
       android:layout_height="match_parent"/>
 

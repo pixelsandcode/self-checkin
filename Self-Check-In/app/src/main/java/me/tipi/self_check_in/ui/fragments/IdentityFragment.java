@@ -69,7 +69,6 @@ import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.EmailConflictEvent;
-import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.Strings;
@@ -79,6 +78,8 @@ import retrofit.client.Response;
 import timber.log.Timber;
 
 public class IdentityFragment extends Fragment {
+
+  public static final String TAG = IdentityFragment.class.getSimpleName();
 
   @Inject Picasso picasso;
   @Inject Bus bus;
@@ -160,7 +161,7 @@ public class IdentityFragment extends Fragment {
           public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
             tracker.send(new HitBuilders.EventBuilder("Matched User", "Choose me").build());
             guest.guest_key = "0";
-            bus.post(new PagerChangeEvent(4));
+            ((SignUpActivity)getActivity()).showDateFragment();
           }
         })
         .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -206,21 +207,11 @@ public class IdentityFragment extends Fragment {
   @Override public void onResume() {
     super.onResume();
     bus.register(this);
+
     homeTownACView.setAdapter(new HomeTownAutoCompleteAdapter(getActivity()));
-    tracker.setScreenName(getClass().getSimpleName());
-    tracker.send(new HitBuilders.ScreenViewBuilder().build());
-  }
 
-  @Override public void onPause() {
-    super.onPause();
-    bus.unregister(this);
-  }
-
-  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-    if (getActivity() != null && isVisibleToUser) {
+    if (getActivity() != null) {
       bus.post(new BackShouldShowEvent(true));
-      //bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
 
       new Handler().postDelayed(new Runnable() {
@@ -229,6 +220,13 @@ public class IdentityFragment extends Fragment {
         }
       }, ApiConstants.START_OVER_TIME);
     }
+    tracker.setScreenName(getClass().getSimpleName());
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    bus.unregister(this);
   }
 
   /**
@@ -255,7 +253,7 @@ public class IdentityFragment extends Fragment {
         guest.gender = 1;
       }
 
-      bus.post(new PagerChangeEvent(3));
+      ((SignUpActivity)getActivity()).showPassportFragment();
     }
   }
 

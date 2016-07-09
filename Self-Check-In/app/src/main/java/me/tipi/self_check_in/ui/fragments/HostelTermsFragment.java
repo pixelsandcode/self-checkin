@@ -39,6 +39,8 @@ import retrofit.client.Response;
  */
 public class HostelTermsFragment extends Fragment {
 
+  public static final String TAG = HostelTermsFragment.class.getSimpleName();
+
   @Inject Bus bus;
   @Inject Tracker tracker;
   @Inject AuthenticationService authenticationService;

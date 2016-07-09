@@ -40,6 +40,8 @@ import timber.log.Timber;
  */
 public class LandingFragment extends Fragment {
 
+  public static final String TAG = LandingFragment.class.getSimpleName();
+
   @Inject Bus bus;
   @Inject Tracker tracker;
   @Inject AppContainer appContainer;
@@ -70,21 +72,9 @@ public class LandingFragment extends Fragment {
   @Override public void onResume() {
     super.onResume();
     bus.register(this);
-    tracker.setScreenName(getClass().getSimpleName());
-    tracker.send(new HitBuilders.ScreenViewBuilder().build());
-  }
-
-  @Override public void onPause() {
-    super.onPause();
-    bus.unregister(this);
-  }
-
-  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-    if (getActivity() != null && isVisibleToUser) {
+    if (getActivity() != null) {
       bus.post(new SettingShouldShowEvent(false));
       bus.post(new BackShouldShowEvent(true));
-      //bus.post(new RefreshShouldShowEvent(false));
 
       new Handler().postDelayed(new Runnable() {
         @Override public void run() {
@@ -92,6 +82,13 @@ public class LandingFragment extends Fragment {
         }
       }, ApiConstants.START_OVER_TIME);
     }
+    tracker.setScreenName(getClass().getSimpleName());
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    bus.unregister(this);
   }
 
   private void startOver() {

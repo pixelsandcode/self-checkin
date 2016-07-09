@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -61,15 +62,21 @@ import me.tipi.self_check_in.data.api.models.ClaimResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
 import me.tipi.self_check_in.data.api.models.LoginResponse;
-import me.tipi.self_check_in.ui.adapters.SignUpAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.EmailConflictEvent;
-import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
-import me.tipi.self_check_in.ui.misc.ChangeSwipeViewPager;
+import me.tipi.self_check_in.ui.fragments.AvatarFragment;
+import me.tipi.self_check_in.ui.fragments.DateFragment;
+import me.tipi.self_check_in.ui.fragments.HostelTermsFragment;
+import me.tipi.self_check_in.ui.fragments.IdentityFragment;
+import me.tipi.self_check_in.ui.fragments.LandingFragment;
+import me.tipi.self_check_in.ui.fragments.MainFragment;
+import me.tipi.self_check_in.ui.fragments.PassportFragment;
+import me.tipi.self_check_in.ui.fragments.QuestionFragment;
+import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -82,29 +89,22 @@ public class SignUpActivity extends AppCompatActivity {
   @Inject Bus bus;
   @Inject Guest guest;
   @Inject
-  @Named(ApiConstants.AVATAR)
-  Preference<String> avatarPath;
+  @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
   @Inject
-  @Named(ApiConstants.PASSPORT)
-  Preference<String> passportPath;
+  @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
   @Inject AppContainer appContainer;
   @Inject AuthenticationService authenticationService;
+  @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject
-  @Named(ApiConstants.USER_NAME)
-  Preference<String> username;
-  @Inject
-  @Named(ApiConstants.PASSWORD)
-  Preference<String> password;
+  @Named(ApiConstants.PASSWORD) Preference<String> password;
   @Inject Tracker tracker;
 
-  @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
+  @Bind(R.id.container_main) FrameLayout mainContainer;
   @Bind(R.id.settingBtn) ImageView settingButton;
   @Bind(R.id.resetBtn) ImageView resetButton;
   @Bind(R.id.backBtn) ImageView backButtonView;
 
   MaterialDialog loading;
-
-  public SignUpAdapter adapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -124,10 +124,7 @@ public class SignUpActivity extends AppCompatActivity {
     guest.user_key = null;
     guest.name = null;
     guest.email = null;
-
-    adapter = new SignUpAdapter(getSupportFragmentManager(), this);
-    viewPager.setAdapter(adapter);
-    viewPager.setSwipingEnabled(false);
+    showMainFragment();
   }
 
   @Override protected void onResume() {
@@ -147,22 +144,6 @@ public class SignUpActivity extends AppCompatActivity {
     bus.unregister(this);
   }
 
-  @Override
-  public void onBackPressed() {
-    if (viewPager.getCurrentItem() == 0) {
-      // If the user is currently looking at the first step, allow the system to handle the
-      // Back button. This calls finish() on this activity and pops the back stack.
-      super.onBackPressed();
-    } else if (viewPager.getCurrentItem() == 7) {
-      reset();
-    } else if (viewPager.getCurrentItem() == 5) {
-      viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-      viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-    } else {
-      // Otherwise, select the previous step.
-      viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-    }
-  }
 
   @Override protected void onDestroy() {
     super.onDestroy();
@@ -223,6 +204,60 @@ public class SignUpActivity extends AppCompatActivity {
     return mRect;
   }
 
+  public void showMainFragment() {
+    MainFragment fragment = MainFragment.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .add(R.id.container_main, fragment).commit();
+  }
+
+  public void showLandingFragment() {
+    LandingFragment fragment = LandingFragment.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container_main, fragment).addToBackStack(LandingFragment.TAG).commit();
+  }
+
+  public void showIdentityFragment() {
+    IdentityFragment fragment = IdentityFragment.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container_main, fragment).addToBackStack(IdentityFragment.TAG).commit();
+  }
+
+  public void showPassportFragment() {
+    PassportFragment fragment = PassportFragment.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container_main, fragment).addToBackStack(PassportFragment.TAG).commit();
+  }
+
+  public void showDateFragment() {
+    DateFragment fragment = DateFragment.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container_main, fragment).addToBackStack(DateFragment.TAG).commit();
+  }
+
+  public void showAvatarFragment() {
+    AvatarFragment fragment = AvatarFragment.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container_main, fragment).addToBackStack(AvatarFragment.TAG).commit();
+  }
+
+  public void showTermsFragment() {
+    HostelTermsFragment fragment = HostelTermsFragment.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container_main, fragment).addToBackStack(HostelTermsFragment.TAG).commit();
+  }
+
+  public void showQuestionFragment() {
+    QuestionFragment fragment = QuestionFragment.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container_main, fragment).addToBackStack(QuestionFragment.TAG).commit();
+  }
+
+  public void showSuccessFragment() {
+    SuccessSignUpFragment fragment = SuccessSignUpFragment.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container_main, fragment).addToBackStack(SuccessSignUpFragment.TAG).commit();
+  }
+
   /**
    * Start over.
    */
@@ -251,18 +286,7 @@ public class SignUpActivity extends AppCompatActivity {
       imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    if (viewPager.getCurrentItem() != 0) {
-      if (viewPager.getCurrentItem() == 6) {
-        viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-        viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-      } else if (viewPager.getCurrentItem() == 1 ){
-        reset();
-      } else {
-        viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-      }
-    }
-
-    tracker.send(new HitBuilders.EventBuilder("Sign up", "Back").build());
+    onBackPressed();
   }
 
   /**
@@ -270,14 +294,10 @@ public class SignUpActivity extends AppCompatActivity {
    *
    * @param event the event
    */
-  @Subscribe
+  /*@Subscribe
   public void onPagerChange(PagerChangeEvent event) {
     viewPager.setCurrentItem(event.page, true);
-  }
-
-  public void changePage(int pageNumber) {
-    viewPager.setCurrentItem(pageNumber, true);
-  }
+  }*/
 
   /**
    * On back shown.
@@ -345,14 +365,14 @@ public class SignUpActivity extends AppCompatActivity {
                   .setLabel("Sign Up")
                   .setValue(diffSeconds).build());
               tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
-              viewPager.setCurrentItem(7, true);
+              showSuccessFragment();
             }
 
             @Override public void failure(RetrofitError error) {
               if (error.getResponse() != null) {
                 if (error.getResponse().getStatus() == 409) {
                   loading.dismiss();
-                  viewPager.setCurrentItem(1, true);
+                  /*viewPager.setCurrentItem(1, true);*/
                   bus.post(new EmailConflictEvent());
                 } else if (error.getResponse().getStatus() == 401) {
                   login();
@@ -396,7 +416,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .setAction("Check-In")
                 .setLabel("Claim")
                 .setValue(diffSeconds).build());
-            viewPager.setCurrentItem(7);
+            /*viewPager.setCurrentItem(7);*/
           }
 
           @Override public void failure(RetrofitError error) {
@@ -458,7 +478,7 @@ public class SignUpActivity extends AppCompatActivity {
   public void goToIdentity(View view) {
     tracker.send(new HitBuilders.EventBuilder("Process", "Create").build());
     guest.time = System.currentTimeMillis();
-    viewPager.setCurrentItem(2);
+    showIdentityFragment();
   }
 
   /**
@@ -467,7 +487,7 @@ public class SignUpActivity extends AppCompatActivity {
    * @param view the view
    */
   public void goToLanding(View view) {
-    viewPager.setCurrentItem(1);
+    showLandingFragment();
   }
 
   /**

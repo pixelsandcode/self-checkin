@@ -47,6 +47,8 @@ import timber.log.Timber;
  */
 public class QuestionFragment extends Fragment {
 
+  public static final String TAG = QuestionFragment.class.getSimpleName();
+
   @Inject Bus bus;
   @Inject Tracker tracker;
   @Inject AuthenticationService authenticationService;

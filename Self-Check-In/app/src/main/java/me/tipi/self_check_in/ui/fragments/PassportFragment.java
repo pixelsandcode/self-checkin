@@ -58,7 +58,6 @@ import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
-import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.util.ImageParameters;
 import me.tipi.self_check_in.util.ImageUtility;
@@ -180,19 +179,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
       restartPreview();
     }
 
-    bus.register(this);
-    tracker.setScreenName(getClass().getSimpleName());
-    tracker.send(new HitBuilders.ScreenViewBuilder().build());
-  }
-
-  @Override public void onPause() {
-    super.onPause();
-    bus.unregister(this);
-  }
-
-  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-    if (getActivity() != null && isVisibleToUser) {
+    if (getActivity() != null) {
       bus.post(new BackShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
       setPassportImage();
@@ -202,15 +189,23 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
           startOver();
         }
       }, ApiConstants.START_OVER_TIME);
-    } else if (getActivity() != null && !isVisibleToUser) {
-      mOrientationListener.disable();
+    }
 
-      // stop the preview
-      if (mCamera != null) {
-        stopCameraPreview();
-        mCamera.release();
-        mCamera = null;
-      }
+    bus.register(this);
+    tracker.setScreenName(getClass().getSimpleName());
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    bus.unregister(this);
+    mOrientationListener.disable();
+
+    // stop the preview
+    if (mCamera != null) {
+      stopCameraPreview();
+      mCamera.release();
+      mCamera = null;
     }
   }
 
@@ -287,7 +282,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   public void continueToCheckIn() {
     if (passportPath.isSet()) {
       Timber.v(passportPath.get());
-      bus.post(new PagerChangeEvent(4));
+      ((SignUpActivity)getActivity()).showDateFragment();
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please Scan your passport first!", Snackbar.LENGTH_LONG).show();
     }

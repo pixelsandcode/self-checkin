@@ -54,6 +54,8 @@ import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 
 public class DateFragment extends Fragment implements CalendarDatePickerDialogFragment.OnDateSetListener {
 
+  public static final String TAG = DateFragment.class.getSimpleName();
+
   @Inject Bus bus;
   @Inject Guest guest;
   @Inject Tracker tracker;
@@ -131,12 +133,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       @Override
       public void onClick(View textView) {
         if (isLogin) {
-          if (getActivity() instanceof SignUpActivity) {
-            bus.post(new PagerChangeEvent(5));
-          } else {
-            bus.post(new PagerChangeEvent(2));
-          }
-
+          ((SignUpActivity)getActivity()).showTermsFragment();
         } else {
           bus.post(new PagerChangeEvent(5));
         }
@@ -159,6 +156,26 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
   @Override public void onResume() {
     super.onResume();
     bus.register(this);
+
+    if (getActivity() != null) {
+      bus.post(new BackShouldShowEvent(true));
+      bus.post(new SettingShouldShowEvent(false));
+      isLogin = guest.user_key != null && !TextUtils.isEmpty(guest.user_key);
+      if (isLogin) {
+        passportLayout.setVisibility(View.GONE);
+        passportLabel.setVisibility(View.GONE);
+      } else {
+        passportLayout.setVisibility(View.VISIBLE);
+        passportLabel.setVisibility(View.VISIBLE);
+      }
+
+      new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+          startOver();
+        }
+      }, ApiConstants.START_OVER_TIME);
+    }
+
     tracker.setScreenName(getClass().getSimpleName());
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
@@ -190,8 +207,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       if (isLogin) {
         bus.post(new ClaimEvent());
       } else {
-        bus.post(new PagerChangeEvent(6));
-        //bus.post(new SubmitEvent());
+        ((SignUpActivity)getActivity()).showAvatarFragment();
       }
     }
   }
@@ -261,29 +277,6 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
     }
 
     return cancel;
-  }
-
-  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-    if (getActivity() != null && isVisibleToUser) {
-      bus.post(new BackShouldShowEvent(true));
-      //bus.post(new RefreshShouldShowEvent(true));
-      bus.post(new SettingShouldShowEvent(false));
-      isLogin = guest.user_key != null && !TextUtils.isEmpty(guest.user_key);
-      if (isLogin) {
-        passportLayout.setVisibility(View.GONE);
-        passportLabel.setVisibility(View.GONE);
-      } else {
-        passportLayout.setVisibility(View.VISIBLE);
-        passportLabel.setVisibility(View.VISIBLE);
-      }
-
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, ApiConstants.START_OVER_TIME);
-    }
   }
 
   @Override

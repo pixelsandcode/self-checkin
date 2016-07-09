@@ -44,20 +44,16 @@ public class MainFragment extends Fragment {
   @Override public void onResume() {
     super.onResume();
     bus.register(this);
+    if (getActivity() != null) {
+      bus.post(new SettingShouldShowEvent(true));
+      bus.post(new BackShouldShowEvent(false));
+      bus.post(new RefreshShouldShowEvent(false));
+    }
   }
 
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
-  }
-
-  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-    if (getActivity() != null && isVisibleToUser) {
-      bus.post(new SettingShouldShowEvent(true));
-      bus.post(new BackShouldShowEvent(false));
-      bus.post(new RefreshShouldShowEvent(false));
-    }
   }
 
 }
