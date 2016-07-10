@@ -408,7 +408,6 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
 
     passportView.setImageBitmap(bitmap);
     Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
-    //File saved = FileHelper.getResizedFile(getActivity(), photoUri, Build.VERSION.SDK_INT, 600, 600);
     passportPath.set(photoUri.getPath());
     setupUIWithPassport();
   }

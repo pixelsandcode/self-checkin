@@ -23,7 +23,7 @@ public class BigBrotherCameraPreview extends SurfaceView {
   private static final int ZOOM_DELTA = 1;
 
   private static final int FOCUS_SQR_SIZE = 100;
-  private static final int FOCUS_MAX_BOUND = 1000;
+  private static final int FOCUS_MAX_BOUND = 500;
   private static final int FOCUS_MIN_BOUND = -FOCUS_MAX_BOUND;
   private Camera camera;
 
