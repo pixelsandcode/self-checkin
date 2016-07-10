@@ -133,9 +133,9 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       @Override
       public void onClick(View textView) {
         if (isLogin) {
-          ((SignUpActivity)getActivity()).showTermsFragment();
+          bus.post(new PagerChangeEvent(2));
         } else {
-          bus.post(new PagerChangeEvent(5));
+          ((SignUpActivity)getActivity()).showTermsFragment();
         }
       }
       @Override
@@ -205,7 +205,11 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       }
 
       if (isLogin) {
-        bus.post(new ClaimEvent());
+        if (getActivity() instanceof SignUpActivity) {
+          ((SignUpActivity)getActivity()).showQuestionFragment();
+        } else {
+          bus.post(new ClaimEvent());
+        }
       } else {
         ((SignUpActivity)getActivity()).showAvatarFragment();
       }

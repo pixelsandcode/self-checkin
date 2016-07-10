@@ -158,18 +158,7 @@ public class QuestionFragment extends Fragment {
   @Override public void onResume() {
     super.onResume();
     bus.register(this);
-    tracker.setScreenName(getClass().getSimpleName());
-    tracker.send(new HitBuilders.ScreenViewBuilder().build());
-  }
-
-  @Override public void onPause() {
-    super.onPause();
-    bus.unregister(this);
-  }
-
-  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-    if (getActivity() != null && isVisibleToUser) {
+    if (getActivity() != null) {
       if (guest != null) {
         guestKey = guest.guest_key;
       }
@@ -184,6 +173,14 @@ public class QuestionFragment extends Fragment {
         }
       }, ApiConstants.START_OVER_TIME);
     }
+
+    tracker.setScreenName(getClass().getSimpleName());
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    bus.unregister(this);
   }
 
   @OnClick(R.id.continue_btn)
@@ -240,14 +237,14 @@ public class QuestionFragment extends Fragment {
   }
 
   private void navigateToSuccessPage() {
-    if (guest.user_key != null && !TextUtils.isEmpty(guest.user_key)) {
+    if (guest.guest_key != null && !TextUtils.isEmpty(guest.guest_key)) {
       if (getActivity() instanceof SignUpActivity) {
-        bus.post(new PagerChangeEvent(8));
+        ((SignUpActivity)getActivity()).showSuccessFragment();
       } else {
         bus.post(new PagerChangeEvent(4));
       }
     } else {
-      bus.post(new PagerChangeEvent(8));
+      ((SignUpActivity)getActivity()).showSuccessFragment();
     }
   }
 

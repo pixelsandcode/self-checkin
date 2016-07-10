@@ -290,16 +290,6 @@ public class SignUpActivity extends AppCompatActivity {
   }
 
   /**
-   * On pager change.
-   *
-   * @param event the event
-   */
-  /*@Subscribe
-  public void onPagerChange(PagerChangeEvent event) {
-    viewPager.setCurrentItem(event.page, true);
-  }*/
-
-  /**
    * On back shown.
    *
    * @param event the event
@@ -365,7 +355,7 @@ public class SignUpActivity extends AppCompatActivity {
                   .setLabel("Sign Up")
                   .setValue(diffSeconds).build());
               tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
-              showSuccessFragment();
+              showQuestionFragment();
             }
 
             @Override public void failure(RetrofitError error) {

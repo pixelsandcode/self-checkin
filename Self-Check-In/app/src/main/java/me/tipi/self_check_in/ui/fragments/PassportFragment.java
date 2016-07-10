@@ -26,7 +26,6 @@ import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -44,6 +43,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -59,6 +59,7 @@ import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
+import me.tipi.self_check_in.ui.misc.BigBrotherCameraPreview;
 import me.tipi.self_check_in.util.ImageParameters;
 import me.tipi.self_check_in.util.ImageUtility;
 import timber.log.Timber;
@@ -71,6 +72,9 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
 
   public static final String TAG = PassportFragment.class.getSimpleName();
 
+  private static final int PICTURE_SIZE_MAX_WIDTH = 1280;
+  private static final int PREVIEW_SIZE_MAX_WIDTH = 640;
+
   @Inject Picasso picasso;
   @Inject AppContainer appContainer;
   @Inject Bus bus;
@@ -81,8 +85,12 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   @Bind(R.id.scan) ImageView passportView;
   @Bind(R.id.retry_btn) Button retryButton;
   @Bind(R.id.continue_btn) Button continueButton;
-  @Bind(R.id.surface_view) SurfaceView mPreviewView;
+  @Bind(R.id.surface_view) BigBrotherCameraPreview mPreviewView;
   @Bind(R.id.scan_btn) ImageButton scanButton;
+  @Bind(R.id.cover_top_view) View topCoverView;
+  @Bind(R.id.cover_bottom_view) View bottomCoverView;
+  @Bind(R.id.cover_right_view) View rightCoverView;
+  @Bind(R.id.cover_left_view) View leftCoverView;
 
   MaterialDialog dialog;
 
@@ -96,6 +104,11 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   private ImageParameters mImageParameters;
 
   private CameraOrientationListener mOrientationListener;
+
+  private float coverHeight;
+  private float coverWidth;
+  private float guideWidth;
+  private float guideHeight;
 
   /**
    * Instantiates a new Passport fragment.
@@ -156,6 +169,11 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
         public void onGlobalLayout() {
           mImageParameters.mPreviewWidth = mPreviewView.getWidth();
           mImageParameters.mPreviewHeight = mPreviewView.getHeight();
+
+          coverHeight = topCoverView.getHeight();
+          coverWidth = leftCoverView.getWidth();
+          guideHeight = passportView.getHeight();
+          guideWidth = passportView.getWidth();
 
 
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -268,11 +286,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
 
   @OnClick({R.id.retry_btn})
   public void retryTapped() {
-    scanButton.setVisibility(View.VISIBLE);
-    retryButton.setVisibility(View.GONE);
-    continueButton.setVisibility(View.GONE);
-    mPreviewView.setVisibility(View.VISIBLE);
-    passportView.setImageResource(R.drawable.passport_guide);
+    setupUIWhenNoPassport();
   }
 
   /**
@@ -294,6 +308,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   @SuppressWarnings("ConstantConditions")
   private void setPassportImage() {
     if (passportPath != null && passportPath.isSet() && passportPath.get() != null && passportView != null) {
+      setupUIWithPassport();
       picasso.load(new File(passportPath.get())).resize(600, 400).centerCrop().into(passportView);
     }
   }
@@ -309,6 +324,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   private void getCamera(int cameraID) {
     try {
       mCamera = Camera.open(cameraID);
+      mPreviewView.setCamera(mCamera);
     } catch (Exception e) {
       Log.d(TAG, "Can't open camera with id " + cameraID);
       e.printStackTrace();
@@ -334,6 +350,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
    */
   private void startCameraPreview() {
     determineDisplayOrientation();
+    setupCamera();
 
     try {
       mCamera.setPreviewDisplay(mSurfaceHolder);
@@ -362,7 +379,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
 
   private void rotatePicture(int rotation, byte[] data) {
     Bitmap bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
-//        Log.d(TAG, "original bitmap width " + bitmap.getWidth() + " height " + bitmap.getHeight());
+    //Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
     if (rotation != 0) {
       Bitmap oldBitmap = bitmap;
 
@@ -376,15 +393,63 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
       oldBitmap.recycle();
     }
 
+    float ratio;
+    float heightRatio = guideHeight / guideWidth;
+    if (bitmap.getWidth() < bitmap.getHeight()) {
+      ratio = (float) bitmap.getWidth() / (float) bitmap.getHeight();
+    } else {
+      ratio = (float) bitmap.getHeight() / (float) bitmap.getWidth();
+    }
+
+    int x = Math.round(coverWidth * ratio);
+    int y = Math.round(coverHeight * heightRatio);
+
+    bitmap = Bitmap.createBitmap(bitmap, x, y, bitmap.getWidth() - x * 2, bitmap.getHeight() - y * 2);
+
     passportView.setImageBitmap(bitmap);
     Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
     //File saved = FileHelper.getResizedFile(getActivity(), photoUri, Build.VERSION.SDK_INT, 600, 600);
     passportPath.set(photoUri.getPath());
+    setupUIWithPassport();
+  }
+
+  private void setupUIWithPassport() {
     scanButton.setVisibility(View.GONE);
     retryButton.setVisibility(View.VISIBLE);
     continueButton.setVisibility(View.VISIBLE);
+    mPreviewView.setVisibility(View.GONE);
   }
 
+  private void setupUIWhenNoPassport() {
+    scanButton.setVisibility(View.VISIBLE);
+    retryButton.setVisibility(View.GONE);
+    continueButton.setVisibility(View.GONE);
+    mPreviewView.setVisibility(View.VISIBLE);
+    passportView.setImageResource(R.drawable.passport_guide);
+  }
+
+  /**
+   * Setup the camera parameters
+   */
+  private void setupCamera() {
+    // Never keep a global parameters
+    Camera.Parameters parameters = mCamera.getParameters();
+
+    Camera.Size bestPreviewSize = determineBestPreviewSize(parameters);
+    Camera.Size bestPictureSize = determineBestPictureSize(parameters);
+
+    parameters.setPreviewSize(bestPreviewSize.width, bestPreviewSize.height);
+    parameters.setPictureSize(bestPictureSize.width, bestPictureSize.height);
+
+
+    // Set continuous picture focus, if it's supported
+    if (parameters.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+      parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+    }
+
+    // Lock in the changes
+    mCamera.setParameters(parameters);
+  }
   /**
    * Determine the current display orientation and rotate the camera preview
    * accordingly
@@ -433,6 +498,36 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     mImageParameters.mLayoutOrientation = degrees;
 
     mCamera.setDisplayOrientation(mImageParameters.mDisplayOrientation);
+  }
+
+  private Camera.Size determineBestPreviewSize(Camera.Parameters parameters) {
+    return determineBestSize(parameters.getSupportedPreviewSizes(), PREVIEW_SIZE_MAX_WIDTH);
+  }
+
+  private Camera.Size determineBestPictureSize(Camera.Parameters parameters) {
+    return determineBestSize(parameters.getSupportedPictureSizes(), PICTURE_SIZE_MAX_WIDTH);
+  }
+
+  private Camera.Size determineBestSize(List<Camera.Size> sizes, int widthThreshold) {
+    Camera.Size bestSize = null;
+    Camera.Size size;
+    int numOfSizes = sizes.size();
+    for (int i = 0; i < numOfSizes; i++) {
+      size = sizes.get(i);
+      boolean isDesireRatio = (size.width / 4) == (size.height / 3);
+      boolean isBetterSize = (bestSize == null) || size.width > bestSize.width;
+
+      if (isDesireRatio && isBetterSize) {
+        bestSize = size;
+      }
+    }
+
+    if (bestSize == null) {
+      Log.d(TAG, "cannot find the best camera size");
+      return sizes.get(sizes.size() - 1);
+    }
+
+    return bestSize;
   }
 
   /**
