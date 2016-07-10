@@ -72,11 +72,11 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
   @Bind(R.id.passport_label) TextView passportLabel;
   @Bind(R.id.reference_label) TextView referenceLabel;
 
-  public Calendar checkInDate = null;
-  public String dateString;
-  public String enteredReference;
-  public String enteredPassport;
-  public int enteredNights = 0;
+  private Calendar checkInDate = null;
+  private String dateString;
+  private String enteredReference;
+  private String enteredPassport;
+  private int enteredNights = 0;
   private boolean isLogin;
 
   /**

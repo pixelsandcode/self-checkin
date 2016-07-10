@@ -93,7 +93,6 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   MaterialDialog dialog;
 
   private int mCameraID;
-  private String mFlashMode;
   private Camera mCamera;
   private SurfaceHolder mSurfaceHolder;
 
@@ -130,7 +129,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     mCameraID = getFrontCameraID();
-    mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;
+    String mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;
     mImageParameters = new ImageParameters();
   }
 
@@ -250,12 +249,6 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     // The surface is destroyed with the visibility of the SurfaceView is set to View.Invisible
   }
 
-  /**
-   * A picture has been taken
-   *
-   * @param data
-   * @param camera
-   */
   @Override
   public void onPictureTaken(byte[] data, Camera camera) {
     int rotation = getPhotoRotation();
@@ -266,6 +259,11 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     setSafeToTakePhoto(true);
   }
 
+  /**
+   * Gets photo rotation.
+   *
+   * @return the photo rotation
+   */
   private int getPhotoRotation() {
     int rotation;
     int orientation = mOrientationListener.getRememberedNormalOrientation();
@@ -291,6 +289,11 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     tracker.send(new HitBuilders.EventBuilder("Image", "Take avatar").build());
   }
 
+  /**
+   * Gets camera.
+   *
+   * @param cameraID the camera id
+   */
   private void getCamera(int cameraID) {
     try {
       mCamera = Camera.open(cameraID);
@@ -302,7 +305,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   }
 
   /**
-   * Restart the camera preview
+   * Restart preview.
    */
   private void restartPreview() {
     if (mCamera != null) {
@@ -316,7 +319,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   }
 
   /**
-   * Start the camera preview
+   * Start camera preview.
    */
   private void startCameraPreview() {
     determineDisplayOrientation();
@@ -334,7 +337,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   }
 
   /**
-   * Stop the camera preview
+   * Stop camera preview.
    */
   private void stopCameraPreview() {
     setSafeToTakePhoto(false);
@@ -343,6 +346,11 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     mCamera.stopPreview();
   }
 
+  /**
+   * Gets front camera id.
+   *
+   * @return the front camera id
+   */
   private int getFrontCameraID() {
     for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
       Camera.CameraInfo info = new Camera.CameraInfo();
@@ -356,6 +364,9 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     return mCameraID;
   }
 
+  /**
+   * Continue to identity.
+   */
   public void continueToIdentity() {
     if (avatarPath.isSet()) {
       Timber.v(avatarPath.get());
@@ -365,6 +376,9 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     }
   }
 
+  /**
+   * Start over.
+   */
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
       ((SignUpActivity) getActivity()).reset();
@@ -373,6 +387,12 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     }
   }
 
+  /**
+   * Rotate picture.
+   *
+   * @param rotation the rotation
+   * @param data     the data
+   */
   private void rotatePicture(int rotation, byte[] data) {
     Bitmap bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
     if (rotation != 0) {
@@ -403,7 +423,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   }
 
   /**
-   * Setup the camera parameters
+   * Sets camera.
    */
   private void setupCamera() {
     // Never keep a global parameters
@@ -426,8 +446,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   }
 
   /**
-   * Determine the current display orientation and rotate the camera preview
-   * accordingly
+   * Determine display orientation.
    */
   private void determineDisplayOrientation() {
     Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
@@ -475,14 +494,33 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     mCamera.setDisplayOrientation(mImageParameters.mDisplayOrientation);
   }
 
+  /**
+   * Determine best preview size camera . size.
+   *
+   * @param parameters the parameters
+   * @return the camera . size
+   */
   private Camera.Size determineBestPreviewSize(Camera.Parameters parameters) {
     return determineBestSize(parameters.getSupportedPreviewSizes(), PREVIEW_SIZE_MAX_WIDTH);
   }
 
+  /**
+   * Determine best picture size camera . size.
+   *
+   * @param parameters the parameters
+   * @return the camera . size
+   */
   private Camera.Size determineBestPictureSize(Camera.Parameters parameters) {
     return determineBestSize(parameters.getSupportedPictureSizes(), PICTURE_SIZE_MAX_WIDTH);
   }
 
+  /**
+   * Determine best size camera . size.
+   *
+   * @param sizes          the sizes
+   * @param widthThreshold the width threshold
+   * @return the camera . size
+   */
   private Camera.Size determineBestSize(List<Camera.Size> sizes, int widthThreshold) {
     Camera.Size bestSize = null;
     Camera.Size size;
@@ -506,7 +544,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   }
 
   /**
-   * Take a picture
+   * Take picture.
    */
   private void takePicture() {
 
@@ -531,18 +569,25 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     }
   }
 
+  /**
+   * Sets safe to take photo.
+   *
+   * @param isSafeToTakePhoto the is safe to take photo
+   */
   private void setSafeToTakePhoto(final boolean isSafeToTakePhoto) {
     mIsSafeToTakePhoto = isSafeToTakePhoto;
   }
 
-  /**
-   * When orientation changes, onOrientationChanged(int) of the listener will be called
-   */
   private static class CameraOrientationListener extends OrientationEventListener {
 
     private int mCurrentNormalizedOrientation;
     private int mRememberedNormalOrientation;
 
+    /**
+     * Instantiates a new Camera orientation listener.
+     *
+     * @param context the context
+     */
     public CameraOrientationListener(Context context) {
       super(context, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -555,8 +600,10 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     }
 
     /**
-     * @param degrees Amount of clockwise rotation from the device's natural position
-     * @return Normalized degrees to just 0, 90, 180, 270
+     * Normalize int.
+     *
+     * @param degrees the degrees
+     * @return the int
      */
     private int normalize(int degrees) {
       if (degrees > 315 || degrees <= 45) {
@@ -578,10 +625,18 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
       throw new RuntimeException("The physics as we know them are no more. Watch out for anomalies.");
     }
 
+    /**
+     * Remember orientation.
+     */
     public void rememberOrientation() {
       mRememberedNormalOrientation = mCurrentNormalizedOrientation;
     }
 
+    /**
+     * Gets remembered normal orientation.
+     *
+     * @return the remembered normal orientation
+     */
     public int getRememberedNormalOrientation() {
       rememberOrientation();
       return mRememberedNormalOrientation;

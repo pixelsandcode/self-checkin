@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
   //@Bind(R.id.forgot_password_text) TextView forgotPassView;
   //@Bind(R.id.reset_password_button) Button resetPasswordButton;
 
-  MaterialDialog loading;
+  private MaterialDialog loading;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -96,10 +96,6 @@ public class MainActivity extends AppCompatActivity {
   @Override protected void onPause() {
     super.onPause();
     Timber.d("Paused");
-  }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
   }
 
   @Override public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -139,10 +135,10 @@ public class MainActivity extends AppCompatActivity {
   /**
    * Show login fragment.
    */
-  public void showLoginFragment() {
-    getFragmentManager().beginTransaction().replace(R.id.container, LoginFragment.newInstance(this)).commit();
-    //forgotPassView.setVisibility(View.VISIBLE);
-    //resetPasswordButton.setVisibility(View.VISIBLE);
+  private void showLoginFragment() {
+    getFragmentManager().beginTransaction()
+        .replace(R.id.container, LoginFragment.newInstance(this)).commit();
+
   }
 
   /**

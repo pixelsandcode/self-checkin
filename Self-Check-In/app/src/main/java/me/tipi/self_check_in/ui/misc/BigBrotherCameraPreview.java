@@ -12,7 +12,7 @@ import android.view.SurfaceView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BigBrotherCameraPreview extends SurfaceView {
+@SuppressWarnings("deprecation") public class BigBrotherCameraPreview extends SurfaceView {
 
   public static final String TAG = BigBrotherCameraPreview.class.getSimpleName();
 

@@ -99,11 +99,11 @@ public class IdentityFragment extends Fragment {
   @Bind(R.id.radioSex) RadioGroup radioGroup;
 
 
-  public Date dob = null;
-  public String enteredEmail;
-  public String enteredFullName;
-  public String enteredHomeTown;
-  MaterialDialog matchUserDialog;
+  private Date dob = null;
+  private String enteredEmail;
+  private String enteredFullName;
+  private String enteredHomeTown;
+  private MaterialDialog matchUserDialog;
   private boolean hasSelectedHometown;
 
   /**
@@ -364,7 +364,7 @@ public class IdentityFragment extends Fragment {
     LinearLayout llFirst = (LinearLayout) datePicker.getChildAt(0);
     LinearLayout llSecond = (LinearLayout) llFirst.getChildAt(0);
     for (int i = 0; i < llSecond.getChildCount(); i++) {
-      NumberPicker picker = (NumberPicker) llSecond.getChildAt(i); // Numberpickers in llSecond
+      NumberPicker picker = (NumberPicker) llSecond.getChildAt(i); // NumberPickers in llSecond
       Field[] pickerFields = NumberPicker.class.getDeclaredFields();
       for (Field pf : pickerFields) {
         if (pf.getName().equals("mSelectionDivider")) {
@@ -384,7 +384,7 @@ public class IdentityFragment extends Fragment {
     }
   }
 
-  public static boolean validateFullName(String fullName) {
+  private boolean validateFullName(String fullName) {
 
     String regex = "^[\\p{L} .'-]+$";
     Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);

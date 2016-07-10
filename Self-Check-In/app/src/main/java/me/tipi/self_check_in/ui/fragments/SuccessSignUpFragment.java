@@ -92,10 +92,6 @@ public class SuccessSignUpFragment extends Fragment {
     bus.unregister(this);
   }
 
-  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-  }
-
   @OnClick(R.id.continue_btn)
   public void finishTapped() {
     startOver();

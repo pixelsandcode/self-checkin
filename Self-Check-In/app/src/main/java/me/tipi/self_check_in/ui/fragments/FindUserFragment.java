@@ -33,7 +33,6 @@ import com.squareup.picasso.Picasso;
 import javax.inject.Inject;
 
 import butterknife.Bind;
-import butterknife.BindColor;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
@@ -75,7 +74,6 @@ public class FindUserFragment extends Fragment {
   @Bind(R.id.match_user_container) RelativeLayout matchedUserContainer;
   @Bind(R.id.avatar) ImageView avatarView;
   @Bind(R.id.user_name) TextView userNameView;
-  @BindColor(R.color.colorAccent) int accentColor;
 
   private String enteredEmail;
   private MaterialDialog loading;

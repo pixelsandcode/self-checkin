@@ -61,9 +61,9 @@ public class QuestionFragment extends Fragment {
   @Bind(R.id.country_question) EditText countryQuestion;
 
   private String guestKey;
-  MaterialDialog thirdDialog;
-  MaterialDialog fourthDialog;
-  MaterialDialog loading;
+  private MaterialDialog thirdDialog;
+  private MaterialDialog fourthDialog;
+  private MaterialDialog loading;
 
   public QuestionFragment() {
     // Required empty public constructor

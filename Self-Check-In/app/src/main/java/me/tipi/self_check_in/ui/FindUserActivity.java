@@ -76,7 +76,7 @@ public class FindUserActivity extends AppCompatActivity {
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
   @Bind(R.id.backBtn) ImageView backButtonView;
 
-  public LoginAdapter adapter;
+  private LoginAdapter adapter;
   private MaterialDialog loading;
 
   @Override

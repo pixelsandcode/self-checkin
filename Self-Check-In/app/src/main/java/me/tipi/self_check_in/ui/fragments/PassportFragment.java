@@ -90,7 +90,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   @Bind(R.id.cover_top_view) View topCoverView;
   @Bind(R.id.cover_left_view) View leftCoverView;
 
-  MaterialDialog dialog;
+  private MaterialDialog dialog;
 
   private int mCameraID;
   private Camera mCamera;
