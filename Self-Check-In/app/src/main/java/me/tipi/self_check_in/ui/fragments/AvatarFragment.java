@@ -27,7 +27,6 @@ import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -43,8 +42,8 @@ import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -61,8 +60,8 @@ import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
+import me.tipi.self_check_in.ui.misc.BigBrotherCameraPreview;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
-import me.tipi.self_check_in.util.FileHelper;
 import me.tipi.self_check_in.util.ImageParameters;
 import me.tipi.self_check_in.util.ImageUtility;
 import timber.log.Timber;
@@ -72,17 +71,24 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
 
   public static final String TAG = PassportFragment.class.getSimpleName();
 
+  private static final int PICTURE_SIZE_MAX_WIDTH = 1280;
+  private static final int PREVIEW_SIZE_MAX_WIDTH = 640;
+
   @Inject Picasso picasso;
   @Inject AppContainer appContainer;
   @Inject Bus bus;
-  @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
+  @Inject
+  @Named(ApiConstants.AVATAR)
+  Preference<String> avatarPath;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
 
   @Bind(R.id.avatar) ImageView avatarView;
-  @Bind(R.id.surface_view) SurfaceView mPreviewView;
+  @Bind(R.id.surface_view) BigBrotherCameraPreview mPreviewView;
   @Bind(R.id.continue_btn) Button continueButton;
   @Bind(R.id.capture) ImageButton captureButton;
+  @Bind(R.id.cover_top_view) View topCoverView;
+  @Bind(R.id.cover_left_view) View leftCoverView;
 
   MaterialDialog dialog;
 
@@ -96,6 +102,11 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   private ImageParameters mImageParameters;
 
   private CameraOrientationListener mOrientationListener;
+
+  private float coverHeight;
+  private float coverWidth;
+  private float guideWidth;
+  private float guideHeight;
 
   /**
    * Instantiates a new Avatar fragment.
@@ -157,8 +168,10 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
         mImageParameters.mPreviewWidth = mPreviewView.getWidth();
         mImageParameters.mPreviewHeight = mPreviewView.getHeight();
 
-        mImageParameters.mCoverWidth = mImageParameters.mCoverHeight
-            = mImageParameters.calculateCoverWidthHeight();
+        coverHeight = topCoverView.getHeight();
+        coverWidth = leftCoverView.getWidth();
+        guideHeight = avatarView.getHeight();
+        guideWidth = avatarView.getWidth();
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -185,11 +198,12 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     if (getActivity() != null) {
       bus.post(new BackShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
-      if (avatarPath.isSet() && avatarPath.get() != null && avatarView != null) {
+      // TODO: Remove when confirmed sign up after taking photo
+      /*if (avatarPath.isSet() && avatarPath.get() != null && avatarView != null) {
         picasso.load(new File(avatarPath.get())).resize(300, 300).centerCrop()
             .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
             .placeholder(R.drawable.avatar_placeholder).into(avatarView);
-      }
+      }*/
 
       new Handler().postDelayed(new Runnable() {
         @Override public void run() {
@@ -207,9 +221,6 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     super.onPause();
     bus.unregister(this);
     Timber.d("AVATAR : %S", "BUS UNREGISTERED");
-  }
-
-  @Override public void onStop() {
 
     mOrientationListener.disable();
 
@@ -219,8 +230,6 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
       mCamera.release();
       mCamera = null;
     }
-
-    super.onStop();
   }
 
   @Override
@@ -243,6 +252,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
 
   /**
    * A picture has been taken
+   *
    * @param data
    * @param camera
    */
@@ -274,7 +284,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   /**
    * On launch camera.
    */
-  @OnClick({ R.id.avatar, R.id.capture})
+  @OnClick({R.id.avatar, R.id.capture})
   public void onLaunchCamera() {
     takePicture();
 
@@ -284,6 +294,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   private void getCamera(int cameraID) {
     try {
       mCamera = Camera.open(cameraID);
+      mPreviewView.setCamera(mCamera);
     } catch (Exception e) {
       Log.d(TAG, "Can't open camera with id " + cameraID);
       e.printStackTrace();
@@ -309,6 +320,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
    */
   private void startCameraPreview() {
     determineDisplayOrientation();
+    setupCamera();
 
     try {
       mCamera.setPreviewDisplay(mSurfaceHolder);
@@ -332,25 +344,16 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   }
 
   private int getFrontCameraID() {
-    for(int i = 0; i < Camera.getNumberOfCameras(); i++){
+    for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
       Camera.CameraInfo info = new Camera.CameraInfo();
       Camera.getCameraInfo(i, info);
-      if(info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT){
+      if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
         mCameraID = i;
         break;
       }
     }
 
     return mCameraID;
-  }
-
-  private int getBackCameraID() {
-    return Camera.CameraInfo.CAMERA_FACING_BACK;
-  }
-
-  @OnClick(R.id.continue_btn)
-  public void change() {
-    continueToIdentity();
   }
 
   public void continueToIdentity() {
@@ -364,33 +367,14 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
 
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
-      ((SignUpActivity)getActivity()).reset();
-    } else if (getActivity() != null){
-      ((FindUserActivity)getActivity()).reset();
+      ((SignUpActivity) getActivity()).reset();
+    } else if (getActivity() != null) {
+      ((FindUserActivity) getActivity()).reset();
     }
-  }
-
-  private Camera.Size getBestPreviewSize(int width, int height, Camera.Parameters parameters) {
-    Camera.Size result = null;
-    for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
-      if (size.width <= width && size.height <= height) {
-        if (result == null) {
-          result = size;
-        } else {
-          int resultArea = result.width * result.height;
-          int newArea = size.width * size.height;
-          if (newArea > resultArea) {
-            result = size;
-          }
-        }
-      }
-    }
-    return (result);
   }
 
   private void rotatePicture(int rotation, byte[] data) {
     Bitmap bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
-//        Log.d(TAG, "original bitmap width " + bitmap.getWidth() + " height " + bitmap.getHeight());
     if (rotation != 0) {
       Bitmap oldBitmap = bitmap;
 
@@ -404,11 +388,41 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
       oldBitmap.recycle();
     }
 
-    avatarView.setImageBitmap(bitmap);
-    Uri photoUri = ImageUtility.savePicture(getActivity(), bitmap);
-    File saved = FileHelper.getResizedFile(getActivity(), photoUri, Build.VERSION.SDK_INT, 500, 500);
-    avatarPath.set(saved.getPath());
-    continueToIdentity();
+    int x = Math.round(bitmap.getWidth() - guideWidth) / 2;
+    int y = Math.round(bitmap.getHeight() - guideHeight) / 2;
+    bitmap = Bitmap.createBitmap(bitmap, x, y, bitmap.getWidth() - x * 2, bitmap.getHeight() - y * 2);
+
+    Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
+    avatarPath.set(photoUri.getPath());
+    if (photoUri.getPath() != null) {
+      picasso.load(photoUri)
+          .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
+          .into(avatarView);
+      continueToIdentity();
+    }
+  }
+
+  /**
+   * Setup the camera parameters
+   */
+  private void setupCamera() {
+    // Never keep a global parameters
+    Camera.Parameters parameters = mCamera.getParameters();
+
+    Camera.Size bestPreviewSize = determineBestPreviewSize(parameters);
+    Camera.Size bestPictureSize = determineBestPictureSize(parameters);
+
+    parameters.setPreviewSize(bestPreviewSize.width, bestPreviewSize.height);
+    parameters.setPictureSize(bestPictureSize.width, bestPictureSize.height);
+
+
+    // Set continuous picture focus, if it's supported
+    if (parameters.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+      parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+    }
+
+    // Lock in the changes
+    mCamera.setParameters(parameters);
   }
 
   /**
@@ -459,6 +473,36 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     mImageParameters.mLayoutOrientation = degrees;
 
     mCamera.setDisplayOrientation(mImageParameters.mDisplayOrientation);
+  }
+
+  private Camera.Size determineBestPreviewSize(Camera.Parameters parameters) {
+    return determineBestSize(parameters.getSupportedPreviewSizes(), PREVIEW_SIZE_MAX_WIDTH);
+  }
+
+  private Camera.Size determineBestPictureSize(Camera.Parameters parameters) {
+    return determineBestSize(parameters.getSupportedPictureSizes(), PICTURE_SIZE_MAX_WIDTH);
+  }
+
+  private Camera.Size determineBestSize(List<Camera.Size> sizes, int widthThreshold) {
+    Camera.Size bestSize = null;
+    Camera.Size size;
+    int numOfSizes = sizes.size();
+    for (int i = 0; i < numOfSizes; i++) {
+      size = sizes.get(i);
+      boolean isDesireRatio = (size.width / 4) == (size.height / 3);
+      boolean isBetterSize = (bestSize == null) || size.width > bestSize.width;
+
+      if (isDesireRatio && isBetterSize) {
+        bestSize = size;
+      }
+    }
+
+    if (bestSize == null) {
+      Log.d(TAG, "cannot find the best camera size");
+      return sizes.get(sizes.size() - 1);
+    }
+
+    return bestSize;
   }
 
   /**

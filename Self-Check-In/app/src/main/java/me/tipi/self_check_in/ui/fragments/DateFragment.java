@@ -185,6 +185,28 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
     bus.unregister(this);
   }
 
+  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    if (getActivity() != null && isVisibleToUser) {
+      bus.post(new BackShouldShowEvent(true));
+      bus.post(new SettingShouldShowEvent(false));
+      isLogin = guest.user_key != null && !TextUtils.isEmpty(guest.user_key);
+      if (isLogin) {
+        passportLayout.setVisibility(View.GONE);
+        passportLabel.setVisibility(View.GONE);
+      } else {
+        passportLayout.setVisibility(View.VISIBLE);
+        passportLabel.setVisibility(View.VISIBLE);
+      }
+
+      new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+          startOver();
+        }
+      }, ApiConstants.START_OVER_TIME);
+    }
+  }
+
   /**
    * Date submit clicked.
    */
@@ -206,7 +228,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
 
       if (isLogin) {
         if (getActivity() instanceof SignUpActivity) {
-          ((SignUpActivity)getActivity()).showQuestionFragment();
+          bus.post(new ClaimEvent());
         } else {
           bus.post(new ClaimEvent());
         }

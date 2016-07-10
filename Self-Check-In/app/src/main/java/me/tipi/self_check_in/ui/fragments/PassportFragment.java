@@ -88,14 +88,11 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   @Bind(R.id.surface_view) BigBrotherCameraPreview mPreviewView;
   @Bind(R.id.scan_btn) ImageButton scanButton;
   @Bind(R.id.cover_top_view) View topCoverView;
-  @Bind(R.id.cover_bottom_view) View bottomCoverView;
-  @Bind(R.id.cover_right_view) View rightCoverView;
   @Bind(R.id.cover_left_view) View leftCoverView;
 
   MaterialDialog dialog;
 
   private int mCameraID;
-  private String mFlashMode;
   private Camera mCamera;
   private SurfaceHolder mSurfaceHolder;
 
@@ -132,7 +129,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     mCameraID = getBackCameraID();
-    mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;
+    String mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;
     mImageParameters = new ImageParameters();
   }
 
@@ -163,26 +160,26 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     mImageParameters.mIsPortrait =
         getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
 
-      ViewTreeObserver observer = mPreviewView.getViewTreeObserver();
-      observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-          mImageParameters.mPreviewWidth = mPreviewView.getWidth();
-          mImageParameters.mPreviewHeight = mPreviewView.getHeight();
+    ViewTreeObserver observer = mPreviewView.getViewTreeObserver();
+    observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+      @Override
+      public void onGlobalLayout() {
+        mImageParameters.mPreviewWidth = mPreviewView.getWidth();
+        mImageParameters.mPreviewHeight = mPreviewView.getHeight();
 
-          coverHeight = topCoverView.getHeight();
-          coverWidth = leftCoverView.getWidth();
-          guideHeight = passportView.getHeight();
-          guideWidth = passportView.getWidth();
+        coverHeight = topCoverView.getHeight();
+        coverWidth = leftCoverView.getWidth();
+        guideHeight = passportView.getHeight();
+        guideWidth = passportView.getWidth();
 
 
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mPreviewView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          } else {
-            mPreviewView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-          }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+          mPreviewView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        } else {
+          mPreviewView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
         }
-      });
+      }
+    });
   }
 
   @Override public void onAttach(Context context) {
@@ -245,11 +242,6 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     // The surface is destroyed with the visibility of the SurfaceView is set to View.Invisible
   }
 
-  /**
-   * A picture has been taken
-   * @param data
-   * @param camera
-   */
   @Override
   public void onPictureTaken(byte[] data, Camera camera) {
     int rotation = getPhotoRotation();
@@ -449,6 +441,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     // Lock in the changes
     mCamera.setParameters(parameters);
   }
+
   /**
    * Determine the current display orientation and rotate the camera preview
    * accordingly

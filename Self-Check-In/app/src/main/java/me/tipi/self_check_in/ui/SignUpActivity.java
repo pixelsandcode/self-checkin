@@ -406,7 +406,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .setAction("Check-In")
                 .setLabel("Claim")
                 .setValue(diffSeconds).build());
-            /*viewPager.setCurrentItem(7);*/
+            showQuestionFragment();
           }
 
           @Override public void failure(RetrofitError error) {
