@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -155,6 +156,20 @@ public class SignUpActivity extends AppCompatActivity {
     }
   }
 
+  @Override public void onBackPressed() {
+    Fragment questionFragment = getSupportFragmentManager().findFragmentByTag(QuestionFragment.TAG);
+    Fragment successFragment = getSupportFragmentManager().findFragmentByTag(SuccessSignUpFragment.TAG);
+    if (questionFragment != null && questionFragment.isVisible()) {
+      reset();
+    }
+
+    if (successFragment != null && successFragment.isVisible()) {
+      reset();
+    }
+
+    super.onBackPressed();
+  }
+
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
     // Make sure it's our original READ_CONTACTS request
@@ -249,13 +264,13 @@ public class SignUpActivity extends AppCompatActivity {
   public void showQuestionFragment() {
     QuestionFragment fragment = QuestionFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment).addToBackStack(QuestionFragment.TAG).commit();
+        .replace(R.id.container_main, fragment, QuestionFragment.TAG).addToBackStack(QuestionFragment.TAG).commit();
   }
 
   public void showSuccessFragment() {
     SuccessSignUpFragment fragment = SuccessSignUpFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment).addToBackStack(SuccessSignUpFragment.TAG).commit();
+        .replace(R.id.container_main, fragment, SuccessSignUpFragment.TAG).addToBackStack(SuccessSignUpFragment.TAG).commit();
   }
 
   /**
@@ -478,6 +493,7 @@ public class SignUpActivity extends AppCompatActivity {
    */
   public void goToLanding(View view) {
     showLandingFragment();
+    //showPassportFragment();
   }
 
   /**
