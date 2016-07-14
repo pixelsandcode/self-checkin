@@ -113,4 +113,5 @@
   <string name="gender">Gender</string>
   <string name="male">Male</string>
   <string name="female">Female</string>
+  <string name="error_invalid_name_count">Enter your first and last name</string>
 </resources>

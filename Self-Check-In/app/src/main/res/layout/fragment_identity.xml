@@ -61,7 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/normal_padding"
-        android:text="@string/booking_email"
+        android:text="@string/email"
         android:textAllCaps="true"
         android:textColor="@color/label_text"
         android:textSize="@dimen/font_normal"/>

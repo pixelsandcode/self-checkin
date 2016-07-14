@@ -183,6 +183,19 @@ public class QuestionFragment extends Fragment {
     bus.unregister(this);
   }
 
+  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    if (getActivity() != null && isVisibleToUser) {
+      if (guest != null) {
+        guestKey = guest.guest_key;
+      }
+
+      bus.post(new BackShouldShowEvent(false));
+      bus.post(new RefreshShouldShowEvent(false));
+      bus.post(new SettingShouldShowEvent(false));
+    }
+  }
+
   @OnClick(R.id.continue_btn)
   public void sendNote() {
     String note = "";

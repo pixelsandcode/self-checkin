@@ -288,6 +288,10 @@ public class IdentityFragment extends Fragment {
       nameLayout.setError(getString(R.string.error_field_required));
       focusView = fullNameTextView;
       cancel = true;
+    } else if (!checkIfHasSpace(enteredFullName)) {
+      nameLayout.setError(getString(R.string.error_invalid_name_count));
+      focusView = fullNameTextView;
+      cancel = true;
     } else if (!validateFullName(enteredFullName)) {
       nameLayout.setError(getString(R.string.error_invalid_full_name));
       focusView = fullNameTextView;
@@ -391,6 +395,10 @@ public class IdentityFragment extends Fragment {
     Matcher matcher = pattern.matcher(fullName);
     return matcher.find();
 
+  }
+
+  private boolean checkIfHasSpace(String fullName) {
+    return fullName.contains(" ");
   }
 
   /**

@@ -122,7 +122,7 @@ public class FindUserActivity extends AppCompatActivity {
       // If the user is currently looking at the first step, allow the system to handle the
       // Back button. This calls finish() on this activity and pops the back stack.
       super.onBackPressed();
-    } else if(viewPager.getCurrentItem() == 4) {
+    } else if(viewPager.getCurrentItem() == 4 || viewPager.getCurrentItem() == 3) {
       reset();
     } else {
       // Otherwise, select the previous step.
@@ -239,7 +239,7 @@ public class FindUserActivity extends AppCompatActivity {
       // If the user is currently looking at the first step, allow the system to handle the
       // Back button. This calls finish() on this activity and pops the back stack.
       super.onBackPressed();
-    } else if(viewPager.getCurrentItem() == 4) {
+    } else if(viewPager.getCurrentItem() == 4 || viewPager.getCurrentItem() == 3) {
       reset();
     } else {
       // Otherwise, select the previous step.

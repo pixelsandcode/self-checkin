@@ -11,17 +11,17 @@ package me.tipi.self_check_in.data.api;
 public class ApiConstants {
 
   // Api Ips
-  /*public static final String API_URL = "http://api.tipi.me/v1";
-  public static final String API_IMAGE_URL = "http://api.tipi.me/cdn";*/
+  public static final String API_URL = "http://api.tipi.me/v1";
+  public static final String API_IMAGE_URL = "http://api.tipi.me/cdn";
 
   // Api Stg
-  public static final String API_URL = "http://stg.api.tipi.me/v1";
-  public static final String API_IMAGE_URL = "http://stg.api.tipi.me/cdn";
+  /*public static final String API_URL = "http://stg.api.tipi.me/v1";
+  public static final String API_IMAGE_URL = "http://stg.api.tipi.me/cdn";*/
 
   // Download Page
   public static final String BASE_DOWNLOAD_PAGE = "https://play.google.com/store/apps/details?id=me.tipi.self_check_in";
 
-  public static final int START_OVER_TIME = 420000;
+  public static final int START_OVER_TIME = 600000;
 
   // Routes
   public static final String LOGIN = "/dashboard/login";

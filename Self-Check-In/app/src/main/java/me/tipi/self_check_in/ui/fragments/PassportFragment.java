@@ -370,8 +370,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   }
 
   private void rotatePicture(int rotation, byte[] data) {
-    Bitmap bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
-    //Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+    Bitmap bitmap = ImageUtility.decodeJPEGfromBuffer(getActivity(), data);
     if (rotation != 0) {
       Bitmap oldBitmap = bitmap;
 
@@ -385,17 +384,8 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
       oldBitmap.recycle();
     }
 
-    float ratio;
-    float heightRatio = guideHeight / guideWidth;
-    if (bitmap.getWidth() < bitmap.getHeight()) {
-      ratio = (float) bitmap.getWidth() / (float) bitmap.getHeight();
-    } else {
-      ratio = (float) bitmap.getHeight() / (float) bitmap.getWidth();
-    }
-
-    int x = Math.round(coverWidth * ratio);
-    int y = Math.round(coverHeight * heightRatio);
-
+    int x = Math.round(bitmap.getWidth() - guideWidth) / 2;
+    int y = Math.round(bitmap.getHeight() - guideHeight) / 2;
     bitmap = Bitmap.createBitmap(bitmap, x, y, bitmap.getWidth() - x * 2, bitmap.getHeight() - y * 2);
 
     passportView.setImageBitmap(bitmap);
