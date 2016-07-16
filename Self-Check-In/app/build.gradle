@@ -1,3 +1,9 @@
+// Manifest version information!
+def versionMajor = 3
+def versionMinor = 1
+def versionPatch = 8
+def versionBuild = 0 // bump for dogfood builds, public betas, etc.
+
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 android {
@@ -12,12 +18,15 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     useLibrary 'org.apache.http.legacy'
+
     defaultConfig {
         applicationId "me.tipi.self_check_in"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode rootProject.ext.versionCode
-        versionName rootProject.ext.versionName
+
+        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+
         manifestPlaceholders = [HOCKEYAPP_APP_ID: HOCKEY_ID]
         setProperty("archivesBaseName", "MAD-Kiosk-$versionName")
     }
