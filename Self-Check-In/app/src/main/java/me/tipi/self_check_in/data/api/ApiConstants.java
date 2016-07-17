@@ -42,4 +42,7 @@ public class ApiConstants {
   public static final String PASSPORT = "passport";
   public static final String HOSTEL_NAME = "hostelName";
   public static final String HOSTEL_KEY = "hostelKey";
+
+  // Blink Licence Key
+  public static final String LICENCE_KEY = "KFOJQQUV-RD4RYXYA-ST53TQCQ-NN3R24ZB-YH6QXXUH-RLH4M5HI-P44JXQCR-O5QWY3PQ";
 }

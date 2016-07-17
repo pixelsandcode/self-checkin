@@ -75,6 +75,7 @@ import me.tipi.self_check_in.ui.fragments.HostelTermsFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LandingFragment;
 import me.tipi.self_check_in.ui.fragments.MainFragment;
+import me.tipi.self_check_in.ui.fragments.OCRFragment;
 import me.tipi.self_check_in.ui.fragments.PassportFragment;
 import me.tipi.self_check_in.ui.fragments.QuestionFragment;
 import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
@@ -270,6 +271,12 @@ public class SignUpActivity extends AppCompatActivity {
     SuccessSignUpFragment fragment = SuccessSignUpFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.container_main, fragment, SuccessSignUpFragment.TAG).addToBackStack(SuccessSignUpFragment.TAG).commit();
+  }
+
+  public void showScanFragment() {
+    OCRFragment fragment = OCRFragment.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container_main, fragment).addToBackStack(null).commit();
   }
 
   /**
@@ -491,8 +498,8 @@ public class SignUpActivity extends AppCompatActivity {
    * @param view the view
    */
   public void goToLanding(View view) {
-    showLandingFragment();
-    //showPassportFragment();
+    //showLandingFragment();
+    showScanFragment();
   }
 
   /**
