@@ -1,0 +1,74 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context="me.tipi.self_check_in.ui.fragments.EmailFragment"
+    tools:ignore="ContentDescription">
+
+  <TextView
+      android:id="@+id/title"
+      android:layout_width="350dp"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:gravity="center"
+      android:text="@string/enter_your_email"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_extra_large"/>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+      android:layout_marginLeft="120dp"
+      android:layout_marginRight="120dp"
+      android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/normal_padding"
+        android:text="@string/email"
+        android:textAllCaps="true"
+        android:textColor="@color/label_text"
+        android:textSize="@dimen/font_normal"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/email_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+      <EditText
+          android:id="@+id/email"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:imeOptions="actionDone"
+          android:inputType="textEmailAddress"
+          android:paddingLeft="@dimen/first_key_line"
+          android:paddingRight="@dimen/first_key_line"
+          android:textColor="@color/main_text"
+          android:textSize="@dimen/font_large"
+          tools:text="Ashkan Hesaraki"/>
+    </android.support.design.widget.TextInputLayout>
+  </LinearLayout>
+
+  <Button
+      android:id="@+id/continue_btn"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="@dimen/second_key_line"
+      android:layout_marginLeft="@dimen/proceed_button_margin"
+      android:layout_marginRight="@dimen/proceed_button_margin"
+      android:background="@drawable/next_button_bg"
+      android:padding="@dimen/first_key_line"
+      android:text="@string/next"
+      android:textColor="@color/colorAccent"
+      android:textSize="@dimen/font_normal"
+      android:textStyle="bold"/>
+
+</RelativeLayout>

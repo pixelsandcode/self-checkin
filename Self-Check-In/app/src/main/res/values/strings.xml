@@ -114,4 +114,10 @@
   <string name="male">Male</string>
   <string name="female">Female</string>
   <string name="error_invalid_name_count">Enter your first and last name</string>
+  <string name="enter_your_email">Enter your email …</string>
+  <string name="verify_your_id">Verify your ID</string>
+  <string name="do_you_have_your_passport">Do you have your Passport</string>
+  <string name="take_a_picture">Not working? Take a picture…</string>
+  <string name="use_back_camera_to_scan_passport">Use back camera to scan passport</string>
+  <string name="use_back_camera_to_take_a_picture_of_your_license">Use back camera to take a picture of your license</string>
 </resources>

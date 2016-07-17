@@ -59,7 +59,6 @@ import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
-import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.ui.misc.BigBrotherCameraPreview;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.ImageParameters;
@@ -370,7 +369,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   public void continueToIdentity() {
     if (avatarPath.isSet()) {
       Timber.v(avatarPath.get());
-      bus.post(new SubmitEvent());
+      ((SignUpActivity)getActivity()).showDateFragment();
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie first!", Snackbar.LENGTH_LONG).show();
     }

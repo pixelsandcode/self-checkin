@@ -2,26 +2,32 @@ package me.tipi.self_check_in.ui.fragments;
 
 
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.microblink.activity.ScanActivity;
+import com.f2prateek.rx.preferences.Preference;
 import com.microblink.detectors.DetectorResult;
 import com.microblink.detectors.quad.QuadDetectorResult;
 import com.microblink.hardware.orientation.Orientation;
+import com.microblink.image.Image;
 import com.microblink.metadata.DetectionMetadata;
+import com.microblink.metadata.ImageMetadata;
 import com.microblink.metadata.Metadata;
 import com.microblink.metadata.MetadataListener;
 import com.microblink.metadata.MetadataSettings;
 import com.microblink.recognition.InvalidLicenceKeyException;
+import com.microblink.recognizers.BaseRecognitionResult;
 import com.microblink.recognizers.RecognitionResults;
 import com.microblink.recognizers.settings.RecognitionSettings;
 import com.microblink.recognizers.settings.RecognizerSettings;
@@ -36,22 +42,33 @@ import com.microblink.view.viewfinder.quadview.QuadViewManager;
 import com.microblink.view.viewfinder.quadview.QuadViewManagerFactory;
 import com.microblink.view.viewfinder.quadview.QuadViewPreset;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import me.tipi.self_check_in.R;
+import me.tipi.self_check_in.SecretKey;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
+import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.misc.Config;
+import me.tipi.self_check_in.util.ImageUtility;
 import timber.log.Timber;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class OCRFragment extends Fragment implements ScanResultListener, CameraEventsListener, OnSizeChangedListener, MetadataListener {
+public class OCRFragment extends Fragment implements ScanResultListener, CameraEventsListener,
+    OnSizeChangedListener, MetadataListener {
 
   public static final String TAG = OCRFragment.class.getSimpleName();
+  @Inject @Named(ApiConstants.PASSPORT)
+  Preference<String> passportPath;
 
   @Bind(R.id.rec_view) RecognizerView mRecognizerView;
+  @Bind(R.id.scan_btn) ImageButton scanButton;
+  @Bind(R.id.scan_hint) TextView scanHintTextView;
 
   private int mScansDone = 0;
   private Handler mHandler = new Handler();
@@ -83,6 +100,11 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     recognitionSettings.setRecognizerSettingsArray(settArray);
     mRecognizerView.setRecognitionSettings(recognitionSettings);
 
+    MetadataSettings.ImageMetadataSettings ims = new MetadataSettings.ImageMetadataSettings();
+    // sets whether image that was used to obtain valid scanning result will be available
+    //ims.setSuccessfulScanFrameEnabled(true);
+    ims.setDewarpedImageEnabled(true);
+
 
     // In order for scanning to work, you must enter a valid licence key. Without licence key,
     // scanning will not work. Licence key is bound the the package name of your app, so when
@@ -94,7 +116,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     // that are disallowed by licence key will be turned off without any error and information
     // about turning them off will be logged to ADB logcat.
     try {
-      mRecognizerView.setLicenseKey(ApiConstants.LICENCE_KEY);
+      mRecognizerView.setLicenseKey(SecretKey.LICENCE_KEY);
     } catch (InvalidLicenceKeyException e) {
       e.printStackTrace();
       Log.e(TAG, "Invalid licence key!");
@@ -125,9 +147,11 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     // define which metadata will be available in MetadataListener (onMetadataAvailable method)
     MetadataSettings metadataSettings = new MetadataSettings();
 
+
     // detection metadata should be available in MetadataListener
     // detection metadata are all metadata objects from com.microblink.metadata.detection package
     metadataSettings.setDetectionMetadataAllowed(true);
+    metadataSettings.setImageMetadataSettings(ims);
 
     // set metadata listener and defined metadata settings
     // metadata listener will obtain selected metadata
@@ -230,12 +254,22 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     soundNotification();
     mScansDone++;
     mRecognizerView.pauseScanning();
-    if(mScansDone>=3) {
-      // after 3 successful scans, return the last result
-      Intent resultIntent = new Intent();
-      resultIntent.putExtra(ScanActivity.EXTRAS_RECOGNITION_RESULTS, results);
-      /*setResult(RESULT_OK, resultIntent);
-      finish();*/
+
+    if(mScansDone >= 1) {
+
+
+      BaseRecognitionResult[] resArray = null;
+      if (results != null) {
+        // get array of recognition results
+        resArray = results.getRecognitionResults();
+      }
+
+      if (resArray != null) {
+        ((SignUpActivity)getActivity()).showIdentityFragment(results);
+      } else {
+        android.util.Log.e(TAG, "Unable to retrieve recognition data!");
+        showScanButton();
+      }
     } else {
       Toast.makeText(getActivity(), "Scans done: " + mScansDone, Toast.LENGTH_SHORT).show();
       // resume scanning after two seconds
@@ -246,13 +280,28 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
         }
       }, 2000);
     }
+
+  }
+
+  private void showScanButton() {
+    scanButton.setVisibility(View.VISIBLE);
+    scanHintTextView.setVisibility(View.VISIBLE);
+    scanButton.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        ((SignUpActivity)getActivity()).showPassportFragment();
+      }
+    });
   }
 
 
   @Override
   public void onCameraPreviewStarted() {
     // this method is called just after camera preview has started
-    //enableTorchButtonIfPossible();
+    mHandler.postDelayed(new Runnable() {
+      @Override public void run() {
+        showScanButton();
+      }
+    }, 15000);
   }
 
   @Override
@@ -308,8 +357,8 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
       Log.i(TAG, "Autofocus started with focusing areas being null");
     } else {
       Log.i(TAG, "Autofocus started");
-      for(int i = 0; i < rects.length; ++i) {
-        Log.d(TAG, "Focus area: " + rects[i].toString());
+      for (Rect rect : rects) {
+        Log.d(TAG, "Focus area: " + rect.toString());
       }
     }
   }
@@ -320,8 +369,8 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
       Log.i(TAG, "Autofocus stopped with focusing areas being null");
     } else {
       Log.i(TAG, "Autofocus stopped");
-      for(int i = 0; i < rects.length; ++i) {
-        Log.d(TAG, "Focus area: " + rects[i].toString());
+      for (Rect rect : rects) {
+        Log.d(TAG, "Focus area: " + rect.toString());
       }
     }
   }
@@ -353,7 +402,21 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
         // begin quadrilateral animation to detected quadrilateral
         mQvManager.animateQuadToDetectionPosition((QuadDetectorResult) detectorResult);
       }
+    } else if (metadata instanceof ImageMetadata) {
+      // obtain image
+
+      // Please note that Image's internal buffers are valid only
+      // until this method ends. If you want to save image for later,
+      // obtained a cloned image with image.clone().
+
+      Image image = ((ImageMetadata) metadata).getImage();
+      final Bitmap bitmap = image.convertToBitmap();
+      final Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
+      passportPath.set(photoUri.getPath());
+      // to convert the image to Bitmap, call image.convertToBitmap()
+
+      // after this line, image gets disposed. If you want to save it
+      // for later, you need to clone it with image.clone()
     }
   }
-
 }

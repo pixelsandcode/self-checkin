@@ -123,3 +123,4 @@ proguard/
 # Android Studio Navigation editor temp files
 .navigation/
 
+/src/main/java/me/tipi/self_check_in/SecretKey.java

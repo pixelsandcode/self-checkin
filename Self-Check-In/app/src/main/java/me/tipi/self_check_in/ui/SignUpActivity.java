@@ -35,6 +35,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.microblink.recognizers.RecognitionResults;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -71,6 +72,7 @@ import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.ui.fragments.AvatarFragment;
 import me.tipi.self_check_in.ui.fragments.DateFragment;
+import me.tipi.self_check_in.ui.fragments.EmailFragment;
 import me.tipi.self_check_in.ui.fragments.HostelTermsFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LandingFragment;
@@ -78,6 +80,7 @@ import me.tipi.self_check_in.ui.fragments.MainFragment;
 import me.tipi.self_check_in.ui.fragments.OCRFragment;
 import me.tipi.self_check_in.ui.fragments.PassportFragment;
 import me.tipi.self_check_in.ui.fragments.QuestionFragment;
+import me.tipi.self_check_in.ui.fragments.ScanIDFragment;
 import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -231,8 +234,8 @@ public class SignUpActivity extends AppCompatActivity {
         .replace(R.id.container_main, fragment).addToBackStack(LandingFragment.TAG).commit();
   }
 
-  public void showIdentityFragment() {
-    IdentityFragment fragment = IdentityFragment.newInstance(this);
+  public void showIdentityFragment(RecognitionResults results) {
+    IdentityFragment fragment = IdentityFragment.newInstance(this, results);
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.container_main, fragment).addToBackStack(IdentityFragment.TAG).commit();
   }
@@ -270,13 +273,26 @@ public class SignUpActivity extends AppCompatActivity {
   public void showSuccessFragment() {
     SuccessSignUpFragment fragment = SuccessSignUpFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment, SuccessSignUpFragment.TAG).addToBackStack(SuccessSignUpFragment.TAG).commit();
+        .replace(R.id.container_main, fragment, SuccessSignUpFragment.TAG)
+        .addToBackStack(SuccessSignUpFragment.TAG).commit();
   }
 
   public void showScanFragment() {
     OCRFragment fragment = OCRFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.container_main, fragment).addToBackStack(null).commit();
+  }
+
+  public void showEmailFragment() {
+    EmailFragment fragment = EmailFragment.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container_main, fragment, EmailFragment.TAG).addToBackStack(null).commit();
+  }
+
+  public void showScanIDFragment() {
+    ScanIDFragment fragment = ScanIDFragment.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container_main, fragment, ScanIDFragment.TAG).addToBackStack(null).commit();
   }
 
   /**
@@ -489,7 +505,7 @@ public class SignUpActivity extends AppCompatActivity {
   public void goToIdentity(View view) {
     tracker.send(new HitBuilders.EventBuilder("Process", "Create").build());
     guest.time = System.currentTimeMillis();
-    showIdentityFragment();
+    showEmailFragment();
   }
 
   /**
@@ -498,8 +514,7 @@ public class SignUpActivity extends AppCompatActivity {
    * @param view the view
    */
   public void goToLanding(View view) {
-    //showLandingFragment();
-    showScanFragment();
+    showLandingFragment();
   }
 
   /**

@@ -286,7 +286,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   public void continueToCheckIn() {
     if (passportPath.isSet()) {
       Timber.v(passportPath.get());
-      ((SignUpActivity)getActivity()).showDateFragment();
+      ((SignUpActivity)getActivity()).showIdentityFragment(null);
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please Scan your passport first!", Snackbar.LENGTH_LONG).show();
     }

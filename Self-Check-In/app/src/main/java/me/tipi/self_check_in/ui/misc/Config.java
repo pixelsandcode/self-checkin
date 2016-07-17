@@ -6,14 +6,17 @@ import com.microblink.recognizers.settings.RecognizerSettings;
 
 public class Config {
 
-    /** Returns recognizer settings */
-    public static RecognizerSettings[] getRecognizerSettings() {
-        MRTDRecognizerSettings sett = new MRTDRecognizerSettings();
-        USDLRecognizerSettings usdlSett = new USDLRecognizerSettings();
+  /**
+   * Returns recognizer settings
+   */
+  public static RecognizerSettings[] getRecognizerSettings() {
+    MRTDRecognizerSettings sett = new MRTDRecognizerSettings();
+    sett.setShowFullDocument(true);
+    USDLRecognizerSettings usdlSett = new USDLRecognizerSettings();
 
-        return new RecognizerSettings[] {
-                sett, usdlSett
-        };
-    }
+    return new RecognizerSettings[]{
+        sett, usdlSett
+    };
+  }
 }
 

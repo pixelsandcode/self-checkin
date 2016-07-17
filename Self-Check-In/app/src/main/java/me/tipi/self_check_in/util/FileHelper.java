@@ -91,7 +91,7 @@ public class FileHelper {
         File file = new File(context.getCacheDir(), fileName);
         file.createNewFile();
         FileOutputStream out = new FileOutputStream(file);
-        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
         destFile = file;
       } catch (Exception e) {
         Log.e("Image", e.getMessage(), e);

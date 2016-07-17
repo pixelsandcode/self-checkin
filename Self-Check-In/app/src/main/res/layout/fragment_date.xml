@@ -29,33 +29,6 @@
       android:orientation="vertical">
 
     <TextView
-        android:id="@+id/passport_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/normal_padding"
-        android:text="@string/passport_number"
-        android:textAllCaps="true"
-        android:textColor="@color/label_text"
-        android:textSize="@dimen/font_normal"/>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/passport_input_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-      <EditText
-          android:id="@+id/passport"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:imeOptions="actionNext"
-          android:inputType="textNoSuggestions"
-          android:paddingLeft="@dimen/first_key_line"
-          android:paddingRight="@dimen/first_key_line"
-          android:textColor="@color/main_text"
-          android:textSize="@dimen/font_large"/>
-    </android.support.design.widget.TextInputLayout>
-
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/normal_padding"

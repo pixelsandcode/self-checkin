@@ -1,11 +1,3 @@
-/*
- * *
- *  * Copyright (c) 2015-2016 www.Tipi.me.
- *  * Created by Ashkan Hesaraki.
- *  * Ashkan.Hesaraki@gmail.com
- *
- */
-
 package me.tipi.self_check_in.ui.fragments;
 
 
@@ -25,10 +17,10 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
-import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
@@ -37,34 +29,35 @@ import timber.log.Timber;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LandingFragment extends Fragment {
-
-  public static final String TAG = LandingFragment.class.getSimpleName();
+public class ScanIDFragment extends Fragment {
+  public static final String TAG = ScanIDFragment.class.getSimpleName();
 
   @Inject Bus bus;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
 
-  public LandingFragment() {
+
+  public ScanIDFragment() {
     // Required empty public constructor
   }
 
-  public static LandingFragment newInstance(Context context) {
-    LandingFragment fragment = new LandingFragment();
+  public static ScanIDFragment newInstance(Context context) {
+    ScanIDFragment fragment = new ScanIDFragment();
     SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
-
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                           Bundle savedInstanceState) {
     // Inflate the layout for this fragment
-    View rootView =  inflater.inflate(R.layout.fragment_landing, container, false);
-    ButterKnife.bind(this, rootView);
+    View view = inflater.inflate(R.layout.fragment_scan_id, container, false);
+    ButterKnife.bind(this, view);
 
     Timber.d("OnCreateView");
     typeface.setTypeface(container, getResources().getString(R.string.font_regular));
-    return rootView;
+
+    return view;
   }
 
   @Override public void onResume() {
@@ -90,12 +83,19 @@ public class LandingFragment extends Fragment {
     bus.unregister(this);
   }
 
+  @OnClick(R.id.yes_btn)
+  public void yesTapped() {
+    ((SignUpActivity)getActivity()).showScanFragment();
+  }
+
+  @OnClick(R.id.no_btn)
+  public void noTapped() {
+    ((SignUpActivity)getActivity()).showPassportFragment();
+  }
+
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
       ((SignUpActivity)getActivity()).reset();
-    } else if (getActivity() != null){
-      ((FindUserActivity)getActivity()).reset();
     }
   }
-
 }

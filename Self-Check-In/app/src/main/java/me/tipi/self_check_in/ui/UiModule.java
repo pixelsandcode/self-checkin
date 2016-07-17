@@ -15,6 +15,7 @@ import dagger.Provides;
 import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.fragments.AvatarFragment;
 import me.tipi.self_check_in.ui.fragments.DateFragment;
+import me.tipi.self_check_in.ui.fragments.EmailFragment;
 import me.tipi.self_check_in.ui.fragments.FindUserFragment;
 import me.tipi.self_check_in.ui.fragments.HostelTermsFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
@@ -24,6 +25,7 @@ import me.tipi.self_check_in.ui.fragments.MainFragment;
 import me.tipi.self_check_in.ui.fragments.OCRFragment;
 import me.tipi.self_check_in.ui.fragments.PassportFragment;
 import me.tipi.self_check_in.ui.fragments.QuestionFragment;
+import me.tipi.self_check_in.ui.fragments.ScanIDFragment;
 import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
 
 @Module(
@@ -44,7 +46,9 @@ import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
         HostelTermsFragment.class,
         QuestionFragment.class,
         MainFragment.class,
-        OCRFragment.class
+        OCRFragment.class,
+        EmailFragment.class,
+        ScanIDFragment.class
     },
 
     complete = false,

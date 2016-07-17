@@ -15,13 +15,11 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,23 +27,21 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.microblink.recognizers.RecognitionResults;
+import com.microblink.recognizers.blinkid.mrtd.MRTDRecognitionResult;
 import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
-import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -60,50 +56,45 @@ import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
-import me.tipi.self_check_in.data.api.AuthenticationService;
-import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
-import me.tipi.self_check_in.data.api.models.User;
 import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
-import me.tipi.self_check_in.ui.events.EmailConflictEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
-import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
+import me.tipi.self_check_in.util.MRTDRecognitionResultExtractor;
 import me.tipi.self_check_in.util.Strings;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-import timber.log.Timber;
 
 public class IdentityFragment extends Fragment {
 
   public static final String TAG = IdentityFragment.class.getSimpleName();
+  public static final String OCR_RESULTS = "orc_results";
 
-  @Inject Picasso picasso;
   @Inject Bus bus;
   @Inject Guest guest;
-  @Inject AuthenticationService authenticationService;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
 
+  @Bind(R.id.title) TextView titleTextView;
   @Bind(R.id.full_name) EditText fullNameTextView;
-  @Bind(R.id.email) EditText emailTextView;
   @Bind(R.id.home_town) AutoCompleteTextView homeTownACView;
   @Bind(R.id.birthday) EditText birthDayPickerView;
   @Bind(R.id.name_input_layout) TextInputLayout nameLayout;
-  @Bind(R.id.email_input_layout) TextInputLayout emailLayout;
   @Bind(R.id.birthday_input_layout) TextInputLayout birthdayLayout;
   @Bind(R.id.hometown_input_layout) TextInputLayout homeTownLayout;
   @Bind(R.id.radioSex) RadioGroup radioGroup;
+  @Bind(R.id.passport) EditText passportEditText;
+  @Bind(R.id.passport_input_layout) TextInputLayout passportLayout;
+  @Bind(R.id.passport_label) TextView passportLabel;
 
   private Date dob = null;
-  private String enteredEmail;
   private String enteredFullName;
   private String enteredHomeTown;
-  private MaterialDialog matchUserDialog;
+  private String enteredPassport;
   private boolean hasSelectedHometown;
+
+  private RecognitionResults results = null;
+  MRTDRecognitionResultExtractor mResultExtractor = null;
 
   /**
    * Instantiates a new Identity fragment.
@@ -118,10 +109,23 @@ public class IdentityFragment extends Fragment {
    * @param context the context
    * @return the identity fragment
    */
-  public static IdentityFragment newInstance(Context context) {
+  public static IdentityFragment newInstance(Context context, RecognitionResults results) {
     IdentityFragment fragment = new IdentityFragment();
+    if (results != null) {
+      Bundle args = new Bundle();
+      args.putParcelable(OCR_RESULTS, results);
+      fragment.setArguments(args);
+    }
+
     SelfCheckInApp.get(context).inject(fragment);
     return fragment;
+  }
+
+  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    if (getArguments() != null) {
+      results = getArguments().getParcelable(OCR_RESULTS);
+    }
   }
 
   @Override
@@ -130,6 +134,47 @@ public class IdentityFragment extends Fragment {
     View rootView = inflater.inflate(R.layout.fragment_identity, container, false);
     ButterKnife.bind(this, rootView);
     typeface.setTypeface(container, getResources().getString(R.string.font_regular));
+
+
+    if (results!= null && results.getRecognitionResults() != null && results.getRecognitionResults()[0] != null) {
+      MRTDRecognitionResult mrtdRecognitionResult = (MRTDRecognitionResult) results.getRecognitionResults()[0];
+      if (mrtdRecognitionResult != null) {
+        fullNameTextView.setText(String.format("%s %s", mrtdRecognitionResult.getSecondaryId(), mrtdRecognitionResult.getPrimaryId()));
+        homeTownACView.setText(mrtdRecognitionResult.getNationality());
+
+        // Date Of Birth
+        Calendar calendar = Calendar.getInstance();
+        String bornDate = mrtdRecognitionResult.getDateOfBirth();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMdd");
+        Date date = null;
+        try {
+          date = simpleDateFormat.parse(bornDate);
+        } catch (ParseException e) {
+          e.printStackTrace();
+        }
+        calendar.setTime(date);
+        String bDateString = String.format(Locale.US, "%d - %d - %d", calendar.get(Calendar.DAY_OF_MONTH) + 1, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
+        birthDayPickerView.setText(bDateString);
+        dob = calendar.getTime();
+
+        // Gender
+        if (mrtdRecognitionResult.getSex().equals("M")) {
+          radioGroup.check(R.id.radioMale);
+        } else {
+          radioGroup.check(R.id.radioFemale);
+        }
+
+        passportEditText.setText(mrtdRecognitionResult.getDocumentNumber());
+      }
+    }
+
+    if (results == null) {
+      titleTextView.setText("Enter your details");
+      passportLabel.setText("License No");
+    } else {
+      titleTextView.setText("Your Details");
+      titleTextView.setText("Passport No");
+    }
 
     birthDayPickerView.setInputType(InputType.TYPE_NULL);
 
@@ -146,50 +191,6 @@ public class IdentityFragment extends Fragment {
     birthDayPickerView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         showDobDialog();
-      }
-    });
-
-    matchUserDialog = new MaterialDialog.Builder(getActivity())
-        .customView(R.layout.found_user_dialog, false)
-        .positiveText(R.string.dialog_me_text)
-        .negativeText(R.string.dialog_not_me_text)
-        .positiveColorRes(R.color.secondaryAccent)
-        .cancelable(false)
-        .onPositive(new MaterialDialog.SingleButtonCallback() {
-          @Override
-          public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-            tracker.send(new HitBuilders.EventBuilder("Matched User", "Choose me").build());
-            guest.guest_key = "0";
-            ((SignUpActivity)getActivity()).showDateFragment();
-          }
-        })
-        .onNegative(new MaterialDialog.SingleButtonCallback() {
-          @Override
-          public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-            emailTextView.setText("");
-            guest.email = null;
-            guest.user_key = null;
-          }
-        }).build();
-
-    emailTextView.addTextChangedListener(new TextWatcher() {
-      @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-      }
-
-      @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-      }
-
-      @Override public void afterTextChanged(Editable s) {
-        emailLayout.setError(null);
-
-        // Check for a valid email address.
-        if (!TextUtils.isEmpty(s.toString())) {
-          if (Strings.isValidEmail(s.toString())) {
-            findUserWithEmail(s.toString());
-          }
-        }
       }
     });
 
@@ -235,7 +236,7 @@ public class IdentityFragment extends Fragment {
   public void continueToPassport() {
     if (!isError()) {
       guest.name = enteredFullName;
-      guest.email = enteredEmail;
+      guest.passportNumber = enteredPassport;
 
       if (!TextUtils.isEmpty(enteredHomeTown) && hasSelectedHometown && enteredHomeTown.contains("-")) {
         guest.city = Strings.getPreStringSplit(enteredHomeTown, "-").trim();
@@ -252,7 +253,7 @@ public class IdentityFragment extends Fragment {
         guest.gender = 1;
       }
 
-      ((SignUpActivity)getActivity()).showPassportFragment();
+      ((SignUpActivity)getActivity()).showAvatarFragment();
     }
   }
 
@@ -264,18 +265,17 @@ public class IdentityFragment extends Fragment {
   private boolean isError() {
 
     nameLayout.setErrorEnabled(false);
-    emailLayout.setErrorEnabled(false);
     birthdayLayout.setErrorEnabled(false);
     nameLayout.setError(null);
-    emailLayout.setError(null);
     birthdayLayout.setError(null);
+    passportLayout.setErrorEnabled(false);
 
     boolean cancel = false;
     View focusView = null;
 
-    enteredEmail = emailTextView.getText().toString();
     enteredFullName = fullNameTextView.getText().toString().trim();
     enteredHomeTown = homeTownACView.getText().toString().trim();
+    enteredPassport = passportEditText.getText().toString().trim();
 
     Calendar cal = Calendar.getInstance();
     cal.set(Calendar.YEAR, 1900);
@@ -293,19 +293,11 @@ public class IdentityFragment extends Fragment {
       nameLayout.setError(getString(R.string.error_invalid_full_name));
       focusView = fullNameTextView;
       cancel = true;
-    } else if (TextUtils.isEmpty(enteredEmail)) {
-      emailLayout.setError(getString(R.string.error_field_required));
-      focusView = emailTextView;
-      cancel = true;
-    } else if (!Strings.isValidEmail(enteredEmail)) {
-      emailLayout.setError(getString(R.string.error_invalid_email));
-      focusView = emailTextView;
-      cancel = true;
     } else if (TextUtils.isEmpty(enteredHomeTown)) {
       homeTownACView.setError(getString(R.string.error_field_required));
       focusView = homeTownACView;
       cancel = true;
-    } else if (!hasSelectedHometown) {
+    } else if (!hasSelectedHometown && results == null) {
       homeTownLayout.setError(getString(R.string.home_town_error));
       focusView = homeTownACView;
       cancel = true;
@@ -330,6 +322,11 @@ public class IdentityFragment extends Fragment {
         birthDayPickerView.setText("");
         dob = null;
       }
+    } else if (TextUtils.isEmpty(enteredPassport)) {
+      passportLayout.setErrorEnabled(true);
+      passportLayout.setError(getString(R.string.error_field_required));
+      focusView = passportEditText;
+      cancel = true;
     }
 
     if (cancel) {
@@ -396,57 +393,6 @@ public class IdentityFragment extends Fragment {
 
   private boolean checkIfHasSpace(String fullName) {
     return fullName.contains(" ");
-  }
-
-  /**
-   * On email conflict.
-   *
-   * @param event the event
-   */
-  @Subscribe
-  public void onEmailConflict(EmailConflictEvent event) {
-    emailTextView.requestFocus();
-    emailLayout.setError(getString(R.string.error_conflict_email));
-  }
-
-  /**
-   * Find user with email.
-   *
-   * @param enteredEmail the entered email
-   */
-  private void findUserWithEmail(final String enteredEmail) {
-    authenticationService.findUser(enteredEmail, new Callback<FindResponse>() {
-      @Override public void success(FindResponse findResponse, Response response) {
-        User matchedUser = findResponse.data;
-        guest.user_key = matchedUser.doc_key;
-        guest.email = enteredEmail;
-        Timber.d("Found user: %s", matchedUser.toString());
-
-        if (getActivity() != null) {
-          RelativeLayout dialogView = (RelativeLayout) matchUserDialog.getCustomView();
-          if (dialogView != null) {
-            ImageView avatar = (ImageView) dialogView.findViewById(R.id.avatar);
-            TextView name = (TextView) dialogView.findViewById(R.id.user_name);
-            picasso.load(Strings.makeAvatarUrl(matchedUser.doc_key))
-                .resize(200, 200).centerCrop()
-                .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-                .placeholder(R.drawable.avatar_placeholder)
-                .error(R.drawable.fail_photo).into(avatar);
-            name.setText(matchedUser.name);
-            matchUserDialog.show();
-          }
-        }
-      }
-
-      @Override public void failure(RetrofitError error) {
-
-        if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
-          Timber.d("authentication failed");
-        } else {
-          Timber.d("Error finding: %s", error.toString());
-        }
-      }
-    });
   }
 
   private void startOver() {

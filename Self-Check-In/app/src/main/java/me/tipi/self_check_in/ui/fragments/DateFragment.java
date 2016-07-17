@@ -51,6 +51,7 @@ import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
+import me.tipi.self_check_in.ui.events.SubmitEvent;
 
 public class DateFragment extends Fragment implements CalendarDatePickerDialogFragment.OnDateSetListener {
 
@@ -64,18 +65,13 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
   @Bind(R.id.check_in_date) EditText checkInDateView;
   @Bind(R.id.nights_number) EditText nightsNumberView;
   @Bind(R.id.reference) EditText referenceTextView;
-  @Bind(R.id.passport) EditText passportEditText;
   @Bind(R.id.check_in_input_layout) TextInputLayout checkInLayout;
   @Bind(R.id.nights_number_input_layout) TextInputLayout nightNumberLayout;
-  @Bind(R.id.passport_input_layout) TextInputLayout passportLayout;
   @Bind(R.id.terms) TextView termsTextView;
-  @Bind(R.id.passport_label) TextView passportLabel;
-  @Bind(R.id.reference_label) TextView referenceLabel;
 
   private Calendar checkInDate = null;
   private String dateString;
   private String enteredReference;
-  private String enteredPassport;
   private int enteredNights = 0;
   private boolean isLogin;
 
@@ -161,13 +157,6 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       bus.post(new BackShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
       isLogin = guest.user_key != null && !TextUtils.isEmpty(guest.user_key);
-      if (isLogin) {
-        passportLayout.setVisibility(View.GONE);
-        passportLabel.setVisibility(View.GONE);
-      } else {
-        passportLayout.setVisibility(View.VISIBLE);
-        passportLabel.setVisibility(View.VISIBLE);
-      }
 
       new Handler().postDelayed(new Runnable() {
         @Override public void run() {
@@ -191,13 +180,6 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       bus.post(new BackShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
       isLogin = guest.user_key != null && !TextUtils.isEmpty(guest.user_key);
-      if (isLogin) {
-        passportLayout.setVisibility(View.GONE);
-        passportLabel.setVisibility(View.GONE);
-      } else {
-        passportLayout.setVisibility(View.VISIBLE);
-        passportLabel.setVisibility(View.VISIBLE);
-      }
 
       new Handler().postDelayed(new Runnable() {
         @Override public void run() {
@@ -218,7 +200,6 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       guest.checkInDate = checkInDate.getTime();
       checkInDate.add(Calendar.DAY_OF_MONTH, enteredNights);
       guest.checkOutDate = checkInDate.getTime();
-      guest.passportNumber = enteredPassport;
 
       if (!TextUtils.isEmpty(enteredReference)) {
         guest.referenceCode = enteredReference;
@@ -233,7 +214,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
           bus.post(new ClaimEvent());
         }
       } else {
-        ((SignUpActivity)getActivity()).showAvatarFragment();
+        bus.post(new SubmitEvent());
       }
     }
   }
@@ -247,9 +228,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
 
     checkInLayout.setErrorEnabled(false);
     nightNumberLayout.setErrorEnabled(false);
-    passportLayout.setErrorEnabled(false);
     enteredReference = referenceTextView.getText().toString().trim();
-    enteredPassport = passportEditText.getText().toString().trim();
 
     boolean cancel = false;
     View focusView = null;
@@ -289,11 +268,6 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       cancel = true;
       focusView = nightsNumberView;
       enteredNights = 0;
-    } else if (!isLogin && TextUtils.isEmpty(enteredPassport)) {
-      passportLayout.setErrorEnabled(true);
-      passportLayout.setError(getString(R.string.error_field_required));
-      focusView = passportEditText;
-      cancel = true;
     }
 
     if (cancel) {

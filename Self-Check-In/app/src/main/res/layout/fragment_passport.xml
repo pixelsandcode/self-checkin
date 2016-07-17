@@ -64,7 +64,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/first_key_line"
         android:gravity="center"
-        android:text="@string/scan_your_passport_or_drivers_license"
+        android:text="@string/use_back_camera_to_take_a_picture_of_your_license"
         android:textColor="@color/main_text"
         android:textSize="@dimen/font_extra_large"/>
 
