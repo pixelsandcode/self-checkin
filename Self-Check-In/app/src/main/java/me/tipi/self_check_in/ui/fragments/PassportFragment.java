@@ -90,8 +90,6 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   @Bind(R.id.cover_top_view) View topCoverView;
   @Bind(R.id.cover_left_view) View leftCoverView;
 
-  private MaterialDialog dialog;
-
   private int mCameraID;
   private Camera mCamera;
   private SurfaceHolder mSurfaceHolder;
@@ -141,7 +139,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     Timber.d("OnCreateView");
     typeface.setTypeface(container, getResources().getString(R.string.font_regular));
 
-    dialog = new MaterialDialog.Builder(getActivity())
+    MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
         .content("Saving Photo")
         .cancelable(false)
         .progress(true, 0)

@@ -105,7 +105,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Bind(R.id.resetBtn) ImageView resetButton;
   @Bind(R.id.backBtn) ImageView backButtonView;
 
-  MaterialDialog loading;
+  private MaterialDialog loading;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +144,6 @@ public class SignUpActivity extends AppCompatActivity {
     unregisterManagers();
     bus.unregister(this);
   }
-
 
   @Override protected void onDestroy() {
     super.onDestroy();

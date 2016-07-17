@@ -23,9 +23,6 @@ import java.util.Date;
 
 import me.tipi.self_check_in.R;
 
-/**
- * Created by desmond on 24/10/14.
- */
 public class ImageUtility {
 
   public static String convertBitmapToString(Bitmap bitmap) {

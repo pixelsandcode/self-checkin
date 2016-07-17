@@ -82,6 +82,7 @@ public class LandingFragment extends Fragment {
         }
       }, ApiConstants.START_OVER_TIME);
     }
+
     tracker.setScreenName(getClass().getSimpleName());
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }

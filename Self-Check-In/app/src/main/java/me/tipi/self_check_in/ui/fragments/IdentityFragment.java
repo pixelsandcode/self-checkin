@@ -98,7 +98,6 @@ public class IdentityFragment extends Fragment {
   @Bind(R.id.hometown_input_layout) TextInputLayout homeTownLayout;
   @Bind(R.id.radioSex) RadioGroup radioGroup;
 
-
   private Date dob = null;
   private String enteredEmail;
   private String enteredFullName;
@@ -273,8 +272,6 @@ public class IdentityFragment extends Fragment {
 
     boolean cancel = false;
     View focusView = null;
-
-
 
     enteredEmail = emailTextView.getText().toString();
     enteredFullName = fullNameTextView.getText().toString().trim();

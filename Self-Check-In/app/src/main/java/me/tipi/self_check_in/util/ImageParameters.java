@@ -3,9 +3,6 @@ package me.tipi.self_check_in.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by desmond on 9/8/15.
- */
 public class ImageParameters implements Parcelable {
 
     public boolean mIsPortrait;

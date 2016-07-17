@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="me.tipi.self_check_in"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
 
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -15,9 +16,10 @@
   <supports-screens
       android:anyDensity="true"
       android:largeScreens="true"
-      android:normalScreens="false"
+      android:normalScreens="true"
       android:smallScreens="false"
-      android:xlargeScreens="true"/>
+      android:xlargeScreens="true"
+      tools:replace="android:smallScreens"/>
 
   <application
       android:name=".SelfCheckInApp"

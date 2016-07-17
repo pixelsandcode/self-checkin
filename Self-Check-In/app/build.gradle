@@ -6,6 +6,7 @@ def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+
 android {
     signingConfigs {
         release {
@@ -15,6 +16,7 @@ android {
             storePassword KEYSTORE_PASSWORD
         }
     }
+
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     useLibrary 'org.apache.http.legacy'
@@ -30,10 +32,12 @@ android {
         manifestPlaceholders = [HOCKEYAPP_APP_ID: HOCKEY_ID]
         setProperty("archivesBaseName", "MAD-Kiosk-$versionName")
     }
+
     buildTypes {
         debug {
             minifyEnabled false
         }
+
         release {
             signingConfig signingConfigs.release
             minifyEnabled true
@@ -50,9 +54,11 @@ android {
             }
         }
     }
+
     lintOptions {
         disable 'InvalidPackage'
     }
+
     packagingOptions {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
         exclude 'META-INF/DEPENDENCIES'
@@ -65,6 +71,7 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/MANIFEST.MF'
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
@@ -81,12 +88,15 @@ dependencies {
     compile "com.android.support:palette-v7:$rootProject.ext.supportLibraryVersion"
 
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
-    compile('com.github.afollestad.material-dialogs:core:0.8.5.0@aar') {
+
+
+    compile('com.microblink:blinkid:2.7.1@aar') {
         transitive = true
     }
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.0'
+    compile 'com.afollestad.material-dialogs:core:0.8.6.1'
     compile 'com.code-troopers.betterpickers:library:2.5.5'
     compile 'com.google.android.gms:play-services-analytics:8.3.0'
     compile 'com.drivemode:TypefaceHelper:1.0.0@aar'
@@ -105,5 +115,6 @@ dependencies {
 
 repositories {
     maven { url 'https://jitpack.io' }
+    maven { url 'http://maven.microblink.com' }
     mavenCentral()
 }
