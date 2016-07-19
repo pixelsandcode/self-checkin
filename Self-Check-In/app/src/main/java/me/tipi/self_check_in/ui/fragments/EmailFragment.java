@@ -36,7 +36,6 @@ import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.User;
-import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
@@ -67,6 +66,13 @@ public class EmailFragment extends Fragment {
   private String enteredEmail;
   private MaterialDialog matchUserDialog;
   private MaterialDialog loading;
+
+  private Handler handler = new Handler();
+  private Runnable runnable = new Runnable() {
+    @Override public void run() {
+      startOver();
+    }
+  };
 
   public EmailFragment() {
     // Required empty public constructor
@@ -127,11 +133,7 @@ public class EmailFragment extends Fragment {
       bus.post(new BackShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
 
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, ApiConstants.START_OVER_TIME);
+      handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
 
     tracker.setScreenName(getClass().getSimpleName());
@@ -141,6 +143,11 @@ public class EmailFragment extends Fragment {
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    handler.removeCallbacks(runnable);
   }
 
   /**
@@ -155,7 +162,6 @@ public class EmailFragment extends Fragment {
           findUserWithEmail(enteredEmail);
         }
       }
-
     }
   }
 
@@ -215,7 +221,7 @@ public class EmailFragment extends Fragment {
             ImageView avatar = (ImageView) dialogView.findViewById(R.id.avatar);
             TextView name = (TextView) dialogView.findViewById(R.id.user_name);
             picasso.load(Strings.makeAvatarUrl(matchedUser.doc_key))
-                .resize(200, 200).centerCrop()
+                .resize(400, 400).centerCrop()
                 .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
                 .placeholder(R.drawable.avatar_placeholder)
                 .error(R.drawable.fail_photo).into(avatar);
@@ -229,6 +235,8 @@ public class EmailFragment extends Fragment {
         loading.dismiss();
         if (error.getResponse() != null && error.getResponse().getStatus() == 404) {
           ((SignUpActivity)getActivity()).showScanIDFragment();
+          guest.user_key = null;
+          guest.guest_key = null;
         }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
@@ -243,8 +251,6 @@ public class EmailFragment extends Fragment {
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
       ((SignUpActivity)getActivity()).reset();
-    } else if (getActivity() != null){
-      ((FindUserActivity)getActivity()).reset();
     }
   }
 }

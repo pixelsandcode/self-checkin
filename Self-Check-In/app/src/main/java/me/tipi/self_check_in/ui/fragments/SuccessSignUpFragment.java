@@ -43,6 +43,13 @@ public class SuccessSignUpFragment extends Fragment {
   @Inject @Named(ApiConstants.HOSTEL_NAME)
   Preference<String> hostelName;
 
+  private Handler handler = new Handler();
+  private Runnable runnable = new Runnable() {
+    @Override public void run() {
+      startOver();
+    }
+  };
+
   /**
    * Instantiates a new Success sign up fragment.
    */
@@ -77,11 +84,7 @@ public class SuccessSignUpFragment extends Fragment {
       bus.post(new BackShouldShowEvent(false));
       bus.post(new SettingShouldShowEvent(false));
 
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, 15000);
+      handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
     tracker.setScreenName("Success");
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -90,6 +93,11 @@ public class SuccessSignUpFragment extends Fragment {
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    handler.removeCallbacks(runnable);
   }
 
   @OnClick(R.id.continue_btn)

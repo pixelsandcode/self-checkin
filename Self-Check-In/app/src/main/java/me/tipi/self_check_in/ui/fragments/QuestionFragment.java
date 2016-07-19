@@ -64,6 +64,12 @@ public class QuestionFragment extends Fragment {
   private MaterialDialog thirdDialog;
   private MaterialDialog fourthDialog;
   private MaterialDialog loading;
+  private Handler handler = new Handler();
+  private Runnable runnable = new Runnable() {
+    @Override public void run() {
+      startOver();
+    }
+  };
 
   public QuestionFragment() {
     // Required empty public constructor
@@ -167,11 +173,7 @@ public class QuestionFragment extends Fragment {
       bus.post(new RefreshShouldShowEvent(false));
       bus.post(new SettingShouldShowEvent(false));
 
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, ApiConstants.START_OVER_TIME);
+      handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
 
     tracker.setScreenName(getClass().getSimpleName());
@@ -181,6 +183,11 @@ public class QuestionFragment extends Fragment {
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    handler.removeCallbacks(runnable);
   }
 
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {

@@ -162,12 +162,22 @@ public class SignUpActivity extends AppCompatActivity {
   @Override public void onBackPressed() {
     Fragment questionFragment = getSupportFragmentManager().findFragmentByTag(QuestionFragment.TAG);
     Fragment successFragment = getSupportFragmentManager().findFragmentByTag(SuccessSignUpFragment.TAG);
+    Fragment scanFragment = getSupportFragmentManager().findFragmentByTag(ScanIDFragment.TAG);
+    Fragment ocrFragment = getSupportFragmentManager().findFragmentByTag(OCRFragment.TAG);
     if (questionFragment != null && questionFragment.isVisible()) {
       reset();
     }
 
     if (successFragment != null && successFragment.isVisible()) {
       reset();
+    }
+
+    if (scanFragment != null && scanFragment.isVisible()) {
+      clearData();
+    }
+
+    if (ocrFragment != null && ocrFragment.isVisible()) {
+      passportPath.delete();
     }
 
     super.onBackPressed();
@@ -280,19 +290,21 @@ public class SignUpActivity extends AppCompatActivity {
   public void showScanFragment() {
     OCRFragment fragment = OCRFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment).addToBackStack(null).commit();
+        .replace(R.id.container_main, fragment, OCRFragment.TAG).addToBackStack(OCRFragment.TAG).commit();
   }
 
   public void showEmailFragment() {
     EmailFragment fragment = EmailFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment, EmailFragment.TAG).addToBackStack(null).commit();
+        .replace(R.id.container_main, fragment, EmailFragment.TAG)
+        .addToBackStack(EmailFragment.TAG).commit();
   }
 
   public void showScanIDFragment() {
     ScanIDFragment fragment = ScanIDFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment, ScanIDFragment.TAG).addToBackStack(null).commit();
+        .replace(R.id.container_main, fragment, ScanIDFragment.TAG)
+        .addToBackStack(ScanIDFragment.TAG).commit();
   }
 
   /**
@@ -543,10 +555,19 @@ public class SignUpActivity extends AppCompatActivity {
    * Reset.
    */
   public void reset() {
+    clearData();
+
+    Intent intent = getIntent();
+    finish();
+    startActivity(intent);
+  }
+
+  private void clearData() {
     avatarPath.delete();
     passportPath.delete();
     if (guest != null) {
       guest.user_key = null;
+      guest.guest_key = null;
       guest.email = null;
       guest.name = null;
       guest.checkInDate = null;
@@ -557,10 +578,6 @@ public class SignUpActivity extends AppCompatActivity {
       guest.passportNumber = null;
       guest.referenceCode = null;
     }
-
-    Intent intent = getIntent();
-    finish();
-    startActivity(intent);
   }
 
   private void checkForCrashes() {

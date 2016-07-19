@@ -90,6 +90,13 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   @Bind(R.id.cover_top_view) View topCoverView;
   @Bind(R.id.cover_left_view) View leftCoverView;
 
+  private Handler handler = new Handler();
+  private Runnable runnable = new Runnable() {
+    @Override public void run() {
+      startOver();
+    }
+  };
+
   private int mCameraID;
   private Camera mCamera;
   private SurfaceHolder mSurfaceHolder;
@@ -197,11 +204,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
       bus.post(new SettingShouldShowEvent(false));
       setPassportImage();
 
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, ApiConstants.START_OVER_TIME);
+      handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
 
     bus.register(this);
@@ -220,6 +223,11 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
       mCamera.release();
       mCamera = null;
     }
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    handler.removeCallbacks(runnable);
   }
 
   @Override

@@ -16,12 +16,12 @@
       android:padding="@dimen/first_key_line"
       android:textSize="@dimen/font_large"
       android:textStyle="bold"
-      android:textColor="@color/colorAccent"/>
+      android:textColor="@color/main_text"/>
 
   <ImageView
       android:id="@+id/avatar"
-      android:layout_width="96dp"
-      android:layout_height="96dp"
+      android:layout_width="120dp"
+      android:layout_height="120dp"
       android:layout_below="@+id/title"
       android:layout_centerHorizontal="true"
       android:layout_marginTop="@dimen/first_key_line"

@@ -120,4 +120,7 @@
   <string name="take_a_picture">Not working? Take a picture…</string>
   <string name="use_back_camera_to_scan_passport">Use back camera to scan passport</string>
   <string name="use_back_camera_to_take_a_picture_of_your_license">Use back camera to take a picture of your license</string>
+  <string name="license_no">License No</string>
+  <string name="passport_no">Passport No</string>
+  <string name="enter_details">Enter your details</string>
 </resources>

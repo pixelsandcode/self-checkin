@@ -45,6 +45,13 @@ public class LandingFragment extends Fragment {
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
 
+  private Handler handler = new Handler();
+  private Runnable runnable = new Runnable() {
+    @Override public void run() {
+      startOver();
+    }
+  };
+
   public LandingFragment() {
     // Required empty public constructor
   }
@@ -54,7 +61,6 @@ public class LandingFragment extends Fragment {
     SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
-
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,11 +80,7 @@ public class LandingFragment extends Fragment {
       bus.post(new SettingShouldShowEvent(false));
       bus.post(new BackShouldShowEvent(true));
 
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, ApiConstants.START_OVER_TIME);
+      handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
 
     tracker.setScreenName(getClass().getSimpleName());
@@ -88,6 +90,11 @@ public class LandingFragment extends Fragment {
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    handler.removeCallbacks(runnable);
   }
 
   private void startOver() {

@@ -75,6 +75,13 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
   private int enteredNights = 0;
   private boolean isLogin;
 
+  private Handler handler = new Handler();
+  private Runnable runnable = new Runnable() {
+    @Override public void run() {
+      startOver();
+    }
+  };
+
   /**
    * Instantiates a new Date fragment.
    */
@@ -129,7 +136,11 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       @Override
       public void onClick(View textView) {
         if (isLogin) {
-          bus.post(new PagerChangeEvent(2));
+          if (getActivity() instanceof SignUpActivity) {
+            ((SignUpActivity)getActivity()).showTermsFragment();
+          } else {
+            bus.post(new PagerChangeEvent(2));
+          }
         } else {
           ((SignUpActivity)getActivity()).showTermsFragment();
         }
@@ -158,11 +169,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       bus.post(new SettingShouldShowEvent(false));
       isLogin = guest.user_key != null && !TextUtils.isEmpty(guest.user_key);
 
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, ApiConstants.START_OVER_TIME);
+      handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
 
     tracker.setScreenName(getClass().getSimpleName());
@@ -174,6 +181,11 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
     bus.unregister(this);
   }
 
+  @Override public void onStop() {
+    super.onStop();
+    handler.removeCallbacks(runnable);
+  }
+
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
@@ -181,11 +193,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       bus.post(new SettingShouldShowEvent(false));
       isLogin = guest.user_key != null && !TextUtils.isEmpty(guest.user_key);
 
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, ApiConstants.START_OVER_TIME);
+      handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
   }
 
@@ -208,11 +216,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       }
 
       if (isLogin) {
-        if (getActivity() instanceof SignUpActivity) {
-          bus.post(new ClaimEvent());
-        } else {
-          bus.post(new ClaimEvent());
-        }
+        bus.post(new ClaimEvent());
       } else {
         bus.post(new SubmitEvent());
       }

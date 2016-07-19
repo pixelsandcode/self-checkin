@@ -49,6 +49,13 @@ public class HostelTermsFragment extends Fragment {
 
   @Bind(R.id.hostel_terms) TextView termsTextView;
 
+  private Handler handler = new Handler();
+  private Runnable runnable = new Runnable() {
+    @Override public void run() {
+      startOver();
+    }
+  };
+
   public HostelTermsFragment() {
     // Required empty public constructor
   }
@@ -92,6 +99,11 @@ public class HostelTermsFragment extends Fragment {
     bus.unregister(this);
   }
 
+  @Override public void onStop() {
+    super.onStop();
+    handler.removeCallbacks(runnable);
+  }
+
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
@@ -99,11 +111,7 @@ public class HostelTermsFragment extends Fragment {
       //bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
 
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, ApiConstants.START_OVER_TIME);
+      handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
   }
 

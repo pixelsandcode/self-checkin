@@ -57,12 +57,10 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.models.Guest;
-import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
-import me.tipi.self_check_in.util.MRTDRecognitionResultExtractor;
 import me.tipi.self_check_in.util.Strings;
 
 public class IdentityFragment extends Fragment {
@@ -93,8 +91,14 @@ public class IdentityFragment extends Fragment {
   private String enteredPassport;
   private boolean hasSelectedHometown;
 
+  private Handler handler = new Handler();
+  private Runnable runnable = new Runnable() {
+    @Override public void run() {
+      startOver();
+    }
+  };
+
   private RecognitionResults results = null;
-  MRTDRecognitionResultExtractor mResultExtractor = null;
 
   /**
    * Instantiates a new Identity fragment.
@@ -135,45 +139,14 @@ public class IdentityFragment extends Fragment {
     ButterKnife.bind(this, rootView);
     typeface.setTypeface(container, getResources().getString(R.string.font_regular));
 
-
-    if (results!= null && results.getRecognitionResults() != null && results.getRecognitionResults()[0] != null) {
-      MRTDRecognitionResult mrtdRecognitionResult = (MRTDRecognitionResult) results.getRecognitionResults()[0];
-      if (mrtdRecognitionResult != null) {
-        fullNameTextView.setText(String.format("%s %s", mrtdRecognitionResult.getSecondaryId(), mrtdRecognitionResult.getPrimaryId()));
-        homeTownACView.setText(mrtdRecognitionResult.getNationality());
-
-        // Date Of Birth
-        Calendar calendar = Calendar.getInstance();
-        String bornDate = mrtdRecognitionResult.getDateOfBirth();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMdd");
-        Date date = null;
-        try {
-          date = simpleDateFormat.parse(bornDate);
-        } catch (ParseException e) {
-          e.printStackTrace();
-        }
-        calendar.setTime(date);
-        String bDateString = String.format(Locale.US, "%d - %d - %d", calendar.get(Calendar.DAY_OF_MONTH) + 1, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
-        birthDayPickerView.setText(bDateString);
-        dob = calendar.getTime();
-
-        // Gender
-        if (mrtdRecognitionResult.getSex().equals("M")) {
-          radioGroup.check(R.id.radioMale);
-        } else {
-          radioGroup.check(R.id.radioFemale);
-        }
-
-        passportEditText.setText(mrtdRecognitionResult.getDocumentNumber());
-      }
-    }
+    fillDetailsFromPassport();
 
     if (results == null) {
-      titleTextView.setText("Enter your details");
-      passportLabel.setText("License No");
+      titleTextView.setText(R.string.enter_details);
+      passportLabel.setText(R.string.license_no);
     } else {
-      titleTextView.setText("Your Details");
-      titleTextView.setText("Passport No");
+      titleTextView.setText(R.string.your_details);
+      titleTextView.setText(R.string.passport_no);
     }
 
     birthDayPickerView.setInputType(InputType.TYPE_NULL);
@@ -214,11 +187,7 @@ public class IdentityFragment extends Fragment {
       bus.post(new BackShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
 
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, ApiConstants.START_OVER_TIME);
+      handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
     tracker.setScreenName(getClass().getSimpleName());
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -227,6 +196,11 @@ public class IdentityFragment extends Fragment {
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    handler.removeCallbacks(runnable);
   }
 
   /**
@@ -297,7 +271,7 @@ public class IdentityFragment extends Fragment {
       homeTownACView.setError(getString(R.string.error_field_required));
       focusView = homeTownACView;
       cancel = true;
-    } else if (!hasSelectedHometown && results == null) {
+    } else if (!hasSelectedHometown) {
       homeTownLayout.setError(getString(R.string.home_town_error));
       focusView = homeTownACView;
       cancel = true;
@@ -395,11 +369,42 @@ public class IdentityFragment extends Fragment {
     return fullName.contains(" ");
   }
 
+  private void fillDetailsFromPassport() {
+    if (results!= null && results.getRecognitionResults() != null && results.getRecognitionResults()[0] != null) {
+      MRTDRecognitionResult mrtdRecognitionResult = (MRTDRecognitionResult) results.getRecognitionResults()[0];
+      if (mrtdRecognitionResult != null) {
+        fullNameTextView.setText(String.format("%s %s", mrtdRecognitionResult.getSecondaryId(), mrtdRecognitionResult.getPrimaryId()));
+
+        // Date Of Birth
+        Calendar calendar = Calendar.getInstance();
+        String bornDate = mrtdRecognitionResult.getDateOfBirth();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMdd");
+        Date date = null;
+        try {
+          date = simpleDateFormat.parse(bornDate);
+        } catch (ParseException e) {
+          e.printStackTrace();
+        }
+        calendar.setTime(date);
+        String bDateString = String.format(Locale.US, "%d - %d - %d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
+        birthDayPickerView.setText(bDateString);
+        dob = calendar.getTime();
+
+        // Gender
+        if (mrtdRecognitionResult.getSex() != null && mrtdRecognitionResult.getSex().equals("M")) {
+          radioGroup.check(R.id.radioMale);
+        } else {
+          radioGroup.check(R.id.radioFemale);
+        }
+
+        passportEditText.setText(mrtdRecognitionResult.getDocumentNumber());
+      }
+    }
+  }
+
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
       ((SignUpActivity)getActivity()).reset();
-    } else if (getActivity() != null){
-      ((FindUserActivity)getActivity()).reset();
     }
   }
 }

@@ -55,7 +55,6 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.ui.AppContainer;
-import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
@@ -90,6 +89,13 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   @Bind(R.id.cover_left_view) View leftCoverView;
 
   MaterialDialog dialog;
+
+  private Handler handler = new Handler();
+  private Runnable runnable = new Runnable() {
+    @Override public void run() {
+      startOver();
+    }
+  };
 
   private int mCameraID;
   private Camera mCamera;
@@ -203,11 +209,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
             .placeholder(R.drawable.avatar_placeholder).into(avatarView);
       }*/
 
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, ApiConstants.START_OVER_TIME);
+      handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
 
     bus.register(this);
@@ -228,6 +230,11 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
       mCamera.release();
       mCamera = null;
     }
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    handler.removeCallbacks(runnable);
   }
 
   @Override
@@ -381,8 +388,6 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
       ((SignUpActivity) getActivity()).reset();
-    } else if (getActivity() != null) {
-      ((FindUserActivity) getActivity()).reset();
     }
   }
 

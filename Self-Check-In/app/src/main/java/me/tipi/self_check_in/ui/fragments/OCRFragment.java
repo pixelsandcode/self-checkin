@@ -51,6 +51,7 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SecretKey;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
+import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.misc.Config;
 import me.tipi.self_check_in.util.ImageUtility;
@@ -72,6 +73,11 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
 
   private int mScansDone = 0;
   private Handler mHandler = new Handler();
+  private Runnable runnable = new Runnable() {
+    @Override public void run() {
+      startOver();
+    }
+  };
 
   /** This is BlinkID's built-in helper for built-in view that draws detection location */
   QuadViewManager mQvManager = null;
@@ -189,6 +195,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     }
 
     mMediaPlayer = MediaPlayer.create(getActivity(), R.raw.beep);
+    mHandler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
   }
 
   @Override
@@ -288,11 +295,11 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     scanHintTextView.setVisibility(View.VISIBLE);
     scanButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
+        passportPath.delete();
         ((SignUpActivity)getActivity()).showPassportFragment();
       }
     });
   }
-
 
   @Override
   public void onCameraPreviewStarted() {
@@ -417,6 +424,14 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
 
       // after this line, image gets disposed. If you want to save it
       // for later, you need to clone it with image.clone()
+    }
+  }
+
+  private void startOver() {
+    if (getActivity() != null && getActivity() instanceof SignUpActivity) {
+      ((SignUpActivity)getActivity()).reset();
+    } else if (getActivity() != null){
+      ((FindUserActivity)getActivity()).reset();
     }
   }
 }

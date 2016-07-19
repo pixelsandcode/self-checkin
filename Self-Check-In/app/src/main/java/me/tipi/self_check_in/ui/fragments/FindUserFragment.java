@@ -78,6 +78,13 @@ public class FindUserFragment extends Fragment {
   private String enteredEmail;
   private MaterialDialog loading;
 
+  private Handler handler = new Handler();
+  private Runnable runnable = new Runnable() {
+    @Override public void run() {
+      startOver();
+    }
+  };
+
   /**
    * Instantiates a new Find user fragment.
    */
@@ -136,6 +143,11 @@ public class FindUserFragment extends Fragment {
     Timber.d("Paused");
   }
 
+  @Override public void onStop() {
+    super.onStop();
+    handler.removeCallbacks(runnable);
+  }
+
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
@@ -143,11 +155,7 @@ public class FindUserFragment extends Fragment {
       //bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
 
-      new Handler().postDelayed(new Runnable() {
-        @Override public void run() {
-          startOver();
-        }
-      }, ApiConstants.START_OVER_TIME);
+      handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
   }
 
