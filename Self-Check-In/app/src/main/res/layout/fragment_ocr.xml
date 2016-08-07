@@ -20,14 +20,14 @@
     <View
         android:id="@+id/cover_top_view"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="220dp"
         android:layout_alignParentTop="true"
         android:background="#E6FFFFFF"/>
 
     <View
         android:id="@+id/cover_bottom_view"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="240dp"
         android:layout_alignParentBottom="true"
         android:background="#E6FFFFFF"/>
 
@@ -49,7 +49,7 @@
         android:text="@string/take_a_picture"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/scan_btn"
-        android:layout_marginBottom="@dimen/second_key_line"
+        android:layout_marginBottom="@dimen/first_key_line"
         android:textColor="@color/main_text"
         android:textSize="@dimen/font_large"
         android:visibility="invisible"/>

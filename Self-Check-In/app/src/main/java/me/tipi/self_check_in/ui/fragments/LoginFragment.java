@@ -95,8 +95,8 @@ public class LoginFragment extends Fragment {
    */
   @OnClick(R.id.submit_btn)
   public void login() {
-    emailLayout.setErrorEnabled(false);
-    passwordLayout.setErrorEnabled(false);
+    emailLayout.setError(null);
+    passwordLayout.setError(null);
     boolean cancel = false;
     View focusView = null;
 
@@ -106,22 +106,18 @@ public class LoginFragment extends Fragment {
     // Check for a valid email address.
     if (TextUtils.isEmpty(enteredEmail)) {
       emailLayout.setError(getString(R.string.error_field_required));
-      emailLayout.setErrorEnabled(true);
       focusView = emailText;
       cancel = true;
     } else if (!Strings.isValidEmail(enteredEmail)) {
       emailLayout.setError(getString(R.string.error_invalid_email));
-      emailLayout.setErrorEnabled(true);
       focusView = emailText;
       cancel = true;
     } else if (TextUtils.isEmpty(enteredPassword)) {
       passwordLayout.setError(getString(R.string.error_field_required));
-      passwordLayout.setErrorEnabled(true);
       focusView = passwordText;
       cancel = true;
     } else if (enteredPassword.length() < 8) {
       passwordLayout.setError(getString(R.string.error_incorrect_password));
-      passwordLayout.setErrorEnabled(true);
       focusView = passwordText;
       cancel = true;
     }

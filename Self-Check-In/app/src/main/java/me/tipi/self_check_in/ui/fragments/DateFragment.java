@@ -51,7 +51,6 @@ import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
-import me.tipi.self_check_in.ui.events.SubmitEvent;
 
 public class DateFragment extends Fragment implements CalendarDatePickerDialogFragment.OnDateSetListener {
 
@@ -71,7 +70,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
 
   private Calendar checkInDate = null;
   private String dateString;
-  private String enteredReference;
+  private String enteredReference = null;
   private int enteredNights = 0;
   private boolean isLogin;
 
@@ -120,7 +119,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
     final CalendarDatePickerDialogFragment cdp = new CalendarDatePickerDialogFragment()
         .setOnDateSetListener(DateFragment.this)
         .setFirstDayOfWeek(Calendar.SUNDAY)
-        .setPreselectedDate(today.get(Calendar.YEAR), today.get(Calendar.MONTH) + 1, today.get(Calendar.DAY_OF_MONTH))
+        .setPreselectedDate(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH))
         .setDoneText("Set")
         .setCancelText("Cancel");
 
@@ -209,16 +208,14 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       checkInDate.add(Calendar.DAY_OF_MONTH, enteredNights);
       guest.checkOutDate = checkInDate.getTime();
 
-      if (!TextUtils.isEmpty(enteredReference)) {
-        guest.referenceCode = enteredReference;
-      } else {
-        guest.referenceCode = null;
-      }
+      guest.referenceCode = null;
 
       if (isLogin) {
         bus.post(new ClaimEvent());
       } else {
-        bus.post(new SubmitEvent());
+        if (getActivity() instanceof SignUpActivity) {
+          ((SignUpActivity)getActivity()).submit();
+        }
       }
     }
   }
@@ -230,9 +227,9 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
    */
   private boolean isError() {
 
-    checkInLayout.setErrorEnabled(false);
-    nightNumberLayout.setErrorEnabled(false);
-    enteredReference = referenceTextView.getText().toString().trim();
+    checkInLayout.setError(null);
+    nightNumberLayout.setError(null);
+    //enteredReference = referenceTextView.getText().toString().trim();
 
     boolean cancel = false;
     View focusView = null;
@@ -245,29 +242,24 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       cancel = true;
       checkInDate = null;
     } else if (nightsNumberView.getText() == null || TextUtils.isEmpty(nightsNumberView.getText().toString())) {
-      nightNumberLayout.setErrorEnabled(true);
       nightNumberLayout.setError(getString(R.string.error_field_required));
       cancel = true;
       enteredNights = 0;
     } else if (checkInDate.before(compare)) {
-      checkInLayout.setErrorEnabled(true);
       checkInLayout.setError(getString(R.string.error_less_than_today));
       cancel = true;
       checkInDate = null;
     } else if (nightsNumberView.getText().toString().trim().length() > 3) {
-      nightNumberLayout.setErrorEnabled(true);
       nightNumberLayout.setError(getString(R.string.error_check_out_more_than_one_year));
       cancel = true;
       focusView = nightsNumberView;
       enteredNights = 0;
     } else if (Integer.parseInt(nightsNumberView.getText().toString()) <= 0) {
-      nightNumberLayout.setErrorEnabled(true);
       nightNumberLayout.setError(getString(R.string.error_check_out_before_check_in));
       cancel = true;
       focusView = nightsNumberView;
       enteredNights = 0;
     } else if (Integer.parseInt(nightsNumberView.getText().toString()) > 365) {
-      nightNumberLayout.setErrorEnabled(true);
       nightNumberLayout.setError(getString(R.string.error_check_out_more_than_one_year));
       cancel = true;
       focusView = nightsNumberView;

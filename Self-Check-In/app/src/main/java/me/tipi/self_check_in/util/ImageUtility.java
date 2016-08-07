@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -75,7 +74,7 @@ public class ImageUtility {
     // Saving the bitmap
     try {
       ByteArrayOutputStream out = new ByteArrayOutputStream();
-      bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out);
+      bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
 
       FileOutputStream stream = new FileOutputStream(mediaFile);
       stream.write(out.toByteArray());
@@ -95,11 +94,6 @@ public class ImageUtility {
   }
 
   public static Uri savePicture(Context context, Bitmap bitmap) {
-    int cropHeight;
-    if (bitmap.getHeight() > bitmap.getWidth()) cropHeight = bitmap.getWidth();
-    else cropHeight = bitmap.getHeight();
-
-    bitmap = ThumbnailUtils.extractThumbnail(bitmap, cropHeight, cropHeight);
 
     File mediaStorageDir = new File(
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
@@ -120,7 +114,7 @@ public class ImageUtility {
     // Saving the bitmap
     try {
       ByteArrayOutputStream out = new ByteArrayOutputStream();
-      bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+      bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
 
       FileOutputStream stream = new FileOutputStream(mediaFile);
       stream.write(out.toByteArray());

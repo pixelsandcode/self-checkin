@@ -34,4 +34,33 @@ public final class Guest {
   public Guest() {
 
   }
+
+  @Override public String toString() {
+    return "User{" +
+        "user_key='" + user_key + '\'' +
+        ", name='" + name + '\'' +
+        ", email=" + email +
+        ", city='" + city + '\'' +
+        ", country='" + country + '\'' +
+        ", gender='" + gender + '\'' +
+        ", dob='" + dob.toString() + '\'' +
+        ", passport number='" + passportNumber + '\'' +
+        ", check in date='" + checkInDate.toString() + '\'' +
+        ", check out date='" + checkOutDate.toString() + '\'' +
+        ", guest key='" + guest_key + '\'' +
+        '}';
+  }
+
+  public String toStringNoDate() {
+    return "User{" +
+        "user_key='" + user_key + '\'' +
+        ", name='" + name + '\'' +
+        ", email=" + email +
+        ", city='" + city + '\'' +
+        ", country='" + country + '\'' +
+        ", gender='" + gender + '\'' +
+        ", passport number='" + passportNumber + '\'' +
+        ", guest key='" + guest_key + '\'' +
+        '}';
+  }
 }

@@ -11,6 +11,7 @@ package me.tipi.self_check_in.ui.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -42,6 +43,7 @@ import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.User;
+import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.AuthenticationFailedEvent;
@@ -67,6 +69,7 @@ public class FindUserFragment extends Fragment {
   @Inject Guest guest;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
+  @Inject AppContainer appContainer;
 
   @Bind(R.id.email) EditText emailEditText;
   @Bind(R.id.email_input_layout) TextInputLayout emailLayout;
@@ -205,6 +208,11 @@ public class FindUserFragment extends Fragment {
         }
 
         @Override public void failure(RetrofitError error) {
+
+          if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+            Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+            return;
+          }
 
           if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
             Timber.d("authentication failed");

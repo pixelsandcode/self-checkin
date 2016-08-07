@@ -251,6 +251,7 @@ public class QuestionFragment extends Fragment {
         @Override public void failure(RetrofitError error) {
           loading.dismiss();
           Timber.e(error.getMessage());
+          navigateToSuccessPage();
         }
       });
     }

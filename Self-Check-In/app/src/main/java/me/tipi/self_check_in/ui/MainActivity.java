@@ -162,10 +162,16 @@ public class MainActivity extends AppCompatActivity {
       @Override public void failure(RetrofitError error) {
         loading.dismiss();
         showLoginFragment();
+
+        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+          Snackbar.make(appContainer.bind(MainActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+          return;
+        }
+
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
           Snackbar.make(appContainer.bind(MainActivity.this), "Your email/password doesn't match!", Snackbar.LENGTH_LONG).show();
         } else {
-          Snackbar.make(appContainer.bind(MainActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
+          Snackbar.make(appContainer.bind(MainActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
         }
       }
     });

@@ -186,7 +186,7 @@ public class FindUserActivity extends AppCompatActivity {
     authenticationService.claim(guest.user_key, new ClaimRequest(
             guest.email,
             new Booking(
-                guest.referenceCode,
+                guest.referenceCode != null ? guest.referenceCode : null,
                 dateFormat.format(guest.checkInDate),
                 dateFormat.format(guest.checkOutDate))),
         new Callback<ClaimResponse>() {
@@ -209,8 +209,25 @@ public class FindUserActivity extends AppCompatActivity {
 
           @Override public void failure(RetrofitError error) {
             loading.dismiss();
-            Timber.d("Claim error : %s", error.toString());
-            Snackbar.make(appContainer.bind(FindUserActivity.this), "Something went wrong, try again", Snackbar.LENGTH_SHORT)
+
+            if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+              Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+              return;
+            }
+
+            if (error.getResponse() != null && error.getResponse().getStatus() == 400) {
+              Timber.e("ERROR %s", error.getBody().toString());
+              new MaterialDialog.Builder(FindUserActivity.this)
+                  .cancelable(true)
+                  .autoDismiss(true)
+                  .title("Bad info")
+                  .content("Please check your check-in date again and retry")
+                  .positiveText("OK").build().show();
+              return;
+            }
+
+            Timber.d("Claim error : %s", error.getMessage());
+            Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT)
                 .show();
           }
         });

@@ -146,7 +146,7 @@ public class IdentityFragment extends Fragment {
       passportLabel.setText(R.string.license_no);
     } else {
       titleTextView.setText(R.string.your_details);
-      titleTextView.setText(R.string.passport_no);
+      passportLabel.setText(R.string.passport_no);
     }
 
     birthDayPickerView.setInputType(InputType.TYPE_NULL);
@@ -189,6 +189,7 @@ public class IdentityFragment extends Fragment {
 
       handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
+
     tracker.setScreenName(getClass().getSimpleName());
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
@@ -242,7 +243,7 @@ public class IdentityFragment extends Fragment {
     birthdayLayout.setErrorEnabled(false);
     nameLayout.setError(null);
     birthdayLayout.setError(null);
-    passportLayout.setErrorEnabled(false);
+    passportLayout.setError(null);
 
     boolean cancel = false;
     View focusView = null;
@@ -276,6 +277,10 @@ public class IdentityFragment extends Fragment {
       focusView = homeTownACView;
       cancel = true;
       homeTownACView.setText("");
+    } else if (TextUtils.isEmpty(enteredPassport)) {
+      passportLayout.setError(getString(R.string.error_field_required));
+      focusView = passportEditText;
+      cancel = true;
     } else if (dob == null || TextUtils.isEmpty(birthDayPickerView.getText().toString().trim())) {
       birthdayLayout.setError(getString(R.string.error_field_required));
       focusView = birthDayPickerView;
@@ -296,11 +301,6 @@ public class IdentityFragment extends Fragment {
         birthDayPickerView.setText("");
         dob = null;
       }
-    } else if (TextUtils.isEmpty(enteredPassport)) {
-      passportLayout.setErrorEnabled(true);
-      passportLayout.setError(getString(R.string.error_field_required));
-      focusView = passportEditText;
-      cancel = true;
     }
 
     if (cancel) {

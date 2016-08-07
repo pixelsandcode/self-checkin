@@ -101,7 +101,7 @@ public class EmailFragment extends Fragment {
           @Override
           public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
             tracker.send(new HitBuilders.EventBuilder("Matched User", "Choose me").build());
-            guest.guest_key = "0";
+            guest.guest_key = null;
             ((SignUpActivity)getActivity()).showDateFragment();
           }
         })
@@ -240,9 +240,9 @@ public class EmailFragment extends Fragment {
         }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
-          Timber.d("authentication failed");
+          Timber.e("authentication failed");
         } else {
-          Timber.d("Error finding: %s", error.toString());
+          Timber.e("Error finding: %s", error.toString());
         }
       }
     });

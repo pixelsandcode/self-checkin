@@ -31,6 +31,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
@@ -66,10 +67,8 @@ import me.tipi.self_check_in.data.api.models.LoginRequest;
 import me.tipi.self_check_in.data.api.models.LoginResponse;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
-import me.tipi.self_check_in.ui.events.EmailConflictEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
-import me.tipi.self_check_in.ui.events.SubmitEvent;
 import me.tipi.self_check_in.ui.fragments.AvatarFragment;
 import me.tipi.self_check_in.ui.fragments.DateFragment;
 import me.tipi.self_check_in.ui.fragments.EmailFragment;
@@ -120,7 +119,7 @@ public class SignUpActivity extends AppCompatActivity {
     ButterKnife.bind(this);
 
     loading = new MaterialDialog.Builder(this)
-        .content("Submitting")
+        .content("Please wait...")
         .cancelable(false)
         .progress(true, 0)
         .build();
@@ -363,16 +362,13 @@ public class SignUpActivity extends AppCompatActivity {
     resetButton.setVisibility(event.show ? View.VISIBLE : View.GONE);
   }
 
-  /**
-   * On submit.
-   *
-   * @param event the event
-   */
-  @Subscribe
-  public void onSubmit(SubmitEvent event) {
+  public void submit() {
+    Timber.i("Entered submit method");
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     if (avatarPath != null && avatarPath.get() != null && passportPath != null && passportPath.get() != null) {
       loading.show();
+      Timber.i("sending data with values");
+
       @SuppressWarnings("ConstantConditions")
       TypedFile avatarFile = new TypedFile("image/jpeg", new File(avatarPath.get()));
       @SuppressWarnings("ConstantConditions")
@@ -393,7 +389,7 @@ public class SignUpActivity extends AppCompatActivity {
           new Callback<ClaimResponse>() {
             @Override public void success(ClaimResponse apiResponse, Response response) {
               loading.dismiss();
-              Timber.d("Good");
+              Timber.i("Success" + "name:" + apiResponse.data.name + " guest_key : " + apiResponse.data.guest_key);
               guest.guest_key = apiResponse.data.guest_key;
               // Send overall success time
               long elapsed = Math.abs(guest.time - System.currentTimeMillis());
@@ -408,36 +404,71 @@ public class SignUpActivity extends AppCompatActivity {
             }
 
             @Override public void failure(RetrofitError error) {
+              loading.dismiss();
+              if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+                Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+                return;
+              }
+
               if (error.getResponse() != null) {
                 if (error.getResponse().getStatus() == 409) {
-                  loading.dismiss();
-                  /*viewPager.setCurrentItem(1, true);*/
-                  bus.post(new EmailConflictEvent());
+                  Timber.e("ERROR %s:%s", System.getProperty("line.separator"), error.getBody().toString());
+                  showSuccessFragment();
                 } else if (error.getResponse().getStatus() == 401) {
+                  Timber.e("ERROR %s", error.getBody().toString());
                   login();
+                } else if (error.getResponse().getStatus() == 400) {
+                  Timber.e("ERROR %s", error.getBody().toString());
+                  new MaterialDialog.Builder(SignUpActivity.this)
+                      .cancelable(true)
+                      .autoDismiss(true)
+                      .title("Bad info")
+                      .content("Please check your check-in date again and retry")
+                      .positiveText("OK").build().show();
                 } else {
-                  loading.dismiss();
-                  Snackbar.make(appContainer.bind(SignUpActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
+                  Timber.e("ERROR" + error.toString() +
+                      "error body = " + error.getBody().toString() + "error kind = " + error.getKind().toString());
+                  Toast.makeText(SignUpActivity.this, "Sorry Something went wrong" + error.getMessage(), Toast.LENGTH_LONG).show();
                 }
               } else {
-                loading.dismiss();
-                Snackbar.make(appContainer.bind(SignUpActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
+                Timber.e("ERROR %s", error.toString());
+                Toast.makeText(SignUpActivity.this, "Sorry Something went wrong" + error.getMessage(), Toast.LENGTH_SHORT).show();
               }
             }
           }
       );
+    } else {
+      reEnterDataDialog();
     }
 
   }
 
+  private void reEnterDataDialog() {
+    new MaterialDialog.Builder(SignUpActivity.this)
+        .cancelable(false)
+        .autoDismiss(false)
+        .title("Bad things happened")
+        .content("We are sorry, something went wrong, please enter your info again")
+        .positiveText("OK")
+        .onPositive(new MaterialDialog.SingleButtonCallback() {
+          @Override
+          public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+            reset();
+          }
+        }).build().show();
+  }
+
   @Subscribe
   public void onClaimEvent(ClaimEvent event) {
+    Timber.i("Entered claim event");
+    Timber.i(System.getProperty("line.separator") + "Claiming with data: " + "Guest key = " + guest.user_key +
+    "Email :" + guest.email);
     loading.show();
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     authenticationService.claim(guest.user_key, new ClaimRequest(
             guest.email,
             new Booking(
-                guest.referenceCode,
+                guest.referenceCode != null ? guest.referenceCode : null,
                 dateFormat.format(guest.checkInDate),
                 dateFormat.format(guest.checkOutDate))),
         new Callback<ClaimResponse>() {
@@ -460,8 +491,24 @@ public class SignUpActivity extends AppCompatActivity {
 
           @Override public void failure(RetrofitError error) {
             loading.dismiss();
-            Timber.d("Claim error : %s", error.toString());
-            Snackbar.make(appContainer.bind(SignUpActivity.this), "Something went wrong, try again", Snackbar.LENGTH_SHORT)
+            if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+              Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+              return;
+            }
+
+            if (error.getResponse() != null && error.getResponse().getStatus() == 400) {
+              Timber.e("ERROR %s", error.getBody().toString());
+              new MaterialDialog.Builder(SignUpActivity.this)
+                  .cancelable(true)
+                  .autoDismiss(true)
+                  .title("Bad info")
+                  .content("Please check your check-in date again and retry")
+                  .positiveText("OK").build().show();
+              return;
+            }
+
+            Timber.d("Claim error : %s", error.getMessage());
+            Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT)
                 .show();
           }
         });
@@ -526,7 +573,32 @@ public class SignUpActivity extends AppCompatActivity {
    * @param view the view
    */
   public void goToLanding(View view) {
-    showLandingFragment();
+    loading.show();
+    firstLogin();
+  }
+
+  private void firstLogin() {
+    authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
+      @Override public void success(LoginResponse response, Response response2) {
+        loading.dismiss();
+        Timber.d("LoggedIn");
+        showLandingFragment();
+      }
+
+      @Override public void failure(RetrofitError error) {
+        loading.dismiss();
+        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+          Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+        } else {
+          Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.try_again_text, Snackbar.LENGTH_INDEFINITE)
+              .setAction("RETRY", new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                  firstLogin();
+                }
+              }).show();
+        }
+      }
+    });
   }
 
   /**
@@ -536,15 +608,21 @@ public class SignUpActivity extends AppCompatActivity {
     authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
       @Override public void success(LoginResponse response, Response response2) {
         Timber.d("LoggedIn");
-        bus.post(new SubmitEvent());
+        submit();
       }
 
       @Override public void failure(RetrofitError error) {
-        if (error.getResponse().getStatus() == 401) {
+        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+          Snackbar.make(appContainer.bind(SignUpActivity.this), "No Internet Connection, please fix connection and try again", Snackbar.LENGTH_LONG).show();
+          return;
+        }
+
+        if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
           Snackbar.make(appContainer.bind(SignUpActivity.this), "Your email/password doesn't match!", Snackbar.LENGTH_LONG).show();
         } else {
           Snackbar.make(appContainer.bind(SignUpActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
         }
+
         startActivity(new Intent(SignUpActivity.this, MainActivity.class));
         finish();
       }

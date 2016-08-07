@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.f2prateek.rx.preferences.Preference;
 import com.microblink.detectors.DetectorResult;
 import com.microblink.detectors.quad.QuadDetectorResult;
+import com.microblink.hardware.SuccessCallback;
 import com.microblink.hardware.orientation.Orientation;
 import com.microblink.image.Image;
 import com.microblink.metadata.DetectionMetadata;
@@ -72,6 +73,9 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
   @Bind(R.id.scan_hint) TextView scanHintTextView;
 
   private int mScansDone = 0;
+
+  /** Is torch enabled? */
+  private boolean mTorchEnabled = false;
   private Handler mHandler = new Handler();
   private Runnable runnable = new Runnable() {
     @Override public void run() {
@@ -308,7 +312,8 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
       @Override public void run() {
         showScanButton();
       }
-    }, 15000);
+    }, 30000);
+    enableTorchButtonIfPossible();
   }
 
   @Override
@@ -424,6 +429,24 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
 
       // after this line, image gets disposed. If you want to save it
       // for later, you need to clone it with image.clone()
+    }
+  }
+
+  private void enableTorchButtonIfPossible() {
+    if (mRecognizerView.isCameraTorchSupported()) {
+      mRecognizerView.setTorchState(!mTorchEnabled, new SuccessCallback() {
+        @Override
+        public void onOperationDone(final boolean success) {
+          getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              if (success) {
+                mTorchEnabled = !mTorchEnabled;
+              }
+            }
+          });
+        }
+      });
     }
   }
 

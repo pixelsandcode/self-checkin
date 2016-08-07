@@ -4,6 +4,7 @@ package me.tipi.self_check_in.ui.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.LoginResponse;
+import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
@@ -44,8 +46,10 @@ public class HostelTermsFragment extends Fragment {
   @Inject Bus bus;
   @Inject Tracker tracker;
   @Inject AuthenticationService authenticationService;
-  @Inject @Named(ApiConstants.HOSTEL_KEY)
+  @Inject
+  @Named(ApiConstants.HOSTEL_KEY)
   Preference<String> hostelKey;
+  @Inject AppContainer appContainer;
 
   @Bind(R.id.hostel_terms) TextView termsTextView;
 
@@ -82,6 +86,16 @@ public class HostelTermsFragment extends Fragment {
       }
 
       @Override public void failure(RetrofitError error) {
+        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+          Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+          return;
+        }
+
+        if (error.getResponse() != null && error.getResponse().getStatus() == 404) {
+          termsTextView.setText("Sorry this hostel's Terms & Condition isn't available");
+          return;
+        }
+
         loadTerms();
       }
     });
@@ -108,7 +122,6 @@ public class HostelTermsFragment extends Fragment {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       bus.post(new BackShouldShowEvent(false));
-      //bus.post(new RefreshShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
 
       handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
@@ -122,9 +135,9 @@ public class HostelTermsFragment extends Fragment {
 
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
-      ((SignUpActivity)getActivity()).reset();
-    } else if (getActivity() != null){
-      ((FindUserActivity)getActivity()).reset();
+      ((SignUpActivity) getActivity()).reset();
+    } else if (getActivity() != null) {
+      ((FindUserActivity) getActivity()).reset();
     }
   }
 }

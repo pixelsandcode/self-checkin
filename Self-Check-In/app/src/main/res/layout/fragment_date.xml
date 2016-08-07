@@ -74,7 +74,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:digits="1234567890"
-          android:imeOptions="actionNext"
+          android:imeOptions="actionDone"
           android:inputType="phone"
           android:paddingLeft="@dimen/first_key_line"
           android:paddingRight="@dimen/first_key_line"
@@ -91,12 +91,14 @@
         android:text="@string/reference_code"
         android:textAllCaps="true"
         android:textColor="@color/colorAccent"
-        android:textSize="@dimen/font_normal"/>
+        android:textSize="@dimen/font_normal"
+        android:visibility="gone"/>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/reference_input_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
       <EditText
           android:id="@+id/reference"

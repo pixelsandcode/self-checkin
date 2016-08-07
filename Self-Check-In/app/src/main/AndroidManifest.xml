@@ -9,6 +9,8 @@
 
   <!-- Request permission to use a device camera -->
   <uses-permission android:name="android.permission.CAMERA" />
+  <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+  <uses-feature android:glEsVersion="0x00020000" android:required="false" />
 
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

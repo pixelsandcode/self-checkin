@@ -75,8 +75,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   @Inject Picasso picasso;
   @Inject AppContainer appContainer;
   @Inject Bus bus;
-  @Inject
-  @Named(ApiConstants.AVATAR)
+  @Inject @Named(ApiConstants.AVATAR)
   Preference<String> avatarPath;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
@@ -202,12 +201,6 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     if (getActivity() != null) {
       bus.post(new BackShouldShowEvent(true));
       bus.post(new SettingShouldShowEvent(false));
-      // TODO: Remove when confirmed sign up after taking photo
-      /*if (avatarPath.isSet() && avatarPath.get() != null && avatarView != null) {
-        picasso.load(new File(avatarPath.get())).resize(300, 300).centerCrop()
-            .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-            .placeholder(R.drawable.avatar_placeholder).into(avatarView);
-      }*/
 
       handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
     }
@@ -378,7 +371,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
       Timber.v(avatarPath.get());
       ((SignUpActivity)getActivity()).showDateFragment();
     } else {
-      Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie first!", Snackbar.LENGTH_LONG).show();
+      Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie!", Snackbar.LENGTH_LONG).show();
     }
   }
 
