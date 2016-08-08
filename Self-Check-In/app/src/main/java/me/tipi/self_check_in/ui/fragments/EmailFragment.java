@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -36,6 +37,7 @@ import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.User;
+import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
@@ -58,6 +60,7 @@ public class EmailFragment extends Fragment {
   @Inject Guest guest;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
+  @Inject AppContainer appContainer;
   @Inject AuthenticationService authenticationService;
 
   @Bind(R.id.email) EditText emailTextView;
@@ -66,6 +69,7 @@ public class EmailFragment extends Fragment {
   private String enteredEmail;
   private MaterialDialog matchUserDialog;
   private MaterialDialog loading;
+  private int loginCount;
 
   private Handler handler = new Handler();
   private Runnable runnable = new Runnable() {
@@ -233,6 +237,12 @@ public class EmailFragment extends Fragment {
 
       @Override public void failure(RetrofitError error) {
         loading.dismiss();
+
+        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+          Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+          return;
+        }
+
         if (error.getResponse() != null && error.getResponse().getStatus() == 404) {
           ((SignUpActivity)getActivity()).showScanIDFragment();
           guest.user_key = null;

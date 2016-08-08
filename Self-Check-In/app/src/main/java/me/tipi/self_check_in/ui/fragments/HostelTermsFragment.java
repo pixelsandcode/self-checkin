@@ -92,7 +92,7 @@ public class HostelTermsFragment extends Fragment {
         }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 404) {
-          termsTextView.setText("Sorry this hostel's Terms & Condition isn't available");
+          termsTextView.setText(R.string.no_terms);
           return;
         }
 

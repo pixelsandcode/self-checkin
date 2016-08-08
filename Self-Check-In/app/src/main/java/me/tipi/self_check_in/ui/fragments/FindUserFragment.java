@@ -217,13 +217,19 @@ public class FindUserFragment extends Fragment {
           if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
             Timber.d("authentication failed");
             bus.post(new AuthenticationFailedEvent());
-          } else {
+            return;
+          }
+
+          if (error.getResponse() != null && error.getResponse().getStatus() == 404){
             // Handling show/hide views
             loading.dismiss();
             tryAgainView.setVisibility(View.VISIBLE);
             matchedUserContainer.setVisibility(View.GONE);
             Timber.d("Error finding: %s", error.toString());
+            return;
           }
+
+          Snackbar.make(appContainer.bind(getActivity()), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
         }
       });
     }

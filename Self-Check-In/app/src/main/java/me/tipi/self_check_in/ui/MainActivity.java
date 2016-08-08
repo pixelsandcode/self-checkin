@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
-          Snackbar.make(appContainer.bind(MainActivity.this), "Your email/password doesn't match!", Snackbar.LENGTH_LONG).show();
+          Snackbar.make(appContainer.bind(MainActivity.this), R.string.enter_correct_email_password, Snackbar.LENGTH_LONG).show();
         } else {
           Snackbar.make(appContainer.bind(MainActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
         }

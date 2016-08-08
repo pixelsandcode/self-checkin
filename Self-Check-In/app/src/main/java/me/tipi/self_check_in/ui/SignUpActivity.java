@@ -109,6 +109,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Bind(R.id.backBtn) ImageView backButtonView;
 
   private MaterialDialog loading;
+  private int loginCount = 0;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -428,11 +429,11 @@ public class SignUpActivity extends AppCompatActivity {
                 } else {
                   Timber.e("ERROR" + error.toString() +
                       "error body = " + error.getBody().toString() + "error kind = " + error.getKind().toString());
-                  Toast.makeText(SignUpActivity.this, "Sorry Something went wrong" + error.getMessage(), Toast.LENGTH_LONG).show();
+                  Toast.makeText(SignUpActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_LONG).show();
                 }
               } else {
                 Timber.e("ERROR %s", error.toString());
-                Toast.makeText(SignUpActivity.this, "Sorry Something went wrong" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignUpActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_SHORT).show();
               }
             }
           }
@@ -447,7 +448,7 @@ public class SignUpActivity extends AppCompatActivity {
     new MaterialDialog.Builder(SignUpActivity.this)
         .cancelable(false)
         .autoDismiss(false)
-        .title("Bad things happened")
+        .title("Sorry something went wrong")
         .content("We are sorry, something went wrong, please enter your info again")
         .positiveText("OK")
         .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -502,7 +503,7 @@ public class SignUpActivity extends AppCompatActivity {
                   .cancelable(true)
                   .autoDismiss(true)
                   .title("Bad info")
-                  .content("Please check your check-in date again and retry")
+                  .content(R.string.check_from_date)
                   .positiveText("OK").build().show();
               return;
             }
@@ -589,14 +590,20 @@ public class SignUpActivity extends AppCompatActivity {
         loading.dismiss();
         if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
           Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-        } else {
-          Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.try_again_text, Snackbar.LENGTH_INDEFINITE)
-              .setAction("RETRY", new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                  firstLogin();
-                }
-              }).show();
+          return;
         }
+
+        if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
+          Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
+          return;
+        }
+
+        Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_INDEFINITE)
+            .setAction("RETRY", new View.OnClickListener() {
+              @Override public void onClick(View v) {
+                firstLogin();
+              }
+            }).show();
       }
     });
   }
@@ -605,6 +612,14 @@ public class SignUpActivity extends AppCompatActivity {
    * Login.
    */
   private void login() {
+
+    if (loginCount >= 2) {
+
+      Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
+      return;
+    }
+
+    loginCount ++;
     authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
       @Override public void success(LoginResponse response, Response response2) {
         Timber.d("LoggedIn");
@@ -613,18 +628,16 @@ public class SignUpActivity extends AppCompatActivity {
 
       @Override public void failure(RetrofitError error) {
         if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-          Snackbar.make(appContainer.bind(SignUpActivity.this), "No Internet Connection, please fix connection and try again", Snackbar.LENGTH_LONG).show();
+          Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
           return;
         }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
-          Snackbar.make(appContainer.bind(SignUpActivity.this), "Your email/password doesn't match!", Snackbar.LENGTH_LONG).show();
-        } else {
-          Snackbar.make(appContainer.bind(SignUpActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
+          login();
+          return;
         }
 
-        startActivity(new Intent(SignUpActivity.this, MainActivity.class));
-        finish();
+        Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
       }
     });
   }

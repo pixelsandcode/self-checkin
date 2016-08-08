@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -31,6 +32,7 @@ import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.ApiResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.NoteRequest;
+import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
@@ -53,6 +55,7 @@ public class QuestionFragment extends Fragment {
   @Inject Tracker tracker;
   @Inject AuthenticationService authenticationService;
   @Inject Guest guest;
+  @Inject AppContainer appContainer;
 
   @Bind(R.id.first_question) EditText firstQuestionView;
   @Bind(R.id.second_question) EditText secondQuestionView;
@@ -250,6 +253,12 @@ public class QuestionFragment extends Fragment {
 
         @Override public void failure(RetrofitError error) {
           loading.dismiss();
+
+          if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+            Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+            return;
+          }
+
           Timber.e(error.getMessage());
           navigateToSuccessPage();
         }

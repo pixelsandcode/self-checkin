@@ -78,6 +78,7 @@ public class FindUserActivity extends AppCompatActivity {
 
   private LoginAdapter adapter;
   private MaterialDialog loading;
+  private int loginCount = 0;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -215,6 +216,30 @@ public class FindUserActivity extends AppCompatActivity {
               return;
             }
 
+            if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
+              authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
+                @Override public void success(LoginResponse response, Response response2) {
+                  Timber.d("LoggedIn");
+                  bus.post(new ClaimEvent());
+                }
+
+                @Override public void failure(RetrofitError error) {
+
+                  if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+                    Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+                    return;
+                  }
+
+                  if (error.getResponse().getStatus() == 401) {
+                    Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
+                    return;
+                  }
+
+                  Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
+                }
+              });
+            }
+
             if (error.getResponse() != null && error.getResponse().getStatus() == 400) {
               Timber.e("ERROR %s", error.getBody().toString());
               new MaterialDialog.Builder(FindUserActivity.this)
@@ -275,15 +300,6 @@ public class FindUserActivity extends AppCompatActivity {
   }
 
   /**
-   * Go to sign up.
-   *
-   * @param view the view
-   */
-  public void goToSignUp(View view) {
-    reset();
-  }
-
-  /**
    * Reset.
    */
   public void reset() {
@@ -309,6 +325,12 @@ public class FindUserActivity extends AppCompatActivity {
    * Login.
    */
   private void login() {
+    if (loginCount >= 2) {
+      Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
+      return;
+    }
+
+    loginCount++;
     authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
       @Override public void success(LoginResponse response, Response response2) {
         Timber.d("LoggedIn");
@@ -316,13 +338,18 @@ public class FindUserActivity extends AppCompatActivity {
       }
 
       @Override public void failure(RetrofitError error) {
-        if (error.getResponse().getStatus() == 401) {
-          Snackbar.make(appContainer.bind(FindUserActivity.this), "Your email/password doesn't match!", Snackbar.LENGTH_LONG).show();
-        } else {
-          Snackbar.make(appContainer.bind(FindUserActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
+
+        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+          Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+          return;
         }
-        startActivity(new Intent(FindUserActivity.this, MainActivity.class));
-        finish();
+
+        if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
+          login();
+          return;
+        }
+
+        Snackbar.make(appContainer.bind(FindUserActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
       }
     });
   }
