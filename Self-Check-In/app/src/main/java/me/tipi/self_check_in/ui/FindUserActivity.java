@@ -349,7 +349,7 @@ public class FindUserActivity extends AppCompatActivity {
           return;
         }
 
-        Snackbar.make(appContainer.bind(FindUserActivity.this), "Connection failed, please try again", Snackbar.LENGTH_LONG).show();
+        Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
       }
     });
   }

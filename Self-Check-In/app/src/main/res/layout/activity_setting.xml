@@ -70,7 +70,7 @@
         android:layout_marginTop="@dimen/first_key_line"
         android:padding="@dimen/normal_padding"
         android:src="@drawable/ic_file_download"
-        />
+        tools:ignore="ContentDescription"/>
 
     <TextView
         android:id="@+id/download"

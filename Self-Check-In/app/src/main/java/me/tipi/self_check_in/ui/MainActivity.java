@@ -154,7 +154,9 @@ public class MainActivity extends AppCompatActivity {
         passportPath.delete();
         hostelName.set(response.data.name);
         hostelKey.set(response.data.doc_key);
+
         tracker.send(new HitBuilders.TimingBuilder("Login", "Logged In", System.currentTimeMillis()).build());
+
         startActivity(new Intent(MainActivity.this, SignUpActivity.class));
         finish();
       }

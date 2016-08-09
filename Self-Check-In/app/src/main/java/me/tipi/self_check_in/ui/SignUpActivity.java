@@ -449,7 +449,7 @@ public class SignUpActivity extends AppCompatActivity {
         .cancelable(false)
         .autoDismiss(false)
         .title("Sorry something went wrong")
-        .content("We are sorry, something went wrong, please enter your info again")
+        .content("We are sorry, something went wrong, please enter your info again!")
         .positiveText("OK")
         .onPositive(new MaterialDialog.SingleButtonCallback() {
           @Override
