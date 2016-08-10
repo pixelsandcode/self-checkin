@@ -203,13 +203,16 @@ public class MainActivity extends AppCompatActivity {
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
           Snackbar.make(appContainer.bind(MainActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+          Timber.w("Please check the WI-FI connection!");
           return;
         }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
           Snackbar.make(appContainer.bind(MainActivity.this), R.string.enter_correct_email_password, Snackbar.LENGTH_LONG).show();
+          Timber.w("Please enter correct email and password!");
         } else {
           Snackbar.make(appContainer.bind(MainActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
+          Timber.w("Sorry something went wrong, please try again!");
         }
       }
     });

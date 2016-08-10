@@ -211,11 +211,12 @@ public class FindUserFragment extends Fragment {
 
           if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
             Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+            Timber.w("Please check the WI-FI connection!");
             return;
           }
 
           if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
-            Timber.d("authentication failed");
+            Timber.w("authentication failed");
             bus.post(new AuthenticationFailedEvent());
             return;
           }

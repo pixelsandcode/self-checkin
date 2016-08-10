@@ -227,15 +227,18 @@ public class FindUserActivity extends AppCompatActivity {
 
                   if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
                     Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+                    Timber.w("Please check the WI-FI connection!");
                     return;
                   }
 
                   if (error.getResponse().getStatus() == 401) {
                     Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
+                    Timber.w("Please ask one of the staff to log this tablet in again!");
                     return;
                   }
 
                   Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
+                  Timber.w("Sorry something went wrong, please try again!");
                 }
               });
             }

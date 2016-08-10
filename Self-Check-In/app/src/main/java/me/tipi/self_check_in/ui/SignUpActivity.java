@@ -408,6 +408,7 @@ public class SignUpActivity extends AppCompatActivity {
               loading.dismiss();
               if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
                 Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+                Timber.w("Please check the WI-FI Connection!");
                 return;
               }
 
@@ -494,6 +495,7 @@ public class SignUpActivity extends AppCompatActivity {
             loading.dismiss();
             if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
               Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+              Timber.w("Please check the WI-FI connection!");
               return;
             }
 
@@ -505,12 +507,14 @@ public class SignUpActivity extends AppCompatActivity {
                   .title("Bad info")
                   .content(R.string.check_from_date)
                   .positiveText("OK").build().show();
+              Timber.w("Please check your check-in date again and retry!");
               return;
             }
 
             Timber.d("Claim error : %s", error.getMessage());
             Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT)
                 .show();
+            Timber.w("Sorry something went wrong, please try again!");
           }
         });
   }
@@ -590,11 +594,13 @@ public class SignUpActivity extends AppCompatActivity {
         loading.dismiss();
         if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
           Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+          Timber.w("Please check the WI-FI connection!");
           return;
         }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
           Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
+          Timber.w("Please ask one of the staff to log this tablet in again!");
           return;
         }
 
@@ -604,6 +610,7 @@ public class SignUpActivity extends AppCompatActivity {
                 firstLogin();
               }
             }).show();
+        Timber.w("Sorry something went wrong, please try again!");
       }
     });
   }
@@ -616,6 +623,7 @@ public class SignUpActivity extends AppCompatActivity {
     if (loginCount >= 2) {
 
       Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
+      Timber.w("Please ask one of the staff to log this tablet in again!");
       return;
     }
 
@@ -629,6 +637,7 @@ public class SignUpActivity extends AppCompatActivity {
       @Override public void failure(RetrofitError error) {
         if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
           Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+          Timber.w("Please check the WI-FI connection!");
           return;
         }
 
@@ -638,6 +647,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
+        Timber.w("Sorry something went wrong, please try again!");
       }
     });
   }
