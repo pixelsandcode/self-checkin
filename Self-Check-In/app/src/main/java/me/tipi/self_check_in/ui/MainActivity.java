@@ -8,12 +8,15 @@
 
 package me.tipi.self_check_in.ui;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -63,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
   private MaterialDialog loading;
 
+  private static final int PERMISSION_REQUEST_CODE = 1;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -77,6 +82,10 @@ public class MainActivity extends AppCompatActivity {
         .progress(true, 0)
         .build();
 
+    if(!checkPermission()){
+      requestPermission();
+    }
+
     if (username.isSet() && password.isSet()) {
       this.login();
     } else {
@@ -85,6 +94,33 @@ public class MainActivity extends AppCompatActivity {
 
     Timber.d("Created");
   }
+
+  private boolean checkPermission(){
+    int result = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    if (result == PackageManager.PERMISSION_GRANTED){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private void requestPermission(){
+
+    if (! ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISSION_REQUEST_CODE);
+    }
+
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults){
+    switch(permsRequestCode){
+      case 200:
+        boolean writeAccepted = grantResults[0]== PackageManager.PERMISSION_GRANTED;
+        break;
+    }
+  }
+
 
   @Override protected void onResume() {
     super.onResume();
