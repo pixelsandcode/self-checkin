@@ -18,6 +18,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import dagger.ObjectGraph;
+import me.tipi.self_check_in.util.FileLogger;
 import timber.log.Timber;
 
 public final class SelfCheckInApp extends Application {
@@ -28,7 +29,7 @@ public final class SelfCheckInApp extends Application {
     super.onCreate();
 
     AndroidThreeTen.init(this);
-
+    Timber.plant(new FileLogger());
     if (BuildConfig.DEBUG) {
       Timber.plant(new Timber.DebugTree());
     } /*else {
