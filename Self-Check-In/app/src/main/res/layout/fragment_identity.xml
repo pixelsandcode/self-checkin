@@ -129,7 +129,7 @@
           android:id="@+id/passport"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:imeOptions="actionNext"
+          android:imeOptions="actionDone"
           android:inputType="textNoSuggestions"
           android:paddingLeft="@dimen/first_key_line"
           android:paddingRight="@dimen/first_key_line"
