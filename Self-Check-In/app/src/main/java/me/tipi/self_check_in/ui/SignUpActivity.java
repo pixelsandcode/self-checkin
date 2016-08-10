@@ -414,13 +414,16 @@ public class SignUpActivity extends AppCompatActivity {
 
               if (error.getResponse() != null) {
                 if (error.getResponse().getStatus() == 409) {
-                  Timber.e("ERROR %s:%s", System.getProperty("line.separator"), error.getBody().toString());
+                  // Timber.e("ERROR %s:%s", System.getProperty("line.separator"), error.getBody().toString());
+                  Timber.w("ERROR %s:%s", System.getProperty("line.separator"), error.getBody().toString());
                   showSuccessFragment();
                 } else if (error.getResponse().getStatus() == 401) {
-                  Timber.e("ERROR %s", error.getBody().toString());
+                  // Timber.e("ERROR %s", error.getBody().toString());
+                  Timber.w("ERROR %s", error.getBody().toString());
                   login();
                 } else if (error.getResponse().getStatus() == 400) {
-                  Timber.e("ERROR %s", error.getBody().toString());
+                  // Timber.e("ERROR %s", error.getBody().toString());
+                  Timber.w("ERROR %s", error.getBody().toString());
                   new MaterialDialog.Builder(SignUpActivity.this)
                       .cancelable(true)
                       .autoDismiss(true)
@@ -428,12 +431,15 @@ public class SignUpActivity extends AppCompatActivity {
                       .content("Please check your check-in date again and retry")
                       .positiveText("OK").build().show();
                 } else {
-                  Timber.e("ERROR" + error.toString() +
-                      "error body = " + error.getBody().toString() + "error kind = " + error.getKind().toString());
+                  // Timber.e("ERROR" + error.toString() +
+                  //    "error body = " + error.getBody().toString() + "error kind = " + error.getKind().toString());
+                  Timber.w("ERROR" + error.toString() +
+                          "error body = " + error.getBody().toString() + "error kind = " + error.getKind().toString());
                   Toast.makeText(SignUpActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_LONG).show();
                 }
               } else {
-                Timber.e("ERROR %s", error.toString());
+                // Timber.e("ERROR %s", error.toString());
+                Timber.w("ERROR %s", error.toString());
                 Toast.makeText(SignUpActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_SHORT).show();
               }
             }
