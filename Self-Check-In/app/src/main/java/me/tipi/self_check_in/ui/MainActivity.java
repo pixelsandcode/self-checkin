@@ -180,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
    */
   public void login() {
     loading.show();
+    Timber.w("Logging in with user: %s and password %s", username.get(), password.get());
     authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
       @Override public void success(LoginResponse response, Response response2) {
         loading.dismiss();
@@ -201,16 +202,14 @@ public class MainActivity extends AppCompatActivity {
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
           Snackbar.make(appContainer.bind(MainActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-          Timber.w("Please check the WI-FI connection!");
           return;
         }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
           Snackbar.make(appContainer.bind(MainActivity.this), R.string.enter_correct_email_password, Snackbar.LENGTH_LONG).show();
-          Timber.w("Please enter correct email and password!");
         } else {
           Snackbar.make(appContainer.bind(MainActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
-          Timber.w("Sorry something went wrong, please try again!");
+          Timber.w(error.getMessage());
         }
       }
     });
