@@ -189,7 +189,7 @@ public class SignUpActivity extends AppCompatActivity {
     if (requestCode == CAMERA_GALLERY_PERMISSIONS_REQUEST) {
       if (grantResults.length == 2 &&
           grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-        Timber.d("Permission Granted");
+        Timber.v("Camera Permission Granted");
       } else {
         Toast.makeText(SignUpActivity.this, "Sorry you can't use this app without permission", Toast.LENGTH_LONG).show();
       }
