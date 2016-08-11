@@ -231,6 +231,7 @@ public class FindUserFragment extends Fragment {
           }
 
           Snackbar.make(appContainer.bind(getActivity()), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
+          Timber.w(error.getMessage());
         }
       });
     }

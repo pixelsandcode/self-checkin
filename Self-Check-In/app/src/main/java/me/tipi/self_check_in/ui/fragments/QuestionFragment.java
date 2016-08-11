@@ -239,7 +239,7 @@ public class QuestionFragment extends Fragment {
       }
     }
 
-    Timber.d("guest_key is: %s", guestKey);
+    Timber.w("guest_key is: %s", guestKey);
     if (TextUtils.isEmpty(note) || note.equals("")) {
       navigateToSuccessPage();
     } else {
@@ -259,7 +259,7 @@ public class QuestionFragment extends Fragment {
             return;
           }
 
-          Timber.e(error.getMessage());
+          Timber.w(error.getMessage());
           navigateToSuccessPage();
         }
       });

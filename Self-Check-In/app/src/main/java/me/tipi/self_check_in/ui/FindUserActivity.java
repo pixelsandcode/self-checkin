@@ -184,6 +184,8 @@ public class FindUserActivity extends AppCompatActivity {
   public void onClaimEvent(ClaimEvent event) {
     loading.show();
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+    Timber.w(System.getProperty("line.separator") + "Claiming with data: " + "Guest key = " + guest.user_key +
+            "Email :" + guest.email);
     authenticationService.claim(guest.user_key, new ClaimRequest(
             guest.email,
             new Booking(
@@ -217,6 +219,7 @@ public class FindUserActivity extends AppCompatActivity {
             }
 
             if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
+              Timber.w("Login as username: %s password: %s", username.get(), password.get());
               authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
                 @Override public void success(LoginResponse response, Response response2) {
                   Timber.d("LoggedIn");
@@ -233,12 +236,11 @@ public class FindUserActivity extends AppCompatActivity {
 
                   if (error.getResponse().getStatus() == 401) {
                     Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
-                    Timber.w("Please ask one of the staff to log this tablet in again!");
                     return;
                   }
 
                   Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
-                  Timber.w("Sorry something went wrong, please try again!");
+                  Timber.w("login error : %s", error.getMessage());
                 }
               });
             }
@@ -254,7 +256,7 @@ public class FindUserActivity extends AppCompatActivity {
               return;
             }
 
-            Timber.d("Claim error : %s", error.getMessage());
+            Timber.w("Claim error : %s", error.getMessage());
             Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT)
                 .show();
           }

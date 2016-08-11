@@ -469,7 +469,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Subscribe
   public void onClaimEvent(ClaimEvent event) {
     Timber.i("Entered claim event");
-    Timber.i(System.getProperty("line.separator") + "Claiming with data: " + "Guest key = " + guest.user_key +
+    Timber.w(System.getProperty("line.separator") + "Claiming with data: " + "Guest key = " + guest.user_key +
     "Email :" + guest.email);
     loading.show();
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -506,7 +506,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
 
             if (error.getResponse() != null && error.getResponse().getStatus() == 400) {
-              Timber.e("ERROR %s", error.getBody().toString());
+              Timber.w("ERROR %s", error.getBody().toString());
               new MaterialDialog.Builder(SignUpActivity.this)
                   .cancelable(true)
                   .autoDismiss(true)
@@ -517,10 +517,9 @@ public class SignUpActivity extends AppCompatActivity {
               return;
             }
 
-            Timber.d("Claim error : %s", error.getMessage());
+            Timber.w("Claim error : %s", error.getMessage());
             Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT)
                 .show();
-            Timber.w("Sorry something went wrong, please try again!");
           }
         });
   }
@@ -616,7 +615,7 @@ public class SignUpActivity extends AppCompatActivity {
                 firstLogin();
               }
             }).show();
-        Timber.w("Sorry something went wrong, please try again!");
+        Timber.w("firstLogin Error: %s", error.getMessage());
       }
     });
   }
@@ -643,7 +642,7 @@ public class SignUpActivity extends AppCompatActivity {
       @Override public void failure(RetrofitError error) {
         if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
           Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-          Timber.w("Please check the WI-FI connection!");
+          Timber.d("Please check the WI-FI connection!");
           return;
         }
 
@@ -653,7 +652,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
-        Timber.w("Sorry something went wrong, please try again!");
+        Timber.w("login Error: %s", error.getMessage());
       }
     });
   }
