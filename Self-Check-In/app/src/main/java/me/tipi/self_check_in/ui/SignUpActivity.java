@@ -192,6 +192,7 @@ public class SignUpActivity extends AppCompatActivity {
         Timber.v("Camera Permission Granted");
       } else {
         Toast.makeText(SignUpActivity.this, "Sorry you can't use this app without permission", Toast.LENGTH_LONG).show();
+        Timber.w("Camera permission denied");
       }
     } else {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -364,11 +365,11 @@ public class SignUpActivity extends AppCompatActivity {
   }
 
   public void submit() {
-    Timber.i("Entered submit method");
+    Timber.w("Entered submit method");
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     if (avatarPath != null && avatarPath.get() != null && passportPath != null && passportPath.get() != null) {
       loading.show();
-      Timber.i("sending data with values");
+      Timber.w("sending data with values  %s", guest.toString());
 
       @SuppressWarnings("ConstantConditions")
       TypedFile avatarFile = new TypedFile("image/jpeg", new File(avatarPath.get()));
@@ -408,22 +409,18 @@ public class SignUpActivity extends AppCompatActivity {
               loading.dismiss();
               if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
                 Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-                Timber.w("Please check the WI-FI Connection!");
                 return;
               }
 
               if (error.getResponse() != null) {
                 if (error.getResponse().getStatus() == 409) {
-                  // Timber.e("ERROR %s:%s", System.getProperty("line.separator"), error.getBody().toString());
-                  Timber.w("ERROR %s:%s", System.getProperty("line.separator"), error.getBody().toString());
+                  Timber.w("ERROR %s, status: %s", error.getMessage(), error.getResponse().getStatus());
                   showSuccessFragment();
                 } else if (error.getResponse().getStatus() == 401) {
-                  // Timber.e("ERROR %s", error.getBody().toString());
-                  Timber.w("ERROR %s", error.getBody().toString());
+                  Timber.w("ERROR %s", error.getMessage());
                   login();
                 } else if (error.getResponse().getStatus() == 400) {
-                  // Timber.e("ERROR %s", error.getBody().toString());
-                  Timber.w("ERROR %s", error.getBody().toString());
+                  Timber.w("ERROR %s, status: %s", error.getMessage(), error.getResponse().getStatus());
                   new MaterialDialog.Builder(SignUpActivity.this)
                       .cancelable(true)
                       .autoDismiss(true)
@@ -433,19 +430,20 @@ public class SignUpActivity extends AppCompatActivity {
                 } else {
                   // Timber.e("ERROR" + error.toString() +
                   //    "error body = " + error.getBody().toString() + "error kind = " + error.getKind().toString());
-                  Timber.w("ERROR" + error.toString() +
-                          "error body = " + error.getBody().toString() + "error kind = " + error.getKind().toString());
+                  Timber.w("ERROR %s", error.getMessage() != null ? error.getMessage() : error.toString());
                   Toast.makeText(SignUpActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_LONG).show();
                 }
               } else {
                 // Timber.e("ERROR %s", error.toString());
-                Timber.w("ERROR %s", error.toString());
+                Timber.w("ERROR %s", error.getMessage() != null ? error.getMessage() : error.toString());
                 Toast.makeText(SignUpActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_SHORT).show();
               }
             }
           }
       );
     } else {
+      Timber.w("AvatarPath: %s - PassportPath: %s", avatarPath != null ? avatarPath.get() : "no avatar path",
+          passportPath != null ? passportPath.get() : "no passport path");
       reEnterDataDialog();
     }
 
@@ -469,8 +467,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Subscribe
   public void onClaimEvent(ClaimEvent event) {
     Timber.i("Entered claim event");
-    Timber.w(System.getProperty("line.separator") + "Claiming with data: " + "Guest key = " + guest.user_key +
-    "Email :" + guest.email);
+    Timber.w("Claiming with data: Guest key = %s - Email = %s", guest.user_key, guest.email);
     loading.show();
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     authenticationService.claim(guest.user_key, new ClaimRequest(
@@ -501,12 +498,11 @@ public class SignUpActivity extends AppCompatActivity {
             loading.dismiss();
             if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
               Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-              Timber.w("Please check the WI-FI connection!");
               return;
             }
 
             if (error.getResponse() != null && error.getResponse().getStatus() == 400) {
-              Timber.w("ERROR %s", error.getBody().toString());
+              Timber.w("ERROR %s - status: %s", error.getMessage(), error.getResponse().getStatus());
               new MaterialDialog.Builder(SignUpActivity.this)
                   .cancelable(true)
                   .autoDismiss(true)
@@ -517,7 +513,7 @@ public class SignUpActivity extends AppCompatActivity {
               return;
             }
 
-            Timber.w("Claim error : %s", error.getMessage());
+            Timber.w("Claim error : %s", error.getMessage() != null ? error.getMessage() : error.toString());
             Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT)
                 .show();
           }
@@ -599,13 +595,12 @@ public class SignUpActivity extends AppCompatActivity {
         loading.dismiss();
         if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
           Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-          Timber.w("Please check the WI-FI connection!");
           return;
         }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
           Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
-          Timber.w("Please ask one of the staff to log this tablet in again!");
+          Timber.w("cannot login in pink after retry");
           return;
         }
 
@@ -615,7 +610,7 @@ public class SignUpActivity extends AppCompatActivity {
                 firstLogin();
               }
             }).show();
-        Timber.w("firstLogin Error: %s", error.getMessage());
+        Timber.w("firstLogin Error: %s", error.getMessage() != null ? error.getMessage() : error.toString());
       }
     });
   }
@@ -628,7 +623,7 @@ public class SignUpActivity extends AppCompatActivity {
     if (loginCount >= 2) {
 
       Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
-      Timber.w("Please ask one of the staff to log this tablet in again!");
+      Timber.w("cannot login when got authentication error in submit after retry!");
       return;
     }
 
@@ -652,7 +647,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
-        Timber.w("login Error: %s", error.getMessage());
+        Timber.w("Submit login Error: %s", error.getMessage() != null ? error.getMessage() : error.toString());
       }
     });
   }

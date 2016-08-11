@@ -184,8 +184,8 @@ public class FindUserActivity extends AppCompatActivity {
   public void onClaimEvent(ClaimEvent event) {
     loading.show();
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-    Timber.w(System.getProperty("line.separator") + "Claiming with data: " + "Guest key = " + guest.user_key +
-            "Email :" + guest.email);
+    Timber.i("Entered claim event");
+    Timber.w("Claiming with data: Guest key = %s - Email = %s", guest.user_key, guest.email);
     authenticationService.claim(guest.user_key, new ClaimRequest(
             guest.email,
             new Booking(
@@ -230,7 +230,6 @@ public class FindUserActivity extends AppCompatActivity {
 
                   if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
                     Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-                    Timber.w("Please check the WI-FI connection!");
                     return;
                   }
 
@@ -240,13 +239,13 @@ public class FindUserActivity extends AppCompatActivity {
                   }
 
                   Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
-                  Timber.w("login error : %s", error.getMessage());
+                  Timber.w("login on find claim error : %s", error.getMessage() != null ? error.getMessage() : error.toString());
                 }
               });
             }
 
             if (error.getResponse() != null && error.getResponse().getStatus() == 400) {
-              Timber.e("ERROR %s", error.getBody().toString());
+              Timber.e("ERROR %s", error.getMessage());
               new MaterialDialog.Builder(FindUserActivity.this)
                   .cancelable(true)
                   .autoDismiss(true)
@@ -256,7 +255,7 @@ public class FindUserActivity extends AppCompatActivity {
               return;
             }
 
-            Timber.w("Claim error : %s", error.getMessage());
+            Timber.w("Claim error : %s", error.getMessage() != null ? error.getMessage() : error.toString());
             Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT)
                 .show();
           }
@@ -355,6 +354,7 @@ public class FindUserActivity extends AppCompatActivity {
         }
 
         Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
+        Timber.w("ERROR: claim login error = %s", error.getMessage() != null ? error.getMessage() : error.toString());
       }
     });
   }

@@ -89,13 +89,12 @@ public class HostelTermsFragment extends Fragment {
       @Override public void failure(RetrofitError error) {
         if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
           Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-          Timber.w("Please check the WI-FI Connection!");
           return;
         }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 404) {
           termsTextView.setText(R.string.no_terms);
-          Timber.w("Sorry this hostel's Terms & Conditions isn't available!");
+          Timber.w("Sorry this hostel's Terms & Conditions isn't available! - hostel_key : %s", hostelKey.get());
           return;
         }
 

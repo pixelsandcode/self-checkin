@@ -54,22 +54,30 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity {
 
   @Inject AuthenticationService authenticationService;
-  @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
-  @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
-  @Inject @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
-  @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
-  @Inject @Named(ApiConstants.HOSTEL_NAME) Preference<String> hostelName;
-  @Inject @Named(ApiConstants.HOSTEL_KEY) Preference<String> hostelKey;
+  @Inject
+  @Named(ApiConstants.USER_NAME)
+  Preference<String> username;
+  @Inject
+  @Named(ApiConstants.PASSWORD)
+  Preference<String> password;
+  @Inject
+  @Named(ApiConstants.AVATAR)
+  Preference<String> avatarPath;
+  @Inject
+  @Named(ApiConstants.PASSPORT)
+  Preference<String> passportPath;
+  @Inject
+  @Named(ApiConstants.HOSTEL_NAME)
+  Preference<String> hostelName;
+  @Inject
+  @Named(ApiConstants.HOSTEL_KEY)
+  Preference<String> hostelKey;
 
   @Inject AppContainer appContainer;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
 
-  //@Bind(R.id.forgot_password_text) TextView forgotPassView;
-  //@Bind(R.id.reset_password_button) Button resetPasswordButton;
-
   private MaterialDialog loading;
-
   private static final int PERMISSION_REQUEST_CODE = 1;
 
   @Override
@@ -86,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         .progress(true, 0)
         .build();
 
-    if(!checkWriteStoragePermission()) {
+    if (!checkWriteStoragePermission()) {
       requestWriteStoragePermission();
     }
 
@@ -113,9 +121,9 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public void onRequestPermissionsResult(int permsRequestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    switch(permsRequestCode) {
+    switch (permsRequestCode) {
       case 200:
-        boolean writeAccepted = grantResults[0]== PackageManager.PERMISSION_GRANTED;
+        boolean writeAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
         break;
     }
   }
@@ -138,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
     int x = (int) ev.getX();
     int y = (int) ev.getY();
 
-    if(view instanceof EditText){
+    if (view instanceof EditText) {
       EditText innerView = (EditText) getCurrentFocus();
 
       if (ev.getAction() == MotionEvent.ACTION_UP &&
@@ -180,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
    */
   public void login() {
     loading.show();
-    Timber.w("Logging in with user: %s and password %s", username.get(), password.get());
     authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
       @Override public void success(LoginResponse response, Response response2) {
         loading.dismiss();
@@ -207,10 +214,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
           Snackbar.make(appContainer.bind(MainActivity.this), R.string.enter_correct_email_password, Snackbar.LENGTH_LONG).show();
-        } else {
-          Snackbar.make(appContainer.bind(MainActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
-          Timber.w(error.getMessage());
+          Timber.w("Error Logging in with user: %s and password %s", username.get(), password.get());
+          return;
         }
+
+        Snackbar.make(appContainer.bind(MainActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
+        Timber.w(error.getMessage());
       }
     });
   }

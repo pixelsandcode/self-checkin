@@ -211,7 +211,6 @@ public class FindUserFragment extends Fragment {
 
           if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
             Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-            Timber.w("Please check the WI-FI connection!");
             return;
           }
 
@@ -231,7 +230,7 @@ public class FindUserFragment extends Fragment {
           }
 
           Snackbar.make(appContainer.bind(getActivity()), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
-          Timber.w(error.getMessage());
+          Timber.w("Error: %s",error.getMessage() != null ? error.getMessage() : error.toString());
         }
       });
     }

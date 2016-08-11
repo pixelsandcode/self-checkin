@@ -240,7 +240,6 @@ public class EmailFragment extends Fragment {
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
           Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-          Timber.w("Please check the WI-FI connection!");
           return;
         }
 
@@ -248,13 +247,16 @@ public class EmailFragment extends Fragment {
           ((SignUpActivity)getActivity()).showScanIDFragment();
           guest.user_key = null;
           guest.guest_key = null;
+          return;
         }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
           Timber.e("authentication failed");
-        } else {
-          Timber.e("Error finding: %s", error.toString());
+          return;
         }
+
+
+        Timber.e("Error finding: %s", error.toString());
       }
     });
   }
