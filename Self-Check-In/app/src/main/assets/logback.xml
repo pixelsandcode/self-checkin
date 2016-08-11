@@ -2,7 +2,7 @@
     <property name="LOG_DIR" value="/storage/emulated/0/Download" />
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/log-latest.log</file>
+        <file>${LOG_DIR}/kiosk.txt</file>
 
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} %thread %level %line %msg</pattern>
@@ -16,7 +16,7 @@
                 <maxFileSize>2MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
 
-            <maxHistory>30</maxHistory>
+            <maxHistory>50</maxHistory>
         </rollingPolicy>
     </appender>
 
