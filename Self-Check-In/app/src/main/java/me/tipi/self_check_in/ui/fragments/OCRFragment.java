@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,6 +102,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_ocr, container, false);
     ButterKnife.bind(this, view);
+    passportPath.delete();
 
     RecognitionSettings recognitionSettings = new RecognitionSettings();
     RecognizerSettings[] settArray = Config.getRecognizerSettings();
@@ -281,7 +283,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
         showScanButton();
       }
     } else {
-      Toast.makeText(getActivity(), "Scans done: " + mScansDone, Toast.LENGTH_SHORT).show();
+      //Toast.makeText(getActivity(), "Scans done: " + mScansDone, Toast.LENGTH_SHORT).show();
       // resume scanning after two seconds
       mHandler.postDelayed(new Runnable() {
         @Override
@@ -359,7 +361,6 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     // this method is called if camera cannot perform autofocus
     // this method is called from background (focusing) thread
     // so make sure you post UI actions on UI thread
-    Timber.e("AutoFocous Failed");
   }
 
   @Override
@@ -420,15 +421,17 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
       // until this method ends. If you want to save image for later,
       // obtained a cloned image with image.clone().
 
-      Image image = ((ImageMetadata) metadata).getImage();
-      Timber.w("Ocr meta data captured");
-      final Bitmap bitmap = image.convertToBitmap();
-      Timber.w("Metadata converted to bitmap");
-      final Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
-      Timber.w("OCR Uri got back from file helper with path: %s", photoUri != null ? photoUri.getPath() : "NO OCR FILE PATH!!!!!");
-      passportPath.set(photoUri.getPath());
-      Timber.w("Ocr path saved to prefs with path: %s", photoUri.getPath());
-      Timber.w("Reading ocr path from pref and it is: %s", passportPath.get());
+      if (passportPath != null && passportPath.get() == null && TextUtils.isEmpty(passportPath.get())) {
+        Image image = ((ImageMetadata) metadata).getImage();
+        Timber.w("Ocr meta data captured");
+        final Bitmap bitmap = image.convertToBitmap();
+        Timber.w("Metadata converted to bitmap");
+        final Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
+        Timber.w("OCR Uri got back from file helper with path: %s", photoUri != null ? photoUri.getPath() : "NO OCR FILE PATH!!!!!");
+        passportPath.set(photoUri.getPath());
+        Timber.w("Ocr path saved to prefs with path: %s", photoUri.getPath());
+        Timber.w("Reading ocr path from pref and it is: %s", passportPath.get());
+      }
       // to convert the image to Bitmap, call image.convertToBitmap()
 
       // after this line, image gets disposed. If you want to save it
