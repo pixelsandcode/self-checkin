@@ -164,6 +164,7 @@ public class EmailFragment extends Fragment {
       if (!TextUtils.isEmpty(enteredEmail)) {
         if (Strings.isValidEmail(enteredEmail)) {
           findUserWithEmail(enteredEmail);
+          Timber.w("Entered email is: %s", enteredEmail);
         }
       }
     }
@@ -244,6 +245,7 @@ public class EmailFragment extends Fragment {
         }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 404) {
+          Timber.w("No match going to passport yes/no");
           ((SignUpActivity)getActivity()).showScanIDFragment();
           guest.user_key = null;
           guest.guest_key = null;

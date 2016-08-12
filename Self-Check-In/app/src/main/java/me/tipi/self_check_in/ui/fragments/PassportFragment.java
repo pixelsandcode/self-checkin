@@ -35,7 +35,6 @@ import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.drivemode.android.typeface.TypefaceHelper;
-import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
@@ -46,13 +45,13 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.PassportPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.FindUserActivity;
@@ -78,7 +77,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   @Inject Picasso picasso;
   @Inject AppContainer appContainer;
   @Inject Bus bus;
-  @Inject @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
+  @Inject PassportPreference passportPath;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
 
@@ -293,7 +292,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   @OnClick(R.id.continue_btn)
   public void continueToCheckIn() {
     if (passportPath.isSet()) {
-      Timber.v(passportPath.get());
+      Timber.w("Going to check in with passport path: %s", passportPath.get());
       ((SignUpActivity)getActivity()).showIdentityFragment(null);
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please Scan your passport first!", Snackbar.LENGTH_LONG).show();
@@ -377,6 +376,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
 
   private void rotatePicture(int rotation, byte[] data) {
     Bitmap bitmap = ImageUtility.decodeJPEGfromBuffer(getActivity(), data);
+    Timber.w("Converted camera data to passport bitmap with width: %s and height: %s", bitmap.getWidth(), bitmap.getHeight());
     if (rotation != 0) {
       Bitmap oldBitmap = bitmap;
 
@@ -393,10 +393,14 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     int x = Math.round(bitmap.getWidth() - guideWidth) / 2;
     int y = Math.round(bitmap.getHeight() - guideHeight) / 2;
     bitmap = Bitmap.createBitmap(bitmap, x, y, bitmap.getWidth() - x * 2, bitmap.getHeight() - y * 2);
+    Timber.w("cropped passport bitmap to width: %s and height: %s", bitmap.getWidth(), bitmap.getHeight());
 
     passportView.setImageBitmap(bitmap);
     Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
+    Timber.w("Uri got back from file helper with passport path: %s", photoUri != null ? photoUri.getPath() : "NO PASSPORT FILE PATH!!!!!");
     passportPath.set(photoUri.getPath());
+    Timber.w("passport path saved to prefs with path: %s", photoUri.getPath());
+    Timber.w("Reading passport path from pref and it is: %s", passportPath.get());
     setupUIWithPassport();
   }
 

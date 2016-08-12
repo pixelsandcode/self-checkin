@@ -62,6 +62,7 @@ import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.util.Strings;
+import timber.log.Timber;
 
 public class IdentityFragment extends Fragment {
 
@@ -228,6 +229,7 @@ public class IdentityFragment extends Fragment {
         guest.gender = 1;
       }
 
+      Timber.w("We have identity info going to avatar fragment");
       ((SignUpActivity)getActivity()).showAvatarFragment();
     }
   }

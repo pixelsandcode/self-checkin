@@ -16,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.f2prateek.rx.preferences.Preference;
 import com.microblink.detectors.DetectorResult;
 import com.microblink.detectors.quad.QuadDetectorResult;
 import com.microblink.hardware.SuccessCallback;
@@ -44,13 +43,13 @@ import com.microblink.view.viewfinder.quadview.QuadViewManagerFactory;
 import com.microblink.view.viewfinder.quadview.QuadViewPreset;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SecretKey;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.PassportPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
@@ -65,8 +64,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     OnSizeChangedListener, MetadataListener {
 
   public static final String TAG = OCRFragment.class.getSimpleName();
-  @Inject @Named(ApiConstants.PASSPORT)
-  Preference<String> passportPath;
+  @Inject PassportPreference passportPath;
 
   @Bind(R.id.rec_view) RecognizerView mRecognizerView;
   @Bind(R.id.scan_btn) ImageButton scanButton;
@@ -276,6 +274,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
       }
 
       if (resArray != null) {
+        Timber.w("Have ocr data going to Details");
         ((SignUpActivity)getActivity()).showIdentityFragment(results);
       } else {
         android.util.Log.e(TAG, "Unable to retrieve recognition data!");
@@ -422,9 +421,14 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
       // obtained a cloned image with image.clone().
 
       Image image = ((ImageMetadata) metadata).getImage();
+      Timber.w("Ocr meta data captured");
       final Bitmap bitmap = image.convertToBitmap();
+      Timber.w("Metadata converted to bitmap");
       final Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
+      Timber.w("OCR Uri got back from file helper with path: %s", photoUri != null ? photoUri.getPath() : "NO OCR FILE PATH!!!!!");
       passportPath.set(photoUri.getPath());
+      Timber.w("Ocr path saved to prefs with path: %s", photoUri.getPath());
+      Timber.w("Reading ocr path from pref and it is: %s", passportPath.get());
       // to convert the image to Bitmap, call image.convertToBitmap()
 
       // after this line, image gets disposed. If you want to save it

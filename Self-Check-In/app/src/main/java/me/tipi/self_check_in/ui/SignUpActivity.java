@@ -57,6 +57,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.AvatarPreference;
+import me.tipi.self_check_in.data.PassportPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.Booking;
@@ -92,15 +94,16 @@ public class SignUpActivity extends AppCompatActivity {
 
   @Inject Bus bus;
   @Inject Guest guest;
-  @Inject
-  @Named(ApiConstants.AVATAR) Preference<String> avatarPath;
-  @Inject
-  @Named(ApiConstants.PASSPORT) Preference<String> passportPath;
+  @Inject AvatarPreference avatarPath;
+  @Inject PassportPreference passportPath;
   @Inject AppContainer appContainer;
   @Inject AuthenticationService authenticationService;
-  @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject
-  @Named(ApiConstants.PASSWORD) Preference<String> password;
+  @Named(ApiConstants.USER_NAME)
+  Preference<String> username;
+  @Inject
+  @Named(ApiConstants.PASSWORD)
+  Preference<String> password;
   @Inject Tracker tracker;
 
   @Bind(R.id.container_main) FrameLayout mainContainer;
@@ -367,85 +370,110 @@ public class SignUpActivity extends AppCompatActivity {
   public void submit() {
     Timber.w("Entered submit method");
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-    if (avatarPath != null && avatarPath.get() != null && passportPath != null && passportPath.get() != null) {
-      loading.show();
-      Timber.w("sending data with values  %s", guest.toString());
+    if (avatarPath == null) {
+      Timber.w("AVATAR pref is null");
+      Snackbar.make(appContainer.bind(SignUpActivity.this), "Your avatar didn't save successfully, please take another selfie", Snackbar.LENGTH_LONG).show();
+      return;
+    }
 
-      @SuppressWarnings("ConstantConditions")
-      TypedFile avatarFile = new TypedFile("image/jpeg", new File(avatarPath.get()));
-      @SuppressWarnings("ConstantConditions")
-      TypedFile passportFile = new TypedFile("image/jpeg", new File(passportPath.get()));
-      authenticationService.addGuest(
-          avatarFile,
-          passportFile,
-          guest.email,
-          guest.name,
-          (guest.city == null || TextUtils.isEmpty(guest.city)) ? null : guest.city,
-          (guest.country == null || TextUtils.isEmpty(guest.country)) ? null : guest.country,
-          guest.passportNumber,
-          guest.dob == null ? null : dateFormat.format(guest.dob),
-          guest.referenceCode != null ? guest.referenceCode : null,
-          dateFormat.format(guest.checkInDate),
-          dateFormat.format(guest.checkOutDate),
-          guest.gender,
-          new Callback<ClaimResponse>() {
-            @Override public void success(ClaimResponse apiResponse, Response response) {
-              loading.dismiss();
-              Timber.i("Success" + "name:" + apiResponse.data.name + " guest_key : " + apiResponse.data.guest_key);
-              guest.guest_key = apiResponse.data.guest_key;
-              // Send overall success time
-              long elapsed = Math.abs(guest.time - System.currentTimeMillis());
-              long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
-              tracker.send(new HitBuilders.EventBuilder()
-                  .setCategory(getString(R.string.overal_time))
-                  .setAction("Check-In")
-                  .setLabel("Sign Up")
-                  .setValue(diffSeconds).build());
-              tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
-              showQuestionFragment();
+    if (avatarPath.get() == null || TextUtils.isEmpty(avatarPath.get())) {
+      Timber.w("AVATAR path not saved it is: %s", avatarPath.get());
+      Snackbar.make(appContainer.bind(SignUpActivity.this), "Your avatar didn't save successfully, please take another selfie", Snackbar.LENGTH_LONG).show();
+      return;
+    }
+
+    if (passportPath == null) {
+      Timber.w("PASSPORT pref is null");
+      Snackbar.make(appContainer.bind(SignUpActivity.this), "Your passport image didn't save successfully, please re-capture", Snackbar.LENGTH_LONG).show();
+      return;
+    }
+
+    if (passportPath.get() == null || TextUtils.isEmpty(passportPath.get())) {
+      Timber.w("Passport path not saved it is: %s", passportPath.get());
+      Snackbar.make(appContainer.bind(SignUpActivity.this), "Your passport image didn't save successfully, please re-capture", Snackbar.LENGTH_LONG).show();
+      return;
+    }
+
+    loading.show();
+    Timber.w("sending data with values  %s", guest.toString());
+    Timber.w("avatar path: %s", (avatarPath != null && !TextUtils.isEmpty(avatarPath.get())) ? avatarPath.get() : "no avatar path");
+    Timber.w("avatar path: %s", (passportPath != null && passportPath.get() != "") ? passportPath.get() : "no avatar path");
+
+    @SuppressWarnings("ConstantConditions")
+    TypedFile avatarFile = new TypedFile("image/jpeg", new File(avatarPath.get()));
+    @SuppressWarnings("ConstantConditions")
+    TypedFile passportFile = new TypedFile("image/jpeg", new File(passportPath.get()));
+    authenticationService.addGuest(
+        avatarFile,
+        passportFile,
+        guest.email,
+        guest.name,
+        (guest.city == null || TextUtils.isEmpty(guest.city)) ? null : guest.city,
+        (guest.country == null || TextUtils.isEmpty(guest.country)) ? null : guest.country,
+        guest.passportNumber,
+        guest.dob == null ? null : dateFormat.format(guest.dob),
+        guest.referenceCode != null ? guest.referenceCode : null,
+        dateFormat.format(guest.checkInDate),
+        dateFormat.format(guest.checkOutDate),
+        guest.gender,
+        new Callback<ClaimResponse>() {
+          @Override public void success(ClaimResponse apiResponse, Response response) {
+            loading.dismiss();
+            Timber.w("--------PROCESS FINISHED------- with guest_key: %s", apiResponse.data.guest_key);
+            guest.guest_key = apiResponse.data.guest_key;
+            // Send overall success time
+            long elapsed = Math.abs(guest.time - System.currentTimeMillis());
+            long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
+            tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(getString(R.string.overal_time))
+                .setAction("Check-In")
+                .setLabel("Sign Up")
+                .setValue(diffSeconds).build());
+            tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
+            showQuestionFragment();
+          }
+
+          @Override public void failure(RetrofitError error) {
+            loading.dismiss();
+            Timber.w("--------PROCESS Terminated-------");
+            if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+              Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+              return;
             }
 
-            @Override public void failure(RetrofitError error) {
-              loading.dismiss();
-              if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-                Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-                return;
-              }
-
-              if (error.getResponse() != null) {
-                if (error.getResponse().getStatus() == 409) {
-                  Timber.w("ERROR %s, status: %s", error.getMessage(), error.getResponse().getStatus());
-                  showSuccessFragment();
-                } else if (error.getResponse().getStatus() == 401) {
-                  Timber.w("ERROR %s", error.getMessage());
-                  login();
-                } else if (error.getResponse().getStatus() == 400) {
-                  Timber.w("ERROR %s, status: %s", error.getMessage(), error.getResponse().getStatus());
-                  new MaterialDialog.Builder(SignUpActivity.this)
-                      .cancelable(true)
-                      .autoDismiss(true)
-                      .title("Bad info")
-                      .content("Please check your check-in date again and retry")
-                      .positiveText("OK").build().show();
-                } else {
-                  // Timber.e("ERROR" + error.toString() +
-                  //    "error body = " + error.getBody().toString() + "error kind = " + error.getKind().toString());
-                  Timber.w("ERROR %s", error.getMessage() != null ? error.getMessage() : error.toString());
-                  Toast.makeText(SignUpActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_LONG).show();
-                }
+            if (error.getResponse() != null) {
+              if (error.getResponse().getStatus() == 409) {
+                Timber.w("ERROR %s, status: %s", error.getMessage(), error.getResponse().getStatus());
+                showSuccessFragment();
+              } else if (error.getResponse().getStatus() == 401) {
+                Timber.w("ERROR %s", error.getMessage());
+                login();
+              } else if (error.getResponse().getStatus() == 400) {
+                Timber.w("ERROR %s, status: %s", error.getMessage(), error.getResponse().getStatus());
+                new MaterialDialog.Builder(SignUpActivity.this)
+                    .cancelable(true)
+                    .autoDismiss(true)
+                    .title("Bad info")
+                    .content("Please check your check-in date again and retry")
+                    .positiveText("OK").build().show();
               } else {
-                // Timber.e("ERROR %s", error.toString());
+                // Timber.e("ERROR" + error.toString() +
+                //    "error body = " + error.getBody().toString() + "error kind = " + error.getKind().toString());
                 Timber.w("ERROR %s", error.getMessage() != null ? error.getMessage() : error.toString());
-                Toast.makeText(SignUpActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignUpActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_LONG).show();
               }
+            } else {
+              // Timber.e("ERROR %s", error.toString());
+              Timber.w("ERROR %s", error.getMessage() != null ? error.getMessage() : error.toString());
+              Toast.makeText(SignUpActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
           }
-      );
-    } else {
+        }
+    ); /*else {
       Timber.w("AvatarPath: %s - PassportPath: %s", avatarPath != null ? avatarPath.get() : "no avatar path",
           passportPath != null ? passportPath.get() : "no passport path");
       reEnterDataDialog();
-    }
+    }*/
 
   }
 
@@ -559,6 +587,7 @@ public class SignUpActivity extends AppCompatActivity {
   public void goToFindActivity(View view) {
     tracker.send(new HitBuilders.EventBuilder("Process", "Find").build());
     guest.time = System.currentTimeMillis();
+    Timber.w("---------GOING TO FIND USER--------");
     startActivity(new Intent(this, FindUserActivity.class));
   }
 
@@ -570,6 +599,7 @@ public class SignUpActivity extends AppCompatActivity {
   public void goToIdentity(View view) {
     tracker.send(new HitBuilders.EventBuilder("Process", "Create").build());
     guest.time = System.currentTimeMillis();
+    Timber.w("----------GOING TO SIGN UP----------");
     showEmailFragment();
   }
 
@@ -580,6 +610,7 @@ public class SignUpActivity extends AppCompatActivity {
    */
   public void goToLanding(View view) {
     loading.show();
+    Timber.w("----------PROCESS STARTED----------");
     firstLogin();
   }
 
@@ -627,7 +658,7 @@ public class SignUpActivity extends AppCompatActivity {
       return;
     }
 
-    loginCount ++;
+    loginCount++;
     authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
       @Override public void success(LoginResponse response, Response response2) {
         Timber.d("LoggedIn");

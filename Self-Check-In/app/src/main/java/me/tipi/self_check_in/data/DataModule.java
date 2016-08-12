@@ -37,6 +37,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 )
 public final class DataModule {
   static final int DISK_CACHE_SIZE = (int) MEGABYTES.toBytes(50);
+  private static final String PREF_USER_AVATAR = "UserAvatar";
+  private static final String PREF_PASSPORT_IMAGE = "passportImage";
 
   /**
    * Provide shared preferences shared preferences.
@@ -110,6 +112,16 @@ public final class DataModule {
   @Provides @Singleton @Named(ApiConstants.PASSPORT)
   Preference<String> providePassport(RxSharedPreferences prefs) {
     return prefs.getString(ApiConstants.PASSPORT);
+  }
+
+  @Provides @Singleton
+  AvatarPreference provideAvatarPathPreference(SharedPreferences preferences) {
+    return new AvatarPreference(preferences, PREF_USER_AVATAR);
+  }
+
+  @Provides @Singleton
+  PassportPreference providePassportPathPreference(SharedPreferences preferences) {
+    return new PassportPreference(preferences, PREF_PASSPORT_IMAGE);
   }
 
   /**

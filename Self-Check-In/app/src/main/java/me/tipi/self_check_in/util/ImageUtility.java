@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import me.tipi.self_check_in.R;
+import timber.log.Timber;
 
 public class ImageUtility {
 
@@ -66,10 +67,14 @@ public class ImageUtility {
       }
     }
 
+
+    Timber.w("Picture directory available");
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
     File mediaFile = new File(
         mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg"
     );
+
+    Timber.w("file created with path: %s", mediaFile.getPath());
 
     // Saving the bitmap
     try {
@@ -78,9 +83,11 @@ public class ImageUtility {
 
       FileOutputStream stream = new FileOutputStream(mediaFile);
       stream.write(out.toByteArray());
+      Timber.w("Bitmap written on file");
       stream.close();
 
     } catch (IOException exception) {
+      Timber.w("Error writing bitmap on file, exception is: %s", exception.getMessage());
       exception.printStackTrace();
     }
 
@@ -90,6 +97,7 @@ public class ImageUtility {
     mediaScannerIntent.setData(fileContentUri);
     context.sendBroadcast(mediaScannerIntent);
 
+    Timber.w("File scanned to be readable, path is: %s", fileContentUri.getPath());
     return fileContentUri;
   }
 

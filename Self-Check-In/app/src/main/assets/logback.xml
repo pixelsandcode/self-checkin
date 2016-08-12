@@ -5,7 +5,7 @@
         <file>${LOG_DIR}/kiosk.txt</file>
 
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %thread %level %line %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %msg%n</pattern>
         </encoder>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">

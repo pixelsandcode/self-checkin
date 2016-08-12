@@ -93,11 +93,13 @@ public class ScanIDFragment extends Fragment {
 
   @OnClick(R.id.yes_btn)
   public void yesTapped() {
+    Timber.w("User has passport, going to ocr");
     ((SignUpActivity)getActivity()).showScanFragment();
   }
 
   @OnClick(R.id.no_btn)
   public void noTapped() {
+    Timber.w("User doesn't have passport going to licence");
     ((SignUpActivity)getActivity()).showPassportFragment();
   }
 

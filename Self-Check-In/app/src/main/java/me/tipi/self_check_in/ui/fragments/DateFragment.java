@@ -51,6 +51,7 @@ import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
+import timber.log.Timber;
 
 public class DateFragment extends Fragment implements CalendarDatePickerDialogFragment.OnDateSetListener {
 
@@ -214,6 +215,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
         bus.post(new ClaimEvent());
       } else {
         if (getActivity() instanceof SignUpActivity) {
+          Timber.w("User entered %d nights and going to submit method", enteredNights);
           ((SignUpActivity)getActivity()).submit();
         }
       }

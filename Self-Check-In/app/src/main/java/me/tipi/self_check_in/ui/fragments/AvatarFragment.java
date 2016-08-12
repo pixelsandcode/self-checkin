@@ -30,13 +30,10 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.drivemode.android.typeface.TypefaceHelper;
-import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
@@ -46,13 +43,13 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.AvatarPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.SignUpActivity;
@@ -75,15 +72,12 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   @Inject Picasso picasso;
   @Inject AppContainer appContainer;
   @Inject Bus bus;
-  @Inject @Named(ApiConstants.AVATAR)
-  Preference<String> avatarPath;
+  @Inject AvatarPreference avatarPath;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
 
   @Bind(R.id.avatar) ImageView avatarView;
   @Bind(R.id.surface_view) BigBrotherCameraPreview mPreviewView;
-  @Bind(R.id.continue_btn) Button continueButton;
-  @Bind(R.id.capture) ImageButton captureButton;
   @Bind(R.id.cover_top_view) View topCoverView;
   @Bind(R.id.cover_left_view) View leftCoverView;
 
@@ -368,7 +362,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
    */
   public void continueToIdentity() {
     if (avatarPath.isSet()) {
-      Timber.v(avatarPath.get());
+      Timber.w("Reading path from pref before going to check in with path: %s", avatarPath.get());
       ((SignUpActivity)getActivity()).showDateFragment();
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie!", Snackbar.LENGTH_LONG).show();
@@ -392,6 +386,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
    */
   private void rotatePicture(int rotation, byte[] data) {
     Bitmap bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
+    Timber.w("Converted camera data to avatar bitmap with width: %s and height: %s", bitmap.getWidth(), bitmap.getHeight());
     if (rotation != 0) {
       Bitmap oldBitmap = bitmap;
 
@@ -408,9 +403,13 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     int x = Math.round(bitmap.getWidth() - guideWidth) / 2;
     int y = Math.round(bitmap.getHeight() - guideHeight) / 2;
     bitmap = Bitmap.createBitmap(bitmap, x, y, bitmap.getWidth() - x * 2, bitmap.getHeight() - y * 2);
+    Timber.w("cropped bitmap to width: %s and height: %s", bitmap.getWidth(), bitmap.getHeight());
 
     Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
+    Timber.w("Uri got back from file helper with path: %s", photoUri != null ? photoUri.getPath() : "NO AVATAR FILE PATH!!!!!");
     avatarPath.set(photoUri.getPath());
+    Timber.w("Avatar path saved to prefs with path: %s", photoUri.getPath());
+    Timber.w("Reading avatar path from pref and it is: %s", avatarPath.get());
     if (photoUri.getPath() != null) {
       picasso.load(photoUri)
           .transform(new CircleStrokeTransformation(getActivity(), 0, 0))

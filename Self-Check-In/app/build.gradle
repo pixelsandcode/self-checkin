@@ -2,7 +2,7 @@
 def versionMajor = 4
 def versionMinor = 1
 def versionPatch = 0
-def versionBuild = 0 // bump for dogfood builds, public betas, etc.
+def versionBuild = 2 // bump for dogfood builds, public betas, etc.
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
@@ -40,7 +40,7 @@ android {
 
         release {
             signingConfig signingConfigs.release
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
             applicationVariants.all { variant ->
