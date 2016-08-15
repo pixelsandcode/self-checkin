@@ -71,6 +71,7 @@
   <string name="title_activity_setting">Settings</string>
   <string name="start_check_in">Start Check-in</string>
   <string name="download">Download Update</string>
+  <string name="send_log">Send log</string>
   <string name="logout">Logout</string>
   <string name="check_in_details">Check-in Details</string>
   <string name="next">Next</string>
@@ -129,4 +130,7 @@
   <string name="no_terms"><![CDATA[Sorry this hostel\'s Terms & Condition isn\'t available!]]></string>
   <string name="ask_staff_login">Please ask one of the staff to log this tablet in again!</string>
   <string name="check_from_date">Please check your check-in date again and retry!</string>
+  <string name="log_email_subject">Log file</string>
+  <string name="log_email_text">Log File hastel</string>
+  <string name="log_email_to">ashkan.hesaraki@gmail.com</string>
 </resources>

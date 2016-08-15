@@ -95,10 +95,44 @@
         android:background="#979797"/>
 
     <ImageView
-        android:id="@+id/logout_icon"
+        android:id="@+id/send_log_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/download"
+        android:layout_marginLeft="@dimen/first_key_line"
+        android:layout_marginTop="@dimen/first_key_line"
+        android:padding="@dimen/normal_padding"
+        android:src="@drawable/ic_file_download"
+        tools:ignore="ContentDescription"/>
+
+    <TextView
+        android:id="@+id/send_log"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/download"
+        android:layout_marginTop="@dimen/first_key_line"
+        android:clickable="true"
+        android:layout_toRightOf="@+id/download_icon"
+        android:onClick="goToEmail"
+        android:padding="@dimen/normal_padding"
+        android:text="@string/send_log"
+        android:textColor="@color/main_text"
+        android:textSize="@dimen/font_large"/>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/send_log"
+        android:layout_marginLeft="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:background="#979797"/>
+
+    <ImageView
+        android:id="@+id/logout_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/send_log"
         android:layout_marginLeft="@dimen/first_key_line"
         android:layout_marginTop="@dimen/first_key_line"
         android:padding="@dimen/normal_padding"
@@ -109,7 +143,7 @@
         android:id="@+id/logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/download"
+        android:layout_below="@+id/send_log"
         android:layout_marginTop="@dimen/first_key_line"
         android:clickable="true"
         android:layout_toRightOf="@+id/logout_icon"

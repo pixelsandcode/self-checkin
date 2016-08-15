@@ -21,6 +21,8 @@ import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import java.io.File;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -71,6 +73,20 @@ public class SettingActivity extends AppCompatActivity {
     tracker.send(new HitBuilders.EventBuilder("Download", "Tapped").build());
     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(ApiConstants.BASE_DOWNLOAD_PAGE));
     startActivity(browserIntent);
+  }
+
+  public void goToEmail(View view){
+    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+    String emailTo = getResources().getString(R.string.log_email_to);
+    String emailSubject = getResources().getString(R.string.log_email_subject);
+    String emailText = getResources().getString(R.string.log_email_text);
+    emailIntent.setData(Uri.parse("mailto:"));
+    emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
+    emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{emailTo});
+    emailIntent.putExtra(Intent.EXTRA_TEXT, emailText);
+    emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File("/storage/emulated/0/Download/kiosk.txt")));
+    emailIntent.setType("text/plain");
+    startActivity(Intent.createChooser(emailIntent, "Send mail"));
   }
 
   public void logout(View view) {
