@@ -57,8 +57,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
-import me.tipi.self_check_in.data.AvatarPreference;
-import me.tipi.self_check_in.data.PassportPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.Booking;
@@ -94,8 +92,6 @@ public class SignUpActivity extends AppCompatActivity {
 
   @Inject Bus bus;
   @Inject Guest guest;
-  @Inject AvatarPreference avatarPath;
-  @Inject PassportPreference passportPath;
   @Inject AppContainer appContainer;
   @Inject AuthenticationService authenticationService;
   @Inject
@@ -155,8 +151,6 @@ public class SignUpActivity extends AppCompatActivity {
   @Override protected void onDestroy() {
     super.onDestroy();
     unregisterManagers();
-    avatarPath.delete();
-    passportPath.delete();
     if (guest != null) {
       guest = null;
     }
@@ -180,7 +174,9 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     if (ocrFragment != null && ocrFragment.isVisible()) {
-      passportPath.delete();
+      if(guest.passportPath != null && !TextUtils.isEmpty(guest.passportPath)){
+        guest.passportPath = null;
+      }
     }
 
     super.onBackPressed();
@@ -370,39 +366,31 @@ public class SignUpActivity extends AppCompatActivity {
   public void submit() {
     Timber.w("Entered submit method");
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-    if (avatarPath == null) {
+    if (guest.avatarPath == null) {
       Timber.w("AVATAR pref is null");
       Snackbar.make(appContainer.bind(SignUpActivity.this), "Your avatar didn't save successfully, please take another selfie", Snackbar.LENGTH_LONG).show();
       return;
     }
 
-    if (avatarPath.get() == null || TextUtils.isEmpty(avatarPath.get())) {
-      Timber.w("AVATAR path not saved it is: %s", avatarPath.get());
+    if (TextUtils.isEmpty(guest.avatarPath)) {
+      Timber.w("AVATAR path not saved it is: %s", guest.avatarPath);
       Snackbar.make(appContainer.bind(SignUpActivity.this), "Your avatar didn't save successfully, please take another selfie", Snackbar.LENGTH_LONG).show();
       return;
     }
 
-    if (passportPath == null) {
-      Timber.w("PASSPORT pref is null");
-      Snackbar.make(appContainer.bind(SignUpActivity.this), "Your passport image didn't save successfully, please re-capture", Snackbar.LENGTH_LONG).show();
-      return;
-    }
-
-    if (passportPath.get() == null || TextUtils.isEmpty(passportPath.get())) {
-      Timber.w("Passport path not saved it is: %s", passportPath.get());
+    if (guest.passportPath == null || TextUtils.isEmpty(guest.passportPath)) {
+      Timber.w("Passport path not saved it is: %s", guest.passportPath);
       Snackbar.make(appContainer.bind(SignUpActivity.this), "Your passport image didn't save successfully, please re-capture", Snackbar.LENGTH_LONG).show();
       return;
     }
 
     loading.show();
     Timber.w("sending data with values  %s", guest.toString());
-    Timber.w("avatar path: %s", (avatarPath != null && !TextUtils.isEmpty(avatarPath.get())) ? avatarPath.get() : "no avatar path");
-    Timber.w("avatar path: %s", (passportPath != null && passportPath.get() != "") ? passportPath.get() : "no avatar path");
 
     @SuppressWarnings("ConstantConditions")
-    TypedFile avatarFile = new TypedFile("image/jpeg", new File(avatarPath.get()));
+    TypedFile avatarFile = new TypedFile("image/jpeg", new File(guest.avatarPath));
     @SuppressWarnings("ConstantConditions")
-    TypedFile passportFile = new TypedFile("image/jpeg", new File(passportPath.get()));
+    TypedFile passportFile = new TypedFile("image/jpeg", new File(guest.passportPath));
     authenticationService.addGuest(
         avatarFile,
         passportFile,
@@ -469,11 +457,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
           }
         }
-    ); /*else {
-      Timber.w("AvatarPath: %s - PassportPath: %s", avatarPath != null ? avatarPath.get() : "no avatar path",
-          passportPath != null ? passportPath.get() : "no passport path");
-      reEnterDataDialog();
-    }*/
+    );
 
   }
 
@@ -695,8 +679,6 @@ public class SignUpActivity extends AppCompatActivity {
   }
 
   private void clearData() {
-    avatarPath.delete();
-    passportPath.delete();
     if (guest != null) {
       guest.user_key = null;
       guest.guest_key = null;
@@ -709,6 +691,8 @@ public class SignUpActivity extends AppCompatActivity {
       guest.dob = null;
       guest.passportNumber = null;
       guest.referenceCode = null;
+      guest.passportPath = null;
+      guest.avatarPath = null;
     }
   }
 
