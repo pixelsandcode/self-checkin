@@ -27,6 +27,8 @@ public final class Guest {
   public Date checkOutDate;
   public long time;
   public String guest_key;
+  public String passportPath;
+  public String avatarPath;
 
   /**
    * Instantiates a new Guest.
@@ -48,6 +50,8 @@ public final class Guest {
         ", check in date='" + checkInDate.toString() + '\'' +
         ", check out date='" + checkOutDate.toString() + '\'' +
         ", guest key='" + guest_key + '\'' +
+        ", passport path='" + passportPath + '\'' +
+        ", avatar path='" + avatarPath + '\'' +
         '}';
   }
 
@@ -61,6 +65,8 @@ public final class Guest {
         ", gender='" + gender + '\'' +
         ", passport number='" + passportNumber + '\'' +
         ", guest key='" + guest_key + '\'' +
+        ", passport path='" + passportPath + '\'' +
+        ", avatar path='" + avatarPath + '\'' +
         '}';
   }
 }

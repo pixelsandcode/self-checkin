@@ -114,6 +114,7 @@ public final class DataModule {
     return prefs.getString(ApiConstants.PASSPORT);
   }
 
+  /*
   @Provides @Singleton
   AvatarPreference provideAvatarPathPreference(SharedPreferences preferences) {
     return new AvatarPreference(preferences, PREF_USER_AVATAR);
@@ -123,6 +124,7 @@ public final class DataModule {
   PassportPreference providePassportPathPreference(SharedPreferences preferences) {
     return new PassportPreference(preferences, PREF_PASSPORT_IMAGE);
   }
+  */
 
   /**
    * Provide clock clock.

@@ -192,8 +192,6 @@ public class MainActivity extends AppCompatActivity {
       @Override public void success(LoginResponse response, Response response2) {
         loading.dismiss();
         Timber.d("LoggedIn");
-        avatarPath.delete();
-        passportPath.delete();
         hostelName.set(response.data.name);
         hostelKey.set(response.data.doc_key);
 

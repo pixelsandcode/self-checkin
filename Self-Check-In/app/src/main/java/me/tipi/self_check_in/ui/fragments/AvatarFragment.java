@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
@@ -49,8 +50,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
-import me.tipi.self_check_in.data.AvatarPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
+import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
@@ -72,7 +73,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   @Inject Picasso picasso;
   @Inject AppContainer appContainer;
   @Inject Bus bus;
-  @Inject AvatarPreference avatarPath;
+  @Inject Guest guest;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
 
@@ -361,8 +362,8 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
    * Continue to identity.
    */
   public void continueToIdentity() {
-    if (avatarPath.isSet()) {
-      Timber.w("Reading path from pref before going to check in with path: %s", avatarPath.get());
+    if (guest.avatarPath != null && !TextUtils.isEmpty(guest.avatarPath)) {
+      Timber.w("Reading path from pref before going to check in with path: %s", guest.avatarPath);
       ((SignUpActivity)getActivity()).showDateFragment();
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie!", Snackbar.LENGTH_LONG).show();
@@ -407,9 +408,9 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
 
     Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
     Timber.w("Uri got back from file helper with path: %s", photoUri != null ? photoUri.getPath() : "NO AVATAR FILE PATH!!!!!");
-    avatarPath.set(photoUri.getPath());
+    guest.avatarPath = photoUri.getPath();
     Timber.w("Avatar path saved to prefs with path: %s", photoUri.getPath());
-    Timber.w("Reading avatar path from pref and it is: %s", avatarPath.get());
+    Timber.w("Reading avatar path from pref and it is: %s", guest.avatarPath);
     if (photoUri.getPath() != null) {
       picasso.load(photoUri)
           .transform(new CircleStrokeTransformation(getActivity(), 0, 0))

@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
@@ -51,8 +52,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
-import me.tipi.self_check_in.data.PassportPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
+import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
@@ -77,7 +78,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   @Inject Picasso picasso;
   @Inject AppContainer appContainer;
   @Inject Bus bus;
-  @Inject PassportPreference passportPath;
+  @Inject Guest guest;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
 
@@ -291,8 +292,8 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
    */
   @OnClick(R.id.continue_btn)
   public void continueToCheckIn() {
-    if (passportPath.isSet()) {
-      Timber.w("Going to check in with passport path: %s", passportPath.get());
+    if (guest.passportPath != null && !TextUtils.isEmpty(guest.passportPath)) {
+      Timber.w("Going to check in with passport path: %s", guest.passportPath);
       ((SignUpActivity)getActivity()).showIdentityFragment(null);
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please Scan your passport first!", Snackbar.LENGTH_LONG).show();
@@ -304,9 +305,9 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
    */
   @SuppressWarnings("ConstantConditions")
   private void setPassportImage() {
-    if (passportPath != null && passportPath.isSet() && passportPath.get() != null && passportView != null) {
+    if (guest.passportPath != null && TextUtils.isEmpty(guest.passportPath) && passportView != null) {
       setupUIWithPassport();
-      picasso.load(new File(passportPath.get())).resize(600, 400).centerCrop().into(passportView);
+      picasso.load(new File(guest.passportPath)).resize(600, 400).centerCrop().into(passportView);
     }
   }
 
@@ -324,7 +325,9 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
       mPreviewView.setCamera(mCamera);
     } catch (Exception e) {
       Log.d(TAG, "Can't open camera with id " + cameraID);
-      e.printStackTrace();
+      String cameraError = Log.getStackTraceString(e);
+      Timber.w("camera error: " + cameraError);
+      ;
     }
   }
 
@@ -398,9 +401,9 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     passportView.setImageBitmap(bitmap);
     Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
     Timber.w("Uri got back from file helper with passport path: %s", photoUri != null ? photoUri.getPath() : "NO PASSPORT FILE PATH!!!!!");
-    passportPath.set(photoUri.getPath());
+    guest.passportPath = photoUri.getPath();
     Timber.w("passport path saved to prefs with path: %s", photoUri.getPath());
-    Timber.w("Reading passport path from pref and it is: %s", passportPath.get());
+    Timber.w("Reading passport path from pref and it is: %s", guest.passportPath);
     setupUIWithPassport();
   }
 

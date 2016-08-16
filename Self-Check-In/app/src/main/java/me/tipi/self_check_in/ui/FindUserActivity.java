@@ -319,6 +319,8 @@ public class FindUserActivity extends AppCompatActivity {
       guest.dob = null;
       guest.passportNumber = null;
       guest.referenceCode = null;
+      guest.passportPath = null;
+      guest.avatarPath = null;
     }
 
     startActivity(new Intent(this, SignUpActivity.class));

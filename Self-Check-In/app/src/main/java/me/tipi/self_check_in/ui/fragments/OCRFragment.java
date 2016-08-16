@@ -50,8 +50,8 @@ import butterknife.ButterKnife;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SecretKey;
 import me.tipi.self_check_in.SelfCheckInApp;
-import me.tipi.self_check_in.data.PassportPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
+import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.misc.Config;
@@ -65,7 +65,8 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     OnSizeChangedListener, MetadataListener {
 
   public static final String TAG = OCRFragment.class.getSimpleName();
-  @Inject PassportPreference passportPath;
+
+  @Inject Guest guest;
 
   @Bind(R.id.rec_view) RecognizerView mRecognizerView;
   @Bind(R.id.scan_btn) ImageButton scanButton;
@@ -102,7 +103,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_ocr, container, false);
     ButterKnife.bind(this, view);
-    passportPath.delete();
+    guest.passportPath = null;
 
     RecognitionSettings recognitionSettings = new RecognitionSettings();
     RecognizerSettings[] settArray = Config.getRecognizerSettings();
@@ -300,7 +301,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     scanHintTextView.setVisibility(View.VISIBLE);
     scanButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        passportPath.delete();
+        guest.passportPath = null;
         ((SignUpActivity)getActivity()).showPassportFragment();
       }
     });
@@ -421,16 +422,16 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
       // until this method ends. If you want to save image for later,
       // obtained a cloned image with image.clone().
 
-      if (passportPath != null && passportPath.get() == null && TextUtils.isEmpty(passportPath.get())) {
+      if (guest.passportPath == null && TextUtils.isEmpty(guest.passportPath)) {
         Image image = ((ImageMetadata) metadata).getImage();
         Timber.w("Ocr meta data captured");
         final Bitmap bitmap = image.convertToBitmap();
         Timber.w("Metadata converted to bitmap");
         final Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
         Timber.w("OCR Uri got back from file helper with path: %s", photoUri != null ? photoUri.getPath() : "NO OCR FILE PATH!!!!!");
-        passportPath.set(photoUri.getPath());
+        guest.passportPath = photoUri.getPath();
         Timber.w("Ocr path saved to prefs with path: %s", photoUri.getPath());
-        Timber.w("Reading ocr path from pref and it is: %s", passportPath.get());
+        Timber.w("Reading ocr path from pref and it is: %s", guest.passportPath);
       }
       // to convert the image to Bitmap, call image.convertToBitmap()
 
