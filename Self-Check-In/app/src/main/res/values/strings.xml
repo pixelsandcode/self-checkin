@@ -131,6 +131,6 @@
   <string name="ask_staff_login">Please ask one of the staff to log this tablet in again!</string>
   <string name="check_from_date">Please check your check-in date again and retry!</string>
   <string name="log_email_subject">Log file</string>
-  <string name="log_email_text">Log File hastel</string>
+  <string name="log_email_text">Log File attached</string>
   <string name="log_email_to">ashkan.hesaraki@gmail.com</string>
 </resources>
