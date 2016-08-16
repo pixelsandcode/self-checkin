@@ -402,8 +402,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
     Timber.w("Uri got back from file helper with passport path: %s", photoUri != null ? photoUri.getPath() : "NO PASSPORT FILE PATH!!!!!");
     guest.passportPath = photoUri.getPath();
-    Timber.w("passport path saved to prefs with path: %s", photoUri.getPath());
-    Timber.w("Reading passport path from pref and it is: %s", guest.passportPath);
+    Timber.w("passport path saved with path: %s", photoUri.getPath());
     setupUIWithPassport();
   }
 

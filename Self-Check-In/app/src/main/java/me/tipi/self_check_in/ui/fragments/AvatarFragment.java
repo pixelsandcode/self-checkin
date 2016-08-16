@@ -363,7 +363,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
    */
   public void continueToIdentity() {
     if (guest.avatarPath != null && !TextUtils.isEmpty(guest.avatarPath)) {
-      Timber.w("Reading path from pref before going to check in with path: %s", guest.avatarPath);
+      Timber.w("Reading path from object before going to check in with path: %s", guest.avatarPath);
       ((SignUpActivity)getActivity()).showDateFragment();
     } else {
       Snackbar.make(appContainer.bind(getActivity()), "Please take a selfie!", Snackbar.LENGTH_LONG).show();
@@ -409,8 +409,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
     Timber.w("Uri got back from file helper with path: %s", photoUri != null ? photoUri.getPath() : "NO AVATAR FILE PATH!!!!!");
     guest.avatarPath = photoUri.getPath();
-    Timber.w("Avatar path saved to prefs with path: %s", photoUri.getPath());
-    Timber.w("Reading avatar path from pref and it is: %s", guest.avatarPath);
+    Timber.w("Avatar path saved with path: %s", photoUri.getPath());
     if (photoUri.getPath() != null) {
       picasso.load(photoUri)
           .transform(new CircleStrokeTransformation(getActivity(), 0, 0))

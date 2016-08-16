@@ -372,7 +372,7 @@ public class SignUpActivity extends AppCompatActivity {
       return;
     }
 
-    if (guest.avatarPath == null || TextUtils.isEmpty(guest.avatarPath)) {
+    if (TextUtils.isEmpty(guest.avatarPath)) {
       Timber.w("AVATAR path not saved it is: %s", guest.avatarPath);
       Snackbar.make(appContainer.bind(SignUpActivity.this), "Your avatar didn't save successfully, please take another selfie", Snackbar.LENGTH_LONG).show();
       return;
@@ -457,11 +457,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
           }
         }
-    ); /*else {
-      Timber.w("AvatarPath: %s - PassportPath: %s", avatarPath != null ? avatarPath.get() : "no avatar path",
-          passportPath != null ? passportPath.get() : "no passport path");
-      reEnterDataDialog();
-    }*/
+    );
 
   }
 

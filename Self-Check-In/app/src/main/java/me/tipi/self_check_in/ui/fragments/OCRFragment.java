@@ -422,6 +422,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
       // until this method ends. If you want to save image for later,
       // obtained a cloned image with image.clone().
 
+      // TODO: This should be Or not and
       if (guest.passportPath == null && TextUtils.isEmpty(guest.passportPath)) {
         Image image = ((ImageMetadata) metadata).getImage();
         Timber.w("Ocr meta data captured");
@@ -430,8 +431,9 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
         final Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
         Timber.w("OCR Uri got back from file helper with path: %s", photoUri != null ? photoUri.getPath() : "NO OCR FILE PATH!!!!!");
         guest.passportPath = photoUri.getPath();
-        Timber.w("Ocr path saved to prefs with path: %s", photoUri.getPath());
-        Timber.w("Reading ocr path from pref and it is: %s", guest.passportPath);
+        Timber.w("Ocr path saved with path: %s", photoUri.getPath());
+      } else {
+        Timber.w("We have ocr path and it's : %s", guest.passportPath);
       }
       // to convert the image to Bitmap, call image.convertToBitmap()
 
