@@ -166,6 +166,33 @@
           tools:text="Ashkan Hesaraki"/>
     </android.support.design.widget.TextInputLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/normal_padding"
+        android:text="@string/do_you_want_to_learn_how_to_surf"
+        android:textAllCaps="true"
+        android:textColor="@color/label_text"
+        android:textSize="@dimen/font_normal"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/fifth_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+      <EditText
+          android:id="@+id/fifth_question"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:imeOptions="actionNext"
+          android:inputType="none"
+          android:paddingLeft="@dimen/first_key_line"
+          android:paddingRight="@dimen/first_key_line"
+          android:textColor="@color/main_text"
+          android:textSize="@dimen/font_large"
+          tools:text="Ashkan Hesaraki"/>
+    </android.support.design.widget.TextInputLayout>
+
   </LinearLayout>
 
   <Button

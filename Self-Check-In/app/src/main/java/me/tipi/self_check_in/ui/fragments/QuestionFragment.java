@@ -61,11 +61,13 @@ public class QuestionFragment extends Fragment {
   @Bind(R.id.second_question) EditText secondQuestionView;
   @Bind(R.id.third_question) EditText thirdQuestionView;
   @Bind(R.id.forth_question) EditText forthQuestionView;
+  @Bind(R.id.fifth_question) EditText fifthQuestionView;
   @Bind(R.id.country_question) EditText countryQuestion;
 
   private String guestKey;
   private MaterialDialog thirdDialog;
   private MaterialDialog fourthDialog;
+  private MaterialDialog fifthDialog;
   private MaterialDialog loading;
   private Handler handler = new Handler();
   private Runnable runnable = new Runnable() {
@@ -92,6 +94,7 @@ public class QuestionFragment extends Fragment {
 
     thirdQuestionView.setInputType(InputType.TYPE_NULL);
     forthQuestionView.setInputType(InputType.TYPE_NULL);
+    fifthQuestionView.setInputType(InputType.TYPE_NULL);
 
     thirdDialog = new MaterialDialog.Builder(getActivity())
         .positiveText(R.string.yes)
@@ -127,6 +130,23 @@ public class QuestionFragment extends Fragment {
           }
         }).build();
 
+    fifthDialog = new MaterialDialog.Builder(getActivity())
+        .positiveText(R.string.yes)
+        .negativeText(R.string.no)
+        .content(R.string.do_you_want_to_learn_how_to_surf)
+        .onPositive(new MaterialDialog.SingleButtonCallback() {
+          @Override
+          public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+            fifthQuestionView.setText(R.string.yes);
+          }
+        })
+        .onNegative(new MaterialDialog.SingleButtonCallback() {
+          @Override
+          public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+            fifthQuestionView.setText(R.string.no);
+          }
+        }).build();
+
     thirdQuestionView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         thirdDialog.show();
@@ -136,6 +156,12 @@ public class QuestionFragment extends Fragment {
     forthQuestionView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         fourthDialog.show();
+      }
+    });
+
+    fifthQuestionView.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        fifthDialog.show();
       }
     });
 
@@ -151,6 +177,14 @@ public class QuestionFragment extends Fragment {
       @Override public void onFocusChange(View v, boolean hasFocus) {
         if (hasFocus) {
           fourthDialog.show();
+        }
+      }
+    });
+
+    fifthQuestionView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+      @Override public void onFocusChange(View v, boolean hasFocus) {
+        if (hasFocus) {
+          fifthDialog.show();
         }
       }
     });
@@ -213,6 +247,7 @@ public class QuestionFragment extends Fragment {
     String enteredSecond = secondQuestionView.getText().toString().trim();
     String enteredThird = thirdQuestionView.getText().toString().trim();
     String enteredFourth = forthQuestionView.getText().toString().trim();
+    String enteredFifth = fifthQuestionView.getText().toString().trim();
     String enteredCountry = countryQuestion.getText().toString().trim();
 
     if (!TextUtils.isEmpty(enteredCountry)) {
@@ -235,7 +270,13 @@ public class QuestionFragment extends Fragment {
 
     if (!TextUtils.isEmpty(enteredFourth)) {
       if (enteredFourth.equals("Yes")) {
-        note = note + "Looking for a job.";
+        note = note + "Looking for a job. ";
+      }
+    }
+
+    if (!TextUtils.isEmpty(enteredFifth)) {
+      if (enteredFifth.equals("Yes")) {
+        note = note + "Wants to learn surfing";
       }
     }
 
