@@ -22,6 +22,7 @@ import com.microblink.detectors.quad.QuadDetectorResult;
 import com.microblink.hardware.SuccessCallback;
 import com.microblink.hardware.orientation.Orientation;
 import com.microblink.image.Image;
+import com.microblink.image.ImageType;
 import com.microblink.metadata.DetectionMetadata;
 import com.microblink.metadata.ImageMetadata;
 import com.microblink.metadata.Metadata;
@@ -73,6 +74,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
   @Bind(R.id.scan_hint) TextView scanHintTextView;
 
   private int mScansDone = 0;
+  RecognitionResults results;
 
   /** Is torch enabled? */
   private boolean mTorchEnabled = false;
@@ -115,6 +117,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     // sets whether image that was used to obtain valid scanning result will be available
     //ims.setSuccessfulScanFrameEnabled(true);
     ims.setDewarpedImageEnabled(true);
+    ims.setSuccessfulScanFrameEnabled(true);
 
 
     // In order for scanning to work, you must enter a valid licence key. Without licence key,
@@ -273,15 +276,20 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
       BaseRecognitionResult[] resArray = null;
       if (results != null) {
         // get array of recognition results
+        this.results = results;
         resArray = results.getRecognitionResults();
       }
 
-      if (resArray != null) {
-        Timber.w("Have ocr data going to Details");
-        ((SignUpActivity)getActivity()).showIdentityFragment(results);
-      } else {
+      if (resArray == null) {
         android.util.Log.e(TAG, "Unable to retrieve recognition data!");
         showScanButton();
+      } else {
+        if (guest.passportPath != null) {
+           Timber.w("Have ocr data and image, going to Details");
+          ((SignUpActivity) getActivity()).showIdentityFragment(results);
+        } else {
+          Timber.w("We don't have ocr success frame yet");
+        }
       }
     } else {
       //Toast.makeText(getActivity(), "Scans done: " + mScansDone, Toast.LENGTH_SHORT).show();
@@ -398,7 +406,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     // This method will be called when metadata becomes available during recognition process.
     // Here, for every metadata type that is allowed through metadata settings,
     // desired actions can be performed.
-
+    Timber.w("Metadata available");
     // detection metadata contains detection locations
     if (metadata instanceof DetectionMetadata) {
       // detection location is written inside DetectorResult
@@ -417,21 +425,24 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
       }
     } else if (metadata instanceof ImageMetadata) {
       // obtain image
-
       // Please note that Image's internal buffers are valid only
       // until this method ends. If you want to save image for later,
       // obtained a cloned image with image.clone().
 
-      // TODO: This should be Or not and
-      if (guest.passportPath == null && TextUtils.isEmpty(guest.passportPath)) {
+      if (guest.passportPath == null || TextUtils.isEmpty(guest.passportPath) || this.results == null) {
         Image image = ((ImageMetadata) metadata).getImage();
-        Timber.w("Ocr meta data captured");
-        final Bitmap bitmap = image.convertToBitmap();
-        Timber.w("Metadata converted to bitmap");
-        final Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
-        Timber.w("OCR Uri got back from file helper with path: %s", photoUri != null ? photoUri.getPath() : "NO OCR FILE PATH!!!!!");
-        guest.passportPath = photoUri.getPath();
-        Timber.w("Ocr path saved with path: %s", photoUri.getPath());
+
+        if (image != null && image.getImageType() == ImageType.SUCCESSFUL_SCAN) {
+          Timber.w("Metadata type is successful frame image, we go to save it");
+          image.clone();
+          Timber.w("Ocr meta data captured");
+          final Bitmap bitmap = image.convertToBitmap();
+          Timber.w("Metadata converted to bitmap");
+          final Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
+          Timber.w("OCR Uri got back from file helper with path: %s", photoUri != null ? photoUri.getPath() : "NO OCR FILE PATH!!!!!");
+          guest.passportPath = photoUri.getPath();
+          Timber.w("Ocr path saved with path: %s", photoUri.getPath());
+        }
       } else {
         Timber.w("We have ocr path and it's : %s", guest.passportPath);
       }

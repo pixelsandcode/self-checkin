@@ -119,7 +119,7 @@
   <string name="verify_your_id">Verify your ID</string>
   <string name="do_you_have_your_passport">Do you have your Passport</string>
   <string name="take_a_picture">Not working? Take a picture…</string>
-  <string name="use_back_camera_to_scan_passport">Use back camera to scan passport</string>
+  <string name="use_back_camera_to_scan_passport">Use back camera with passport inside white guide to scan</string>
   <string name="use_back_camera_to_take_a_picture_of_your_license">Use back camera to take a picture of your license</string>
   <string name="license_no">License No</string>
   <string name="passport_no">Passport No</string>
