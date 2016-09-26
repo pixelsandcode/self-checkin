@@ -374,7 +374,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
   }
 
   private int getBackCameraID() {
-    return Camera.CameraInfo.CAMERA_FACING_BACK;
+    return Camera.CameraInfo.CAMERA_FACING_FRONT;
   }
 
   private void rotatePicture(int rotation, byte[] data) {
