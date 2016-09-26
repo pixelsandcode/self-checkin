@@ -9,18 +9,15 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     signingConfigs {
-        release {
-            keyAlias KEY_ALIAS
-            keyPassword KEYSTORE_PASSWORD
-            storeFile file(KEY_FILE)
-            storePassword KEYSTORE_PASSWORD
-        }
+
     }
 
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     useLibrary 'org.apache.http.legacy'
-
+    configurations.all {
+        resolutionStrategy.force 'com.android.support:support-annotations:23.0.1'
+    }
     defaultConfig {
         applicationId "me.tipi.self_check_in"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -29,8 +26,10 @@ android {
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
 
-        manifestPlaceholders = [HOCKEYAPP_APP_ID: HOCKEY_ID]
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: '2b2f6829f7a443369bc44a32d4043a13']
         setProperty("archivesBaseName", "MAD-Kiosk-$versionName")
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -38,21 +37,8 @@ android {
             minifyEnabled false
         }
 
-        release {
-            signingConfig signingConfigs.release
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            zipAlignEnabled true
-            applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    //def date = new Date();
-                    //def formattedDate = date.format('yyyyMMddHHmmss')
-                    output.outputFile = new File(output.outputFile.parent,
-                            output.outputFile.name.replace("-release", "")
-                    )
-                }
-            }
-        }
+
+
     }
 
     lintOptions {
@@ -118,6 +104,14 @@ dependencies {
     compile('com.github.tony19:logback-android-classic:1.1.1-5') {
         exclude group: 'com.google.android', module: 'android'
     }
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile('com.android.support.test:runner:0.3') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+
+    }
+    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
 }
 
 repositories {
