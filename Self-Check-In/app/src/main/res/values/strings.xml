@@ -134,4 +134,5 @@
   <string name="log_email_text">Log File attached</string>
   <string name="log_email_to">ashkan.hesaraki@gmail.com</string>
   <string name="do_you_want_to_learn_how_to_surf">Do you want to learn how to surf?</string>
+  <string name="your_country">Your Country</string>
 </resources>

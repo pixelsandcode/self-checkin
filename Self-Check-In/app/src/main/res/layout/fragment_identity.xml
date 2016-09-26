@@ -1,3 +1,4 @@
+
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -64,7 +65,8 @@
         android:text="@string/which_city_are_you_from"
         android:textAllCaps="true"
         android:textColor="@color/label_text"
-        android:textSize="@dimen/font_normal"/>
+        android:textSize="@dimen/font_normal"
+        android:id="@+id/your_country" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/hometown_input_layout"

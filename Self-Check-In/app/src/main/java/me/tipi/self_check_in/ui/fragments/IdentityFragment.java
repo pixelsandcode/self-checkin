@@ -1,3 +1,5 @@
+
+
 /*
  * *
  *  * Copyright (c) 2015-2016 www.Tipi.me.
@@ -18,8 +20,10 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +43,11 @@ import com.microblink.recognizers.RecognitionResults;
 import com.microblink.recognizers.blinkid.mrtd.MRTDRecognitionResult;
 import com.squareup.otto.Bus;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -69,22 +78,39 @@ public class IdentityFragment extends Fragment {
   public static final String TAG = IdentityFragment.class.getSimpleName();
   public static final String OCR_RESULTS = "orc_results";
 
-  @Inject Bus bus;
-  @Inject Guest guest;
-  @Inject Tracker tracker;
-  @Inject TypefaceHelper typeface;
+  @Inject
+  Bus bus;
+  @Inject
+  Guest guest;
+  @Inject
+  Tracker tracker;
+  @Inject
+  TypefaceHelper typeface;
 
-  @Bind(R.id.title) TextView titleTextView;
-  @Bind(R.id.full_name) EditText fullNameTextView;
-  @Bind(R.id.home_town) AutoCompleteTextView homeTownACView;
-  @Bind(R.id.birthday) EditText birthDayPickerView;
-  @Bind(R.id.name_input_layout) TextInputLayout nameLayout;
-  @Bind(R.id.birthday_input_layout) TextInputLayout birthdayLayout;
-  @Bind(R.id.hometown_input_layout) TextInputLayout homeTownLayout;
-  @Bind(R.id.radioSex) RadioGroup radioGroup;
-  @Bind(R.id.passport) EditText passportEditText;
-  @Bind(R.id.passport_input_layout) TextInputLayout passportLayout;
-  @Bind(R.id.passport_label) TextView passportLabel;
+  @Bind(R.id.title)
+  TextView titleTextView;
+  @Bind(R.id.your_country)
+  TextView yourCountryLabel;
+  @Bind(R.id.full_name)
+  EditText fullNameTextView;
+  @Bind(R.id.home_town)
+  AutoCompleteTextView homeTownACView;
+  @Bind(R.id.birthday)
+  EditText birthDayPickerView;
+  @Bind(R.id.name_input_layout)
+  TextInputLayout nameLayout;
+  @Bind(R.id.birthday_input_layout)
+  TextInputLayout birthdayLayout;
+  @Bind(R.id.hometown_input_layout)
+  TextInputLayout homeTownLayout;
+  @Bind(R.id.radioSex)
+  RadioGroup radioGroup;
+  @Bind(R.id.passport)
+  EditText passportEditText;
+  @Bind(R.id.passport_input_layout)
+  TextInputLayout passportLayout;
+  @Bind(R.id.passport_label)
+  TextView passportLabel;
 
   private Date dob = null;
   private String enteredFullName;
@@ -94,7 +120,8 @@ public class IdentityFragment extends Fragment {
 
   private Handler handler = new Handler();
   private Runnable runnable = new Runnable() {
-    @Override public void run() {
+    @Override
+    public void run() {
       startOver();
     }
   };
@@ -126,7 +153,8 @@ public class IdentityFragment extends Fragment {
     return fragment;
   }
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
       results = getArguments().getParcelable(OCR_RESULTS);
@@ -148,12 +176,16 @@ public class IdentityFragment extends Fragment {
     } else {
       titleTextView.setText(R.string.your_details);
       passportLabel.setText(R.string.passport_no);
+      yourCountryLabel.setText(R.string.your_country);
+      homeTownACView.addTextChangedListener(new MyTextWatcher(homeTownACView));
+
     }
 
     birthDayPickerView.setInputType(InputType.TYPE_NULL);
 
     birthDayPickerView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-      @Override public void onFocusChange(View v, boolean hasFocus) {
+      @Override
+      public void onFocusChange(View v, boolean hasFocus) {
         if (hasFocus) {
           if (birthDayPickerView.getText().toString().equals("")) {
             showDobDialog();
@@ -163,22 +195,25 @@ public class IdentityFragment extends Fragment {
     });
 
     birthDayPickerView.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
+      @Override
+      public void onClick(View v) {
         showDobDialog();
       }
     });
 
     homeTownACView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         hasSelectedHometown = true;
         homeTownLayout.setError(null);
       }
     });
-
+    setCountry();
     return rootView;
   }
 
-  @Override public void onResume() {
+  @Override
+  public void onResume() {
     super.onResume();
     bus.register(this);
 
@@ -195,12 +230,15 @@ public class IdentityFragment extends Fragment {
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
-  @Override public void onPause() {
+  @Override
+  public void onPause() {
     super.onPause();
     bus.unregister(this);
+
   }
 
-  @Override public void onStop() {
+  @Override
+  public void onStop() {
     super.onStop();
     handler.removeCallbacks(runnable);
   }
@@ -230,7 +268,7 @@ public class IdentityFragment extends Fragment {
       }
 
       Timber.w("We have identity info going to avatar fragment");
-      ((SignUpActivity)getActivity()).showAvatarFragment();
+      ((SignUpActivity) getActivity()).showAvatarFragment();
     }
   }
 
@@ -239,6 +277,7 @@ public class IdentityFragment extends Fragment {
    *
    * @return the boolean
    */
+
   private boolean isError() {
 
     nameLayout.setErrorEnabled(false);
@@ -316,16 +355,16 @@ public class IdentityFragment extends Fragment {
 
   private void showDobDialog() {
     DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), android.R.style.Theme_Holo_Light_Dialog,
-        new DatePickerDialog.OnDateSetListener() {
-          @Override
-          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            birthdayLayout.setError(null);
-            Calendar calendar = Calendar.getInstance();
-            birthDayPickerView.setText(String.format(Locale.US, "%d - %d - %d", dayOfMonth, monthOfYear + 1, year));
-            calendar.set(year, monthOfYear, dayOfMonth);
-            dob = calendar.getTime();
-          }
-        }, 1985, 6, 15);
+            new DatePickerDialog.OnDateSetListener() {
+              @Override
+              public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                birthdayLayout.setError(null);
+                Calendar calendar = Calendar.getInstance();
+                birthDayPickerView.setText(String.format(Locale.US, "%d - %d - %d", dayOfMonth, monthOfYear + 1, year));
+                calendar.set(year, monthOfYear, dayOfMonth);
+                dob = calendar.getTime();
+              }
+            }, 1985, 6, 15);
     DatePicker datePicker = datePickerDialog.getDatePicker();
     datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     styleDatePicker(datePicker);
@@ -361,7 +400,7 @@ public class IdentityFragment extends Fragment {
   private boolean validateFullName(String fullName) {
 
     String regex = "^[\\p{L} .'-]+$";
-    Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
+    Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
     Matcher matcher = pattern.matcher(fullName);
     return matcher.find();
 
@@ -372,7 +411,7 @@ public class IdentityFragment extends Fragment {
   }
 
   private void fillDetailsFromPassport() {
-    if (results!= null && results.getRecognitionResults() != null && results.getRecognitionResults()[0] != null) {
+    if (results != null && results.getRecognitionResults() != null && results.getRecognitionResults()[0] != null) {
       MRTDRecognitionResult mrtdRecognitionResult = (MRTDRecognitionResult) results.getRecognitionResults()[0];
       if (mrtdRecognitionResult != null) {
         fullNameTextView.setText(String.format("%s %s", mrtdRecognitionResult.getSecondaryId(), mrtdRecognitionResult.getPrimaryId()));
@@ -406,7 +445,71 @@ public class IdentityFragment extends Fragment {
 
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
-      ((SignUpActivity)getActivity()).reset();
+      ((SignUpActivity) getActivity()).reset();
     }
+  }
+
+  private String jsonConutries() {
+    String json = null;
+    try {
+      InputStream is = getActivity().getAssets().open("countries.json");
+      int size = is.available();
+      byte[] buffer = new byte[size];
+      is.read(buffer);
+      is.close();
+      json = new String(buffer, "UTF-8");
+    } catch (IOException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+    return json;
+  }
+
+  private String country(String country) {
+    try {
+      JSONObject jsonObject = new JSONObject(jsonConutries());
+      return jsonObject.getString(country);
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return "";
+  }
+
+  private void setCountry() {
+    if (results != null) {
+      {
+        hasSelectedHometown = true;
+        homeTownLayout.setError(null);
+        MRTDRecognitionResult mrtdRecognitionResult = (MRTDRecognitionResult) results.getRecognitionResults()[0];
+        homeTownACView.setText(country(mrtdRecognitionResult.getNationality()
+        ));
+
+      }
+    }
+  }
+
+  private class MyTextWatcher implements TextWatcher {
+
+    private View view;
+
+    private MyTextWatcher(View view) {
+      this.view = view;
+    }
+
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+    }
+
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+      checkCountry();
+    }
+
+    public void afterTextChanged(Editable editable) {
+
+    }
+  }
+
+  private void checkCountry() {
+    if (homeTownACView.getText().toString().equals(""))
+      yourCountryLabel.setText(R.string.which_city_are_you_from);
   }
 }
