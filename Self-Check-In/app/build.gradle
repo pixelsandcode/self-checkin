@@ -6,7 +6,7 @@ def versionBuild = 1 // bump for dogfood builds, public betas, etc.
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
-
+apply plugin: 'spoon'
 android {
     signingConfigs {
 
@@ -36,7 +36,6 @@ android {
         debug {
             minifyEnabled false
         }
-
 
 
     }
@@ -112,6 +111,8 @@ dependencies {
 
     }
     androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
+    androidTestCompile 'tools.fastlane:screengrab:0.3.2'
+    androidTestCompile 'com.squareup.spoon:spoon-client:1.2.0'
 }
 
 repositories {

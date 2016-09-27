@@ -3,10 +3,13 @@ package me.tipi.self_check_in;
 
 import android.support.test.rule.ActivityTestRule;
 
+import com.squareup.spoon.Spoon;
+
 import org.junit.Rule;
 import org.junit.Test;
 
 import me.tipi.self_check_in.ui.MainActivity;
+import tools.fastlane.screengrab.Screengrab;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -27,14 +30,16 @@ public class LogInFragmentTest {
 
     @Test
     public void validPassEmptyError() {
-
+        Screengrab.screenshot("grabber_pass_first");
+        Spoon.screenshot(activityTestRule.getActivity(), "spoon_pass_fisrt");
         onView(withId(R.id.password))
                 .perform(typeText(""), closeSoftKeyboard());
         onView(withId(R.id.email))
                 .perform(typeText("a@j.lo"), closeSoftKeyboard());
         onView(withId(R.id.submit_btn)).perform(click());
         onView(withText(R.string.error_field_required)).check(matches(isDisplayed()));
-
+        Screengrab.screenshot("grabber_pass_second");
+        Spoon.screenshot(activityTestRule.getActivity(), "spoon_pass_second");
     }
 
     @Test
@@ -50,14 +55,16 @@ public class LogInFragmentTest {
 
     @Test
     public void validEmailPatternError() {
-
+        Screengrab.screenshot("graber_email_fisrt");
+        Spoon.screenshot(activityTestRule.getActivity(), "spoon_email_fisrt");
         onView(withId(R.id.password))
                 .perform(typeText("1234567895"), closeSoftKeyboard());
         onView(withId(R.id.email))
                 .perform(typeText("asas"), closeSoftKeyboard());
         onView(withId(R.id.submit_btn)).perform(click());
         onView(withText(R.string.error_invalid_email)).check(matches(isDisplayed()));
-
+        Screengrab.screenshot("graber_email_second");
+        Spoon.screenshot(activityTestRule.getActivity(), "spoon_email_second");
     }
 
     @Test
