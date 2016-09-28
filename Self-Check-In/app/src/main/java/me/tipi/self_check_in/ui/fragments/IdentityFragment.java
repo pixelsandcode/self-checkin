@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -78,17 +79,12 @@ public class IdentityFragment extends Fragment {
   public static final String TAG = IdentityFragment.class.getSimpleName();
   public static final String OCR_RESULTS = "orc_results";
 
-  @Inject
-  Bus bus;
-  @Inject
-  Guest guest;
-  @Inject
-  Tracker tracker;
-  @Inject
-  TypefaceHelper typeface;
+  @Inject Bus bus;
+  @Inject Guest guest;
+  @Inject Tracker tracker;
+  @Inject TypefaceHelper typeface;
 
-  @Bind(R.id.title)
-  TextView titleTextView;
+  @Bind(R.id.title) TextView titleTextView;
   @Bind(R.id.your_country)
   TextView yourCountryLabel;
   @Bind(R.id.full_name)
@@ -177,7 +173,7 @@ public class IdentityFragment extends Fragment {
       titleTextView.setText(R.string.your_details);
       passportLabel.setText(R.string.passport_no);
       yourCountryLabel.setText(R.string.your_country);
-      homeTownACView.addTextChangedListener(new MyTextWatcher(homeTownACView));
+      homeTownACView.addTextChangedListener(new MyTextWatcher());
 
     }
 
@@ -355,16 +351,16 @@ public class IdentityFragment extends Fragment {
 
   private void showDobDialog() {
     DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), android.R.style.Theme_Holo_Light_Dialog,
-            new DatePickerDialog.OnDateSetListener() {
-              @Override
-              public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                birthdayLayout.setError(null);
-                Calendar calendar = Calendar.getInstance();
-                birthDayPickerView.setText(String.format(Locale.US, "%d - %d - %d", dayOfMonth, monthOfYear + 1, year));
-                calendar.set(year, monthOfYear, dayOfMonth);
-                dob = calendar.getTime();
-              }
-            }, 1985, 6, 15);
+        new DatePickerDialog.OnDateSetListener() {
+          @Override
+          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            birthdayLayout.setError(null);
+            Calendar calendar = Calendar.getInstance();
+            birthDayPickerView.setText(String.format(Locale.US, "%d - %d - %d", dayOfMonth, monthOfYear + 1, year));
+            calendar.set(year, monthOfYear, dayOfMonth);
+            dob = calendar.getTime();
+          }
+        }, 1985, 6, 15);
     DatePicker datePicker = datePickerDialog.getDatePicker();
     datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     styleDatePicker(datePicker);
@@ -383,7 +379,7 @@ public class IdentityFragment extends Fragment {
         if (pf.getName().equals("mSelectionDivider")) {
           pf.setAccessible(true);
           try {
-            pf.set(picker, getResources().getDrawable(R.drawable.picker_divider));
+            pf.set(picker, ContextCompat.getDrawable(getActivity(), R.drawable.picker_divider));
           } catch (IllegalArgumentException e) {
             e.printStackTrace();
           } catch (Resources.NotFoundException e) {
@@ -490,10 +486,7 @@ public class IdentityFragment extends Fragment {
 
   private class MyTextWatcher implements TextWatcher {
 
-    private View view;
-
-    private MyTextWatcher(View view) {
-      this.view = view;
+    private MyTextWatcher() {
     }
 
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
