@@ -111,7 +111,6 @@ dependencies {
 
     }
     androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
-    androidTestCompile 'tools.fastlane:screengrab:0.3.2'
     androidTestCompile 'com.squareup.spoon:spoon-client:1.2.0'
 }
 

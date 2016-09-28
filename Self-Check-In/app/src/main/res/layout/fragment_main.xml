@@ -17,7 +17,8 @@
       android:layout_height="250dp"
       android:src="@drawable/main_icon"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="192dp"/>
+      android:layout_marginTop="192dp"
+      android:id="@+id/main_icon_btn" />
 
   <Button
       android:layout_width="match_parent"
@@ -31,6 +32,7 @@
       android:layout_marginBottom="@dimen/third_key_line"
       android:layout_marginRight="@dimen/proceed_button_margin"
       android:layout_marginLeft="@dimen/proceed_button_margin"
-      android:textSize="@dimen/font_normal"/>
+      android:textSize="@dimen/font_normal"
+      android:id="@+id/main_btn" />
 
 </RelativeLayout>

@@ -69,7 +69,7 @@ public class LandingFragment extends Fragment {
     ButterKnife.bind(this, rootView);
 
     Timber.d("OnCreateView");
-    typeface.setTypeface(container, getResources().getString(R.string.font_regular));
+   typeface.setTypeface(container, getResources().getString(R.string.font_regular));
     return rootView;
   }
 
