@@ -9,7 +9,12 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     signingConfigs {
-
+        release {
+            keyAlias KEY_ALIAS
+            keyPassword KEYSTORE_PASSWORD
+            storeFile file(KEY_FILE)
+            storePassword KEYSTORE_PASSWORD
+        }
     }
 
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -24,7 +29,7 @@ android {
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
 
-        manifestPlaceholders = [HOCKEYAPP_APP_ID: 'aa21b186feb9c609435253f5e4a9d5a7']
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: HOCKEY_ID]
         setProperty("archivesBaseName", "MAD-Kiosk-$versionName")
     }
 
@@ -33,7 +38,21 @@ android {
             minifyEnabled false
         }
 
-
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    //def date = new Date();
+                    //def formattedDate = date.format('yyyyMMddHHmmss')
+                    output.outputFile = new File(output.outputFile.parent,
+                            output.outputFile.name.replace("-release", "")
+                    )
+                }
+            }
+        }
     }
 
     lintOptions {
