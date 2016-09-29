@@ -671,8 +671,8 @@ public class SignUpActivity extends AppCompatActivity {
    * Reset.
    */
   public void reset() {
+    removePhoto();
     clearData();
-
     Intent intent = getIntent();
     finish();
     startActivity(intent);
@@ -693,6 +693,28 @@ public class SignUpActivity extends AppCompatActivity {
       guest.referenceCode = null;
       guest.passportPath = null;
       guest.avatarPath = null;
+    }
+  }
+
+  public void removePhoto() {
+    if (guest.passportPath != null) {
+      File passportPhoto = new File(guest.passportPath);
+
+      if (passportPhoto.exists()) {
+        if (passportPhoto.delete()) {
+          Timber.w("passport photo deleted");
+        }
+      }
+    }
+
+    if (guest.avatarPath != null) {
+      File avatarPhoto = new File(guest.avatarPath);
+
+      if (avatarPhoto.exists()) {
+        if (avatarPhoto.delete()) {
+          Timber.w("avatar photo deleted");
+        }
+      }
     }
   }
 
