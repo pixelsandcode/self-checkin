@@ -2,7 +2,7 @@
 def versionMajor = 4
 def versionMinor = 1
 def versionPatch = 4
-def versionBuild = 0 // bump for dogfood builds, public betas, etc.
+def versionBuild = 1 // bump for dogfood builds, public betas, etc.
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
