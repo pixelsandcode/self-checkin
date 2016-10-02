@@ -32,11 +32,9 @@ import retrofit.client.Response;
 
 public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
 
-  @Inject
-  AuthenticationService authenticationService;
+  @Inject AuthenticationService authenticationService;
 
   private LayoutInflater mInflater;
-  private Boolean a = false;
   private List<Country> countries = Collections.emptyList();
 
   /**
@@ -84,6 +82,7 @@ public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements
             });
           }
         }
+
         filterResults.values = countries;
         filterResults.count = countries.size();
         return filterResults;
@@ -109,6 +108,4 @@ public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements
       }
     };
   }
-
-
 }
