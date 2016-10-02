@@ -32,9 +32,11 @@ import retrofit.client.Response;
 
 public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
 
-  @Inject AuthenticationService authenticationService;
+  @Inject
+  AuthenticationService authenticationService;
 
   private LayoutInflater mInflater;
+  private Boolean a = false;
   private List<Country> countries = Collections.emptyList();
 
   /**
@@ -68,42 +70,45 @@ public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements
       protected FilterResults performFiltering(final CharSequence constraint) {
         final FilterResults filterResults = new FilterResults();
         if (constraint != null) {
-          if (constraint.toString().trim().length() > 1) {
+          if (constraint.toString().trim().length() >= 0) {
             authenticationService.getSuggestedCountries(constraint.toString(), new Callback<CountryResponse>() {
-              @Override public void success(CountryResponse countryResponse, Response response) {
+              @Override
+              public void success(CountryResponse countryResponse, Response response) {
                 HomeTownAutoCompleteAdapter.this.countries = countryResponse.data;
               }
 
-              @Override public void failure(RetrofitError error) {
+              @Override
+              public void failure(RetrofitError error) {
 
               }
             });
           }
         }
-
         filterResults.values = countries;
         filterResults.count = countries.size();
-
         return filterResults;
       }
 
       @SuppressWarnings("unchecked")
       @Override
       protected void publishResults(final CharSequence constraint, final FilterResults results) {
-        clear();
-        for (Country country : (List<Country>) results.values) {
-          String homeTown;
-          for (int i = 0; i < country.cities.size(); i++) {
-            homeTown = String.format("%s - %s", country.cities.get(i), country.name);
-            add(homeTown);
+        if (results != null && results.count > 0) {
+          clear();
+          for (Country country : (List<Country>) results.values) {
+            String homeTown;
+            for (int i = 0; i < country.cities.size(); i++) {
+              homeTown = String.format("%s - %s", country.cities.get(i), country.name);
+              add(homeTown);
+            }
           }
-        }
-        if (results.count > 0) {
           notifyDataSetChanged();
+
         } else {
           notifyDataSetInvalidated();
         }
       }
     };
   }
+
+
 }

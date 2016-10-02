@@ -79,12 +79,17 @@ public class IdentityFragment extends Fragment {
   public static final String TAG = IdentityFragment.class.getSimpleName();
   public static final String OCR_RESULTS = "orc_results";
 
-  @Inject Bus bus;
-  @Inject Guest guest;
-  @Inject Tracker tracker;
-  @Inject TypefaceHelper typeface;
+  @Inject
+  Bus bus;
+  @Inject
+  Guest guest;
+  @Inject
+  Tracker tracker;
+  @Inject
+  TypefaceHelper typeface;
 
-  @Bind(R.id.title) TextView titleTextView;
+  @Bind(R.id.title)
+  TextView titleTextView;
   @Bind(R.id.your_country)
   TextView yourCountryLabel;
   @Bind(R.id.full_name)
@@ -150,7 +155,9 @@ public class IdentityFragment extends Fragment {
   }
 
   @Override
-  public void onCreate(@Nullable Bundle savedInstanceState) {
+  public void onCreate(
+      @Nullable
+      Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
       results = getArguments().getParcelable(OCR_RESULTS);
@@ -214,6 +221,8 @@ public class IdentityFragment extends Fragment {
     bus.register(this);
 
     homeTownACView.setAdapter(new HomeTownAutoCompleteAdapter(getActivity()));
+    homeTownACView.setThreshold(1);
+
 
     if (getActivity() != null) {
       bus.post(new BackShouldShowEvent(true));
