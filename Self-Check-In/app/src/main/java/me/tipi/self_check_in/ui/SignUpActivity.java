@@ -671,7 +671,7 @@ public class SignUpActivity extends AppCompatActivity {
    * Reset.
    */
   public void reset() {
-    removePhoto();
+//    removePhoto();
     clearData();
     Intent intent = getIntent();
     finish();
@@ -696,27 +696,27 @@ public class SignUpActivity extends AppCompatActivity {
     }
   }
 
-  public void removePhoto() {
-    if (guest.passportPath != null) {
-      File passportPhoto = new File(guest.passportPath);
-
-      if (passportPhoto.exists()) {
-        if (passportPhoto.delete()) {
-          Timber.w("passport photo deleted");
-        }
-      }
-    }
-
-    if (guest.avatarPath != null) {
-      File avatarPhoto = new File(guest.avatarPath);
-
-      if (avatarPhoto.exists()) {
-        if (avatarPhoto.delete()) {
-          Timber.w("avatar photo deleted");
-        }
-      }
-    }
-  }
+//  public void removePhoto() {
+//    if (guest.passportPath != null) {
+//      File passportPhoto = new File(guest.passportPath);
+//
+//      if (passportPhoto.exists()) {
+//        if (passportPhoto.delete()) {
+//          Timber.w("passport photo deleted");
+//        }
+//      }
+//    }
+//
+//    if (guest.avatarPath != null) {
+//      File avatarPhoto = new File(guest.avatarPath);
+//
+//      if (avatarPhoto.exists()) {
+//        if (avatarPhoto.delete()) {
+//          Timber.w("avatar photo deleted");
+//        }
+//      }
+//    }
+//  }
 
   private void checkForCrashes() {
     CrashManager.register(this);
