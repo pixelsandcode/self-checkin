@@ -157,7 +157,7 @@ public class IdentityFragment extends Fragment {
   @Override
   public void onCreate(
       @Nullable
-      Bundle savedInstanceState) {
+          Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
       results = getArguments().getParcelable(OCR_RESULTS);
@@ -258,8 +258,12 @@ public class IdentityFragment extends Fragment {
       guest.passportNumber = enteredPassport;
 
       if (!TextUtils.isEmpty(enteredHomeTown) && hasSelectedHometown && enteredHomeTown.contains("-")) {
-        guest.city = Strings.getPreStringSplit(enteredHomeTown, "-").trim();
-        guest.country = Strings.getPostStringSplit(enteredHomeTown, "-").trim();
+        if (enteredHomeTown.contains("-")) {
+          guest.city = Strings.getPreStringSplit(enteredHomeTown, "-").trim();
+          guest.country = Strings.getPostStringSplit(enteredHomeTown, "-").trim();
+        } else {
+          guest.country = enteredHomeTown;
+        }
       }
 
       if (dob != null && !TextUtils.isEmpty(birthDayPickerView.getText().toString().trim())) {
