@@ -257,7 +257,7 @@ public class IdentityFragment extends Fragment {
       guest.name = enteredFullName;
       guest.passportNumber = enteredPassport;
 
-      if (!TextUtils.isEmpty(enteredHomeTown) && hasSelectedHometown && enteredHomeTown.contains("-")) {
+      if (!TextUtils.isEmpty(enteredHomeTown) && hasSelectedHometown ) {
         if (enteredHomeTown.contains("-")) {
           guest.city = Strings.getPreStringSplit(enteredHomeTown, "-").trim();
           guest.country = Strings.getPostStringSplit(enteredHomeTown, "-").trim();
