@@ -39,6 +39,9 @@ public final class Strings {
    */
   public static String getPreStringSplit(String value, String splitter) {
     String[] parts = value.split(splitter);
+    if (parts.length > 2) {
+      return value.substring(0, value.lastIndexOf("-")).trim();
+    }
     return parts[0];
   }
 
