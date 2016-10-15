@@ -266,6 +266,7 @@ public class IdentityFragment extends Fragment {
           guest.city = null;
 
         }
+        Timber.w("Guest City and Country: %s", guest.city + "  " + guest.country);
       }
 
       if (dob != null && !TextUtils.isEmpty(birthDayPickerView.getText().toString().trim())) {
