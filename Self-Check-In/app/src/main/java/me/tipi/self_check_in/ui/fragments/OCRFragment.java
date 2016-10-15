@@ -406,7 +406,6 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     // This method will be called when metadata becomes available during recognition process.
     // Here, for every metadata type that is allowed through metadata settings,
     // desired actions can be performed.
-    Timber.w("Metadata available");
     // detection metadata contains detection locations
     if (metadata instanceof DetectionMetadata) {
       // detection location is written inside DetectorResult

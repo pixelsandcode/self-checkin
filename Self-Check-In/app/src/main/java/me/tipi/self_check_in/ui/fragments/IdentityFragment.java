@@ -140,6 +140,7 @@ public class IdentityFragment extends Fragment {
    * New instance identity fragment.
    *
    * @param context the context
+   * @param results the results
    * @return the identity fragment
    */
   public static IdentityFragment newInstance(Context context, RecognitionResults results) {
@@ -155,9 +156,7 @@ public class IdentityFragment extends Fragment {
   }
 
   @Override
-  public void onCreate(
-      @Nullable
-          Bundle savedInstanceState) {
+  public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
       results = getArguments().getParcelable(OCR_RESULTS);
@@ -266,7 +265,7 @@ public class IdentityFragment extends Fragment {
           guest.city = null;
 
         }
-        Timber.w("Guest City and Country: %s", guest.city + "  " + guest.country);
+        Timber.w("Guest City and Country: %s - %s", guest.city, guest.country);
       }
 
       if (dob != null && !TextUtils.isEmpty(birthDayPickerView.getText().toString().trim())) {
@@ -289,7 +288,6 @@ public class IdentityFragment extends Fragment {
    *
    * @return the boolean
    */
-
   private boolean isError() {
 
     nameLayout.setErrorEnabled(false);
@@ -365,6 +363,9 @@ public class IdentityFragment extends Fragment {
     return cancel;
   }
 
+  /**
+   * Show dob dialog.
+   */
   private void showDobDialog() {
     DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), android.R.style.Theme_Holo_Light_Dialog,
         new DatePickerDialog.OnDateSetListener() {
@@ -383,6 +384,11 @@ public class IdentityFragment extends Fragment {
     datePickerDialog.show();
   }
 
+  /**
+   * Style date picker.
+   *
+   * @param datePicker the date picker
+   */
   private void styleDatePicker(DatePicker datePicker) {
     datePicker.setCalendarViewShown(false);
     datePicker.setSpinnersShown(true);
@@ -409,6 +415,12 @@ public class IdentityFragment extends Fragment {
     }
   }
 
+  /**
+   * Validate full name boolean.
+   *
+   * @param fullName the full name
+   * @return the boolean
+   */
   private boolean validateFullName(String fullName) {
 
     String regex = "^[\\p{L} .'-]+$";
@@ -418,10 +430,19 @@ public class IdentityFragment extends Fragment {
 
   }
 
+  /**
+   * Check if has space boolean.
+   *
+   * @param fullName the full name
+   * @return the boolean
+   */
   private boolean checkIfHasSpace(String fullName) {
     return fullName.contains(" ");
   }
 
+  /**
+   * Fill details from passport.
+   */
   private void fillDetailsFromPassport() {
     if (results != null && results.getRecognitionResults() != null && results.getRecognitionResults()[0] != null) {
       MRTDRecognitionResult mrtdRecognitionResult = (MRTDRecognitionResult) results.getRecognitionResults()[0];
@@ -455,13 +476,21 @@ public class IdentityFragment extends Fragment {
     }
   }
 
+  /**
+   * Start over.
+   */
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
       ((SignUpActivity) getActivity()).reset();
     }
   }
 
-  private String jsonConutries() {
+  /**
+   * Json conutries string.
+   *
+   * @return the string
+   */
+  private String jsonCountries() {
     String json = null;
     try {
       InputStream is = getActivity().getAssets().open("countries.json");
@@ -477,31 +506,40 @@ public class IdentityFragment extends Fragment {
     return json;
   }
 
+  /**
+   * Country string.
+   *
+   * @param country the country
+   * @return the string
+   */
   private String country(String country) {
     try {
-      JSONObject jsonObject = new JSONObject(jsonConutries());
+      JSONObject jsonObject = new JSONObject(jsonCountries());
       return jsonObject.getString(country);
     } catch (JSONException e) {
       e.printStackTrace();
     }
+
     return "";
   }
 
+  /**
+   * Sets country.
+   */
   private void setCountry() {
-    if (results != null) {
-      {
+    if (results != null && results.getRecognitionResults() != null && results.getRecognitionResults()[0] != null) {
         hasSelectedHometown = true;
         homeTownLayout.setError(null);
         MRTDRecognitionResult mrtdRecognitionResult = (MRTDRecognitionResult) results.getRecognitionResults()[0];
-        homeTownACView.setText(country(mrtdRecognitionResult.getNationality()
-        ));
-
-      }
+        homeTownACView.setText(country(mrtdRecognitionResult.getNationality()));
     }
   }
 
   private class MyTextWatcher implements TextWatcher {
 
+    /**
+     * Instantiates a new My text watcher.
+     */
     private MyTextWatcher() {
     }
 
@@ -517,8 +555,12 @@ public class IdentityFragment extends Fragment {
     }
   }
 
+  /**
+   * Check country.
+   */
   private void checkCountry() {
-    if (homeTownACView.getText().toString().equals(""))
+    if (homeTownACView.getText().toString().equals("")) {
       yourCountryLabel.setText(R.string.which_city_are_you_from);
+    }
   }
 }
