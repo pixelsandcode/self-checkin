@@ -491,7 +491,9 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     mImageParameters.mDisplayOrientation = displayOrientation;
     mImageParameters.mLayoutOrientation = degrees;
 
-    mCamera.setDisplayOrientation(mImageParameters.mDisplayOrientation);
+    if (mCamera != null) {
+      mCamera.setDisplayOrientation(mImageParameters.mDisplayOrientation);
+    }
   }
 
   private Camera.Size determineBestPreviewSize(Camera.Parameters parameters) {

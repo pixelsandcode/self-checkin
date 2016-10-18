@@ -3,7 +3,9 @@ package me.tipi.self_check_in.ui.fragments;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.media.ExifInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +45,8 @@ import com.microblink.view.recognition.ScanResultListener;
 import com.microblink.view.viewfinder.quadview.QuadViewManager;
 import com.microblink.view.viewfinder.quadview.QuadViewManagerFactory;
 import com.microblink.view.viewfinder.quadview.QuadViewPreset;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -439,8 +443,41 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
           Timber.w("Metadata converted to bitmap");
           final Uri photoUri = ImageUtility.savePassportPicture(getActivity(), bitmap);
           Timber.w("OCR Uri got back from file helper with path: %s", photoUri != null ? photoUri.getPath() : "NO OCR FILE PATH!!!!!");
-          guest.passportPath = photoUri.getPath();
-          Timber.w("Ocr path saved with path: %s", photoUri.getPath());
+          ExifInterface ei = null;
+          try {
+            ei = new ExifInterface(photoUri.getPath());
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+
+          int orientation = ei != null ? ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+              ExifInterface.ORIENTATION_UNDEFINED) : 0;
+          Timber.w("Ocr image orientation angle is: %d", orientation);
+
+          Bitmap rotated = null;
+
+          switch(orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+              rotated = rotateImage(bitmap, 90);
+              break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+              rotated = rotateImage(bitmap, 180);
+              break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+              rotated = rotateImage(bitmap, 270);
+              break;
+            case ExifInterface.ORIENTATION_UNDEFINED:
+              rotated = rotateImage(bitmap, 90);
+              break;
+            case ExifInterface.ORIENTATION_NORMAL:
+            default:
+              break;
+          }
+
+          final Uri rotatedUri = ImageUtility.savePassportPicture(getActivity(), rotated);
+          Timber.w("OCR ROTATED Uri got back from file helper with path: %s", rotatedUri != null ? rotatedUri.getPath() : "NO OCR FILE PATH!!!!!");
+          guest.passportPath = rotatedUri.getPath();
+          Timber.w("Ocr path saved with path: %s", rotatedUri.getPath());
         }
       } else {
         Timber.w("We have ocr path and it's : %s", guest.passportPath);
@@ -468,6 +505,13 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
         }
       });
     }
+  }
+
+  public static Bitmap rotateImage(Bitmap source, float angle) {
+    Matrix matrix = new Matrix();
+    matrix.postRotate(angle);
+    return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix,
+        true);
   }
 
   private void startOver() {

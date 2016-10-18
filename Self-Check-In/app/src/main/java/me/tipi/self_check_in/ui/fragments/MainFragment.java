@@ -48,8 +48,8 @@ public class MainFragment extends Fragment {
 
   @Override public void onResume() {
     super.onResume();
-    bus.register(this);
-    if (getActivity() != null) {
+    if (getActivity() != null && bus != null) {
+      bus.register(this);
       bus.post(new SettingShouldShowEvent(true));
       bus.post(new BackShouldShowEvent(false));
       bus.post(new RefreshShouldShowEvent(false));
