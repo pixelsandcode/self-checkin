@@ -107,9 +107,6 @@ public class MainActivity extends AppCompatActivity {
       showLoginFragment();
     }
 
-    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-    sp.edit().putBoolean(KioskService.PREF_KIOSK_MODE, true).apply();
-
     Timber.d("Created");
   }
 
