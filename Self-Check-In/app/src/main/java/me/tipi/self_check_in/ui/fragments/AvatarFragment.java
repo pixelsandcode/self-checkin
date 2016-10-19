@@ -138,7 +138,9 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
     View rootView = inflater.inflate(R.layout.fragment_avatar, container, false);
     ButterKnife.bind(this, rootView);
     Timber.d("OnCreateView");
-    typeface.setTypeface(container, getResources().getString(R.string.font_regular));
+    if (typeface != null) {
+      typeface.setTypeface(container, getResources().getString(R.string.font_regular));
+    }
 
     dialog = new MaterialDialog.Builder(getActivity())
         .content("Saving Photo")
@@ -208,7 +210,6 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
   @Override public void onPause() {
     super.onPause();
     bus.unregister(this);
-    Timber.d("AVATAR : %S", "BUS UNREGISTERED");
 
     mOrientationListener.disable();
 

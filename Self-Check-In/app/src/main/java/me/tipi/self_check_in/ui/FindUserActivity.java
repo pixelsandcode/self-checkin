@@ -106,7 +106,9 @@ public class FindUserActivity extends AppCompatActivity {
   @Override protected void onResume() {
     super.onResume();
     Timber.d("Resumed");
-    bus.register(this);
+    if (bus != null) {
+      bus.register(this);
+    }
     tracker.setScreenName(getClass().getSimpleName());
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
@@ -114,7 +116,9 @@ public class FindUserActivity extends AppCompatActivity {
   @Override protected void onPause() {
     super.onPause();
     Timber.d("Paused");
-    bus.unregister(this);
+    if (bus != null) {
+      bus.unregister(this);
+    }
   }
 
   @Override

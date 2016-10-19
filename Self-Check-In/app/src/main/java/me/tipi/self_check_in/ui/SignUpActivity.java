@@ -121,7 +121,6 @@ public class SignUpActivity extends AppCompatActivity {
         .progress(true, 0)
         .build();
 
-
     guest.user_key = null;
     guest.firstName = null;
     guest.lastName = null;
@@ -133,7 +132,10 @@ public class SignUpActivity extends AppCompatActivity {
     super.onResume();
     Timber.d("Resumed");
     checkForCrashes();
-    bus.register(this);
+    if (bus != null) {
+      bus.register(this);
+    }
+
     tracker.setScreenName(getResources().getString(R.string.guest_landing));
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
     getPermissionToOpenCameraAndGalley();
@@ -143,7 +145,9 @@ public class SignUpActivity extends AppCompatActivity {
     super.onPause();
     Timber.d("Paused");
     unregisterManagers();
-    bus.unregister(this);
+    if (bus != null) {
+      bus.unregister(this);
+    }
   }
 
   @Override protected void onDestroy() {

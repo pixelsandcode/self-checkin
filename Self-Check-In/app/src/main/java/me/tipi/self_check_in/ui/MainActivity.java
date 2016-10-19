@@ -186,7 +186,6 @@ public class MainActivity extends AppCompatActivity {
   private void showLoginFragment() {
     getFragmentManager().beginTransaction()
         .replace(R.id.container, LoginFragment.newInstance(this)).commit();
-
   }
 
   /**
