@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
@@ -43,7 +42,6 @@ public class LandingFragment extends Fragment {
 
   @Inject Bus bus;
   @Inject Tracker tracker;
-  @Inject TypefaceHelper typeface;
 
   private Handler handler = new Handler();
   private Runnable runnable = new Runnable() {
@@ -69,7 +67,6 @@ public class LandingFragment extends Fragment {
     ButterKnife.bind(this, rootView);
 
     Timber.d("OnCreateView");
-    typeface.setTypeface(container, getResources().getString(R.string.font_regular));
     return rootView;
   }
 

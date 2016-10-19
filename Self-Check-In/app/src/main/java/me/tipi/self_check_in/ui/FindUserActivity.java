@@ -311,7 +311,8 @@ public class FindUserActivity extends AppCompatActivity {
     if (guest != null) {
       guest.user_key = null;
       guest.email = null;
-      guest.name = null;
+      guest.firstName = null;
+      guest.lastName = null;
       guest.checkInDate = null;
       guest.checkOutDate = null;
       guest.city = null;

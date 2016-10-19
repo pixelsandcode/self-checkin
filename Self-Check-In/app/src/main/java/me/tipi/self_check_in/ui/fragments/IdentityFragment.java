@@ -79,42 +79,29 @@ public class IdentityFragment extends Fragment {
   public static final String TAG = IdentityFragment.class.getSimpleName();
   public static final String OCR_RESULTS = "orc_results";
 
-  @Inject
-  Bus bus;
-  @Inject
-  Guest guest;
-  @Inject
-  Tracker tracker;
-  @Inject
-  TypefaceHelper typeface;
+  @Inject Bus bus;
+  @Inject Guest guest;
+  @Inject Tracker tracker;
+  @Inject TypefaceHelper typeface;
 
-  @Bind(R.id.title)
-  TextView titleTextView;
-  @Bind(R.id.your_country)
-  TextView yourCountryLabel;
-  @Bind(R.id.full_name)
-  EditText fullNameTextView;
-  @Bind(R.id.home_town)
-  AutoCompleteTextView homeTownACView;
-  @Bind(R.id.birthday)
-  EditText birthDayPickerView;
-  @Bind(R.id.name_input_layout)
-  TextInputLayout nameLayout;
-  @Bind(R.id.birthday_input_layout)
-  TextInputLayout birthdayLayout;
-  @Bind(R.id.hometown_input_layout)
-  TextInputLayout homeTownLayout;
-  @Bind(R.id.radioSex)
-  RadioGroup radioGroup;
-  @Bind(R.id.passport)
-  EditText passportEditText;
-  @Bind(R.id.passport_input_layout)
-  TextInputLayout passportLayout;
-  @Bind(R.id.passport_label)
-  TextView passportLabel;
+  @Bind(R.id.title) TextView titleTextView;
+  @Bind(R.id.your_country) TextView yourCountryLabel;
+  @Bind(R.id.first_name) EditText firstNameTextView;
+  @Bind(R.id.last_name) EditText lastNameTextView;
+  @Bind(R.id.home_town) AutoCompleteTextView homeTownACView;
+  @Bind(R.id.birthday) EditText birthDayPickerView;
+  @Bind(R.id.first_name_input_layout) TextInputLayout firstNameLayout;
+  @Bind(R.id.last_name_input_layout) TextInputLayout lastNameLayout;
+  @Bind(R.id.birthday_input_layout) TextInputLayout birthdayLayout;
+  @Bind(R.id.hometown_input_layout) TextInputLayout homeTownLayout;
+  @Bind(R.id.radioSex) RadioGroup radioGroup;
+  @Bind(R.id.passport) EditText passportEditText;
+  @Bind(R.id.passport_input_layout) TextInputLayout passportLayout;
+  @Bind(R.id.passport_label) TextView passportLabel;
 
   private Date dob = null;
-  private String enteredFullName;
+  private String enteredFirstName;
+  private String enteredLastName;
   private String enteredHomeTown;
   private String enteredPassport;
   private boolean hasSelectedHometown;
@@ -210,7 +197,9 @@ public class IdentityFragment extends Fragment {
         homeTownLayout.setError(null);
       }
     });
+
     setCountry();
+
     return rootView;
   }
 
@@ -221,7 +210,6 @@ public class IdentityFragment extends Fragment {
 
     homeTownACView.setAdapter(new HomeTownAutoCompleteAdapter(getActivity()));
     homeTownACView.setThreshold(1);
-
 
     if (getActivity() != null) {
       bus.post(new BackShouldShowEvent(true));
@@ -238,7 +226,6 @@ public class IdentityFragment extends Fragment {
   public void onPause() {
     super.onPause();
     bus.unregister(this);
-
   }
 
   @Override
@@ -253,7 +240,8 @@ public class IdentityFragment extends Fragment {
   @OnClick(R.id.continue_btn)
   public void continueToPassport() {
     if (!isError()) {
-      guest.name = enteredFullName;
+      guest.firstName = enteredFirstName;
+      guest.lastName = enteredLastName;
       guest.passportNumber = enteredPassport;
 
       if (!TextUtils.isEmpty(enteredHomeTown) && hasSelectedHometown) {
@@ -290,16 +278,19 @@ public class IdentityFragment extends Fragment {
    */
   private boolean isError() {
 
-    nameLayout.setErrorEnabled(false);
+    firstNameLayout.setErrorEnabled(false);
+    lastNameLayout.setErrorEnabled(false);
     birthdayLayout.setErrorEnabled(false);
-    nameLayout.setError(null);
+    firstNameLayout.setError(null);
+    lastNameLayout.setError(null);
     birthdayLayout.setError(null);
     passportLayout.setError(null);
 
     boolean cancel = false;
     View focusView = null;
 
-    enteredFullName = fullNameTextView.getText().toString().trim();
+    enteredFirstName = firstNameTextView.getText().toString().trim();
+    enteredLastName = lastNameTextView.getText().toString().trim();
     enteredHomeTown = homeTownACView.getText().toString().trim();
     enteredPassport = passportEditText.getText().toString().trim();
 
@@ -307,17 +298,21 @@ public class IdentityFragment extends Fragment {
     cal.set(Calendar.YEAR, 1900);
 
     // Check for validation
-    if (TextUtils.isEmpty(enteredFullName)) {
-      nameLayout.setError(getString(R.string.error_field_required));
-      focusView = fullNameTextView;
+    if (TextUtils.isEmpty(enteredFirstName)) {
+      firstNameTextView.setError(getString(R.string.error_field_required));
+      focusView = firstNameTextView;
       cancel = true;
-    } else if (!checkIfHasSpace(enteredFullName)) {
-      nameLayout.setError(getString(R.string.error_invalid_name_count));
-      focusView = fullNameTextView;
+    } else if (TextUtils.isEmpty(enteredLastName)) {
+      lastNameTextView.setError(getString(R.string.error_field_required));
+      focusView = lastNameTextView;
       cancel = true;
-    } else if (!validateFullName(enteredFullName)) {
-      nameLayout.setError(getString(R.string.error_invalid_full_name));
-      focusView = fullNameTextView;
+    } else if (!validateFullName(enteredFirstName)) {
+      firstNameLayout.setError(getString(R.string.error_invalid_full_name));
+      focusView = firstNameTextView;
+      cancel = true;
+    } else if (!validateFullName(enteredLastName)) {
+      firstNameLayout.setError(getString(R.string.error_invalid_full_name));
+      focusView = firstNameTextView;
       cancel = true;
     } else if (TextUtils.isEmpty(enteredHomeTown)) {
       homeTownACView.setError(getString(R.string.error_field_required));
@@ -447,7 +442,8 @@ public class IdentityFragment extends Fragment {
     if (results != null && results.getRecognitionResults() != null && results.getRecognitionResults()[0] != null) {
       MRTDRecognitionResult mrtdRecognitionResult = (MRTDRecognitionResult) results.getRecognitionResults()[0];
       if (mrtdRecognitionResult != null) {
-        fullNameTextView.setText(String.format("%s %s", mrtdRecognitionResult.getSecondaryId(), mrtdRecognitionResult.getPrimaryId()));
+        firstNameTextView.setText(mrtdRecognitionResult.getSecondaryId());
+        lastNameTextView.setText(mrtdRecognitionResult.getPrimaryId());
 
         // Date Of Birth
         Calendar calendar = Calendar.getInstance();

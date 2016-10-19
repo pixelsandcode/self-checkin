@@ -27,11 +27,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
@@ -102,7 +100,6 @@ public class SignUpActivity extends AppCompatActivity {
   Preference<String> password;
   @Inject Tracker tracker;
 
-  @Bind(R.id.container_main) FrameLayout mainContainer;
   @Bind(R.id.settingBtn) ImageView settingButton;
   @Bind(R.id.resetBtn) ImageView resetButton;
   @Bind(R.id.backBtn) ImageView backButtonView;
@@ -126,7 +123,8 @@ public class SignUpActivity extends AppCompatActivity {
 
 
     guest.user_key = null;
-    guest.name = null;
+    guest.firstName = null;
+    guest.lastName = null;
     guest.email = null;
     showMainFragment();
   }
@@ -388,18 +386,32 @@ public class SignUpActivity extends AppCompatActivity {
       return;
     }
 
-    loading.show();
-    Timber.w("sending data with values  %s", guest.toString());
-
     @SuppressWarnings("ConstantConditions")
     TypedFile avatarFile = new TypedFile("image/jpeg", new File(guest.avatarPath));
     @SuppressWarnings("ConstantConditions")
     TypedFile passportFile = new TypedFile("image/jpeg", new File(guest.passportPath));
+
+    String fullName = "";
+
+    if (guest.firstName != null && !TextUtils.isEmpty(guest.firstName)) {
+      if (guest.lastName != null && !TextUtils.isEmpty(guest.lastName)) {
+        fullName = String.format(Locale.US, "%s  %s", guest.firstName.trim(), guest.lastName.trim()).trim();
+      } else {
+        Timber.w("We don't have last name. it is: %s", guest.lastName);
+      }
+    } else {
+      Timber.w("We don't have first name. it is: %s", guest.firstName);
+    }
+
+    loading.show();
+    Timber.w("sending data with values  %s", guest.toString());
+
+
     authenticationService.addGuest(
         avatarFile,
         passportFile,
         guest.email,
-        guest.name,
+        fullName,
         (guest.city == null || TextUtils.isEmpty(guest.city)) ? null : guest.city,
         (guest.country == null || TextUtils.isEmpty(guest.country)) ? null : guest.country,
         guest.passportNumber,
@@ -465,7 +477,7 @@ public class SignUpActivity extends AppCompatActivity {
 
   }
 
-  private void reEnterDataDialog() {
+/*  private void reEnterDataDialog() {
     new MaterialDialog.Builder(SignUpActivity.this)
         .cancelable(false)
         .autoDismiss(false)
@@ -478,7 +490,7 @@ public class SignUpActivity extends AppCompatActivity {
             reset();
           }
         }).build().show();
-  }
+  }*/
 
   @Subscribe
   public void onClaimEvent(ClaimEvent event) {
@@ -687,7 +699,8 @@ public class SignUpActivity extends AppCompatActivity {
       guest.user_key = null;
       guest.guest_key = null;
       guest.email = null;
-      guest.name = null;
+      guest.firstName = null;
+      guest.lastName = null;
       guest.checkInDate = null;
       guest.checkOutDate = null;
       guest.city = null;
@@ -726,10 +739,10 @@ public class SignUpActivity extends AppCompatActivity {
     CrashManager.register(this);
   }
 
-  private void checkForUpdates() {
+/*  private void checkForUpdates() {
     // Remove this for store builds!
     UpdateManager.register(this);
-  }
+  }*/
 
   private void unregisterManagers() {
     UpdateManager.unregister();

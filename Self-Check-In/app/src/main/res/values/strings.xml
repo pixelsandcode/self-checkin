@@ -136,4 +136,6 @@
   <string name="do_you_want_to_learn_how_to_surf">Do you want to learn how to surf?</string>
   <string name="your_country">Your Country</string>
   <string name="exit_the_app">Exit the App</string>
+  <string name="first_name">First Name</string>
+  <string name="last_name">Last Name</string>
 </resources>

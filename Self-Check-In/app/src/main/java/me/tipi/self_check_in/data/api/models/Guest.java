@@ -15,6 +15,8 @@ import javax.inject.Singleton;
 @Singleton
 public final class Guest {
   public String user_key = "";
+  public String firstName;
+  public String lastName;
   public String name;
   public String email;
   public String city;
@@ -40,7 +42,8 @@ public final class Guest {
   @Override public String toString() {
     return "User{" +
         "user_key='" + user_key + '\'' +
-        ", name='" + name + '\'' +
+        ", firstName='" + firstName + '\'' +
+        ", lastName='" + lastName + '\'' +
         ", email=" + email +
         ", city='" + city + '\'' +
         ", country='" + country + '\'' +
@@ -58,7 +61,8 @@ public final class Guest {
   public String toStringNoDate() {
     return "User{" +
         "user_key='" + user_key + '\'' +
-        ", name='" + name + '\'' +
+        ", firstName='" + firstName + '\'' +
+        ", lastName='" + lastName + '\'' +
         ", email=" + email +
         ", city='" + city + '\'' +
         ", country='" + country + '\'' +
