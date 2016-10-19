@@ -9,8 +9,10 @@
 package me.tipi.self_check_in.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
@@ -29,6 +31,7 @@ import javax.inject.Named;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import me.tipi.self_check_in.BuildConfig;
+import me.tipi.self_check_in.KioskService;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
@@ -100,6 +103,12 @@ public class SettingActivity extends AppCompatActivity {
   public void goToCheckIn(View view) {
     startActivity(new Intent(this, SignUpActivity.class));
     finish();
+  }
+
+  public void exitApp(View view) {
+    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+    sp.edit().putBoolean(KioskService.PREF_KIOSK_MODE, false).apply();
+    this.finishAffinity();
   }
 
 }

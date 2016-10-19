@@ -179,6 +179,10 @@ public class SignUpActivity extends AppCompatActivity {
       }
     }
 
+    if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+      return;
+    }
+
     super.onBackPressed();
   }
 

@@ -10,6 +10,7 @@ package me.tipi.self_check_in;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 
 import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -41,6 +42,7 @@ public final class SelfCheckInApp extends Application {
     objectGraph.inject(this);
 
     TypefaceHelper.initialize(this);
+    startKioskService();
   }
 
   @Override public void onTerminate() {
@@ -81,5 +83,9 @@ public final class SelfCheckInApp extends Application {
    */
   public static SelfCheckInApp get(Context context) {
     return (SelfCheckInApp) context.getApplicationContext();
+  }
+
+  private void startKioskService() { // ... and this method
+    startService(new Intent(this, KioskService.class));
   }
 }
