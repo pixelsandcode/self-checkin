@@ -167,7 +167,6 @@ public class IdentityFragment extends Fragment {
       passportLabel.setText(R.string.passport_no);
       yourCountryLabel.setText(R.string.your_country);
       homeTownACView.addTextChangedListener(new MyTextWatcher());
-
     }
 
     birthDayPickerView.setInputType(InputType.TYPE_NULL);
@@ -290,7 +289,9 @@ public class IdentityFragment extends Fragment {
     View focusView = null;
 
     enteredFirstName = firstNameTextView.getText().toString().trim();
+    enteredFirstName = enteredFirstName.replaceAll("\\s{2,}", " ");
     enteredLastName = lastNameTextView.getText().toString().trim();
+    enteredLastName = enteredLastName.replaceAll("\\s{2,}", " ");
     enteredHomeTown = homeTownACView.getText().toString().trim();
     enteredPassport = passportEditText.getText().toString().trim();
 
@@ -311,8 +312,8 @@ public class IdentityFragment extends Fragment {
       focusView = firstNameTextView;
       cancel = true;
     } else if (!validateFullName(enteredLastName)) {
-      firstNameLayout.setError(getString(R.string.error_invalid_full_name));
-      focusView = firstNameTextView;
+      lastNameLayout.setError(getString(R.string.error_invalid_full_name));
+      focusView = lastNameTextView;
       cancel = true;
     } else if (TextUtils.isEmpty(enteredHomeTown)) {
       homeTownACView.setError(getString(R.string.error_field_required));
