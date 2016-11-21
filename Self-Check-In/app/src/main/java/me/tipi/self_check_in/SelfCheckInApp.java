@@ -47,7 +47,7 @@ public final class SelfCheckInApp extends Application {
 
     TypefaceHelper.initialize(this);
     startKioskService();
-    registerKioskModeScreenOffReceiver();
+    //registerKioskModeScreenOffReceiver();
   }
 
   @Override public void onTerminate() {

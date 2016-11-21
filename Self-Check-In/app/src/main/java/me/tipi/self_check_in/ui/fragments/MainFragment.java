@@ -46,8 +46,6 @@ public class MainFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     deleteMadKioskContent();
-    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    sp.edit().putBoolean(KioskService.PREF_KIOSK_MODE, true).apply();
     return inflater.inflate(R.layout.fragment_main, container, false);
   }
 

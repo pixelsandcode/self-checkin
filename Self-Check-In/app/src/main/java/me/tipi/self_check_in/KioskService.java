@@ -2,7 +2,6 @@ package me.tipi.self_check_in;
 
 import android.app.ActivityManager;
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -69,10 +68,9 @@ public class KioskService extends Service {
 
   private boolean isInBackground() {
     ActivityManager am = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
+    List<ActivityManager.RunningAppProcessInfo> runningInfo = am.getRunningAppProcesses();
 
-    List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-    ComponentName componentInfo = taskInfo.get(0).topActivity;
-    return (!ctx.getApplicationContext().getPackageName().equals(componentInfo.getPackageName()));
+    return runningInfo.get(0).importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
   }
 
   private void restoreApp() {
