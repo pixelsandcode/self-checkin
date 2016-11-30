@@ -35,7 +35,7 @@ public final class SelfCheckInApp extends Application {
 
     AndroidThreeTen.init(this);
     Timber.plant(new FileLogger());
-    if (BuildConfig.DEBUG) {
+    if (BuildConfig.DEBUG || BuildConfig.STG) {
       Timber.plant(new Timber.DebugTree());
     } /*else {
       // TODO Crashlytics.start(this);
@@ -58,7 +58,7 @@ public final class SelfCheckInApp extends Application {
   synchronized public Tracker getDefaultTracker() {
     if (analyticTracker == null) {
       GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-      if (BuildConfig.DEBUG) {
+      if (BuildConfig.DEBUG || BuildConfig.STG) {
         analytics.setDryRun(true);
         analytics.getLogger()
             .setLogLevel(Logger.LogLevel.VERBOSE);

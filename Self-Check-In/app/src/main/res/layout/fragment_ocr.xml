@@ -52,7 +52,7 @@
         android:layout_marginBottom="@dimen/first_key_line"
         android:textColor="@color/main_text"
         android:textSize="@dimen/font_large"
-        android:visibility="visible"/>
+        android:visibility="invisible"/>
 
     <ImageButton
         android:id="@+id/scan_btn"
@@ -62,7 +62,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/second_key_line"
         android:background="@drawable/capture"
-        android:visibility="visible"/>
+        android:visibility="invisible"/>
 
   </RelativeLayout>
 

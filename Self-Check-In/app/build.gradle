@@ -2,7 +2,7 @@
 def versionMajor = 4
 def versionMinor = 3
 def versionPatch = 2
-def versionBuild = 0 // bump for dogfood builds, public betas, etc.
+def versionBuild = 2 // bump for dogfood builds, public betas, etc.
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
@@ -31,6 +31,10 @@ android {
 
         manifestPlaceholders = [HOCKEYAPP_APP_ID: HOCKEY_ID]
         setProperty("archivesBaseName", "MAD-Kiosk-$versionName")
+
+        if (project.hasProperty("STG")) {
+            buildConfigField "boolean", "STG", "${project.property("STG")}"
+        }
     }
 
     buildTypes {

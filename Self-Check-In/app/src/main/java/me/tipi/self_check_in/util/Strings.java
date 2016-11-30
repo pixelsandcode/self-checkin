@@ -64,6 +64,6 @@ public final class Strings {
    * @return the string
    */
   public static String makeAvatarUrl(String userId) {
-    return ApiConstants.API_IMAGE_URL + String.format(ApiConstants.AVATAR_URL, userId) + ".jpg";
+    return ApiConstants.getImageUrl() + String.format(ApiConstants.AVATAR_URL, userId) + ".jpg";
   }
 }

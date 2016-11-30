@@ -326,7 +326,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
       @Override public void run() {
         showScanButton();
       }
-    }, 30000);
+    }, 15000);
     enableTorchButtonIfPossible();
   }
 

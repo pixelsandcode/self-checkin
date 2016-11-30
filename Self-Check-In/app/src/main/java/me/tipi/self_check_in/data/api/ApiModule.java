@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import me.tipi.self_check_in.BuildConfig;
 import me.tipi.self_check_in.data.api.models.Guest;
 import retrofit.Endpoint;
 import retrofit.Endpoints;
@@ -35,7 +36,7 @@ public final class ApiModule {
    */
   @Provides @Singleton
   Endpoint provideEndpoint() {
-    return Endpoints.newFixedEndpoint(ApiConstants.API_URL);
+    return Endpoints.newFixedEndpoint(ApiConstants.getApiBaseUrl());
   }
 
   /**
@@ -62,8 +63,8 @@ public final class ApiModule {
         .setClient(client) //
         .setEndpoint(endpoint)
         .setRequestInterceptor(headers)
-        .setLogLevel(RestAdapter.LogLevel.FULL)
-        .setLog(new AndroidLog("TipiSelfRetrofit"))
+        .setLogLevel(BuildConfig.STG ? RestAdapter.LogLevel.FULL :RestAdapter.LogLevel.NONE)
+        .setLog(new AndroidLog("TipiRetrofit"))
         .build();
   }
 

@@ -8,15 +8,17 @@
 
 package me.tipi.self_check_in.data.api;
 
+import me.tipi.self_check_in.BuildConfig;
+
 public class ApiConstants {
 
   // Api Ips
-/*  public static final String API_URL = "http://api.tipi.me/v1";
-  public static final String API_IMAGE_URL = "http://api.tipi.me/cdn";*/
+  public static final String API_URL = "http://api.tipi.me/v1";
+  public static final String API_IMAGE_URL = "http://api.tipi.me/cdn";
 
   // Api Stg
-  public static final String API_URL = "http://stg.api.tipi.me/v1";
-  public static final String API_IMAGE_URL = "http://stg.api.tipi.me/cdn";
+  public static final String API_URL_STG = "http://stg.api.tipi.me/v1";
+  public static final String API_IMAGE_URL_STG = "http://stg.api.tipi.me/cdn";
 
   // Download Page
   public static final String BASE_DOWNLOAD_PAGE = "https://play.google.com/store/apps/details?id=me.tipi.self_check_in";
@@ -42,5 +44,21 @@ public class ApiConstants {
   public static final String PASSPORT = "passport";
   public static final String HOSTEL_NAME = "hostelName";
   public static final String HOSTEL_KEY = "hostelKey";
+
+  public static String getApiBaseUrl() {
+    if (BuildConfig.STG) {
+      return API_URL_STG;
+    } else {
+      return API_URL;
+    }
+  }
+
+  public static String getImageUrl() {
+    if (BuildConfig.STG) {
+      return API_IMAGE_URL_STG;
+    } else {
+      return API_IMAGE_URL;
+    }
+  }
 
 }
