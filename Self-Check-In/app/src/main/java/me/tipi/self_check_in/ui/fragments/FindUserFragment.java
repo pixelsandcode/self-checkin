@@ -103,7 +103,6 @@ public class FindUserFragment extends Fragment {
    */
   public static FindUserFragment newInstance(Context context) {
     FindUserFragment fragment = new FindUserFragment();
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
@@ -112,6 +111,8 @@ public class FindUserFragment extends Fragment {
     // Inflate the layout for this fragment// Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_find_user, container, false);
     ButterKnife.bind(this, rootView);
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
+
     Timber.d("ViewCreated");
     if (typeface != null) {
       typeface.setTypeface(container, getResources().getString(R.string.font_regular));

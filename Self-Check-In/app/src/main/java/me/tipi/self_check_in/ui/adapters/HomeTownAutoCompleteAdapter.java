@@ -44,12 +44,13 @@ public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements
    */
   public HomeTownAutoCompleteAdapter(final Context context) {
     super(context, -1);
-    SelfCheckInApp.get(context).inject(this);
+    SelfCheckInApp.get(context).getComponent().inject(this);
     mInflater = LayoutInflater.from(context);
   }
 
   @Override
   public View getView(final int position, final View convertView, final ViewGroup parent) {
+
     final TextView tv;
     if (convertView != null) {
       tv = (TextView) convertView;

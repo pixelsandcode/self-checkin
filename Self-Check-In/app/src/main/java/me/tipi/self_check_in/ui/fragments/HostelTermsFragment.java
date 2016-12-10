@@ -67,7 +67,6 @@ public class HostelTermsFragment extends Fragment {
 
   public static HostelTermsFragment newInstance(Context context) {
     HostelTermsFragment fragment = new HostelTermsFragment();
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
@@ -76,6 +75,8 @@ public class HostelTermsFragment extends Fragment {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_hostel_terms, container, false);
     ButterKnife.bind(this, rootView);
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
+
     loadTerms();
     return rootView;
   }

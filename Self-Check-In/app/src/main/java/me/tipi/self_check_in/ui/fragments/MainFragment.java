@@ -31,13 +31,14 @@ public class MainFragment extends Fragment {
 
   public static MainFragment newInstance(Context context) {
     MainFragment fragment = new MainFragment();
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
+
     return inflater.inflate(R.layout.fragment_main, container, false);
   }
 

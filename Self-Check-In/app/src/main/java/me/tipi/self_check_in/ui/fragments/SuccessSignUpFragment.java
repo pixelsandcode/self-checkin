@@ -65,7 +65,6 @@ public class SuccessSignUpFragment extends Fragment {
    */
   public static SuccessSignUpFragment newInstance(Context context) {
     SuccessSignUpFragment fragment = new SuccessSignUpFragment();
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
@@ -74,6 +73,8 @@ public class SuccessSignUpFragment extends Fragment {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_success_sign_up, container, false);
     ButterKnife.bind(this, rootView);
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
+
     return rootView;
   }
 
@@ -107,9 +108,9 @@ public class SuccessSignUpFragment extends Fragment {
 
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
-      ((SignUpActivity)getActivity()).reset();
-    } else if (getActivity() != null){
-      ((FindUserActivity)getActivity()).reset();
+      ((SignUpActivity) getActivity()).reset();
+    } else if (getActivity() != null) {
+      ((FindUserActivity) getActivity()).reset();
     }
   }
 }

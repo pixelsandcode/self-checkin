@@ -82,7 +82,6 @@ public class QuestionFragment extends Fragment {
 
   public static QuestionFragment newInstance(Context context) {
     QuestionFragment fragment = new QuestionFragment();
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
@@ -90,6 +89,8 @@ public class QuestionFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_question, container, false);
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
+
     ButterKnife.bind(this, rootView);
 
     thirdQuestionView.setInputType(InputType.TYPE_NULL);

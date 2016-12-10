@@ -58,7 +58,6 @@ public class LandingFragment extends Fragment {
 
   public static LandingFragment newInstance(Context context) {
     LandingFragment fragment = new LandingFragment();
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
@@ -67,6 +66,7 @@ public class LandingFragment extends Fragment {
     // Inflate the layout for this fragment
     View rootView =  inflater.inflate(R.layout.fragment_landing, container, false);
     ButterKnife.bind(this, rootView);
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
 
     Timber.d("OnCreateView");
    typeface.setTypeface(container, getResources().getString(R.string.font_regular));

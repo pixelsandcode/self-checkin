@@ -97,7 +97,6 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
    */
   public static DateFragment newInstance(Context context) {
     DateFragment fragment = new DateFragment();
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
@@ -105,6 +104,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_date, container, false);
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
     ButterKnife.bind(this, rootView);
     if (typeface != null) {
       typeface.setTypeface(container, getResources().getString(R.string.font_regular));
@@ -137,14 +137,15 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       public void onClick(View textView) {
         if (isLogin) {
           if (getActivity() instanceof SignUpActivity) {
-            ((SignUpActivity)getActivity()).showTermsFragment();
+            ((SignUpActivity) getActivity()).showTermsFragment();
           } else {
             bus.post(new PagerChangeEvent(2));
           }
         } else {
-          ((SignUpActivity)getActivity()).showTermsFragment();
+          ((SignUpActivity) getActivity()).showTermsFragment();
         }
       }
+
       @Override
       public void updateDrawState(TextPaint ds) {
         super.updateDrawState(ds);
@@ -216,7 +217,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
       } else {
         if (getActivity() instanceof SignUpActivity) {
           Timber.w("User entered %d nights and going to submit method", enteredNights);
-          ((SignUpActivity)getActivity()).submit();
+          ((SignUpActivity) getActivity()).submit();
         }
       }
     }
@@ -288,9 +289,9 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
 
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
-      ((SignUpActivity)getActivity()).reset();
-    } else if (getActivity() != null){
-      ((FindUserActivity)getActivity()).reset();
+      ((SignUpActivity) getActivity()).reset();
+    } else if (getActivity() != null) {
+      ((FindUserActivity) getActivity()).reset();
     }
   }
 }

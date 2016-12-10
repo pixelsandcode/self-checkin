@@ -50,7 +50,6 @@ public class ScanIDFragment extends Fragment {
 
   public static ScanIDFragment newInstance(Context context) {
     ScanIDFragment fragment = new ScanIDFragment();
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
@@ -59,6 +58,8 @@ public class ScanIDFragment extends Fragment {
                            Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_scan_id, container, false);
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
+
     ButterKnife.bind(this, view);
 
     Timber.d("OnCreateView");

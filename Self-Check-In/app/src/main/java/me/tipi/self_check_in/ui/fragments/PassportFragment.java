@@ -127,7 +127,6 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
    */
   public static PassportFragment newInstance(Context context) {
     PassportFragment fragment = new PassportFragment();
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
@@ -143,6 +142,8 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_passport, container, false);
     ButterKnife.bind(this, rootView);
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
+
     Timber.d("OnCreateView");
     typeface.setTypeface(container, getResources().getString(R.string.font_regular));
 

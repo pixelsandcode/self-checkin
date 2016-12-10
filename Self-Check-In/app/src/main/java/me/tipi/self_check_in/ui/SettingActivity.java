@@ -48,8 +48,8 @@ public class SettingActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_setting);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    SelfCheckInApp.get(this).inject(this);
     ButterKnife.bind(this);
+    ((SelfCheckInApp) getApplication()).getComponent().inject(this);
 
     typeface.setTypeface(this, getResources().getString(R.string.font_regular));
     versionTextView.setText(String.format("Current Version %s", BuildConfig.VERSION_NAME));

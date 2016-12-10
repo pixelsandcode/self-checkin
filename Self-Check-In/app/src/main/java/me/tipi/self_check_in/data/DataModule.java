@@ -23,18 +23,18 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import me.tipi.self_check_in.data.api.ApiConstants;
-import me.tipi.self_check_in.data.api.ApiModule;
 import timber.log.Timber;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.jakewharton.byteunits.DecimalByteUnit.MEGABYTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-@Module(
-    includes = ApiModule.class,
-    complete = false,
-    library = true
-)
+//@Module(
+//    includes = ApiModule.class,
+//    complete = false,
+//    library = true
+//)
+@Module
 public final class DataModule {
   static final int DISK_CACHE_SIZE = (int) MEGABYTES.toBytes(50);
   private static final String PREF_USER_AVATAR = "UserAvatar";

@@ -149,7 +149,6 @@ public class IdentityFragment extends Fragment {
       fragment.setArguments(args);
     }
 
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
@@ -166,8 +165,8 @@ public class IdentityFragment extends Fragment {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_identity, container, false);
     ButterKnife.bind(this, rootView);
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
     typeface.setTypeface(container, getResources().getString(R.string.font_regular));
-
     fillDetailsFromPassport();
 
     if (results == null) {

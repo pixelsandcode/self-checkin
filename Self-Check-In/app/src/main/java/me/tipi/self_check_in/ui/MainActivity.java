@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     ButterKnife.bind(this);
-    SelfCheckInApp.get(this).inject(this);
+    ((SelfCheckInApp) getApplication()).getComponent().inject(this);
     typeface.setTypeface(this, "SF-UI-Text-Regular.otf");
     loading = new MaterialDialog.Builder(this)
         .content("Loading")

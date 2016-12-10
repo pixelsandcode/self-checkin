@@ -60,7 +60,6 @@ public class LoginFragment extends Fragment {
    */
   public static LoginFragment newInstance(Context context) {
     LoginFragment fragment = new LoginFragment();
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
@@ -69,6 +68,8 @@ public class LoginFragment extends Fragment {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_login, container, false);
     ButterKnife.bind(this, rootView);
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
+
     typeface.setTypeface((ViewGroup) rootView, getResources().getString(R.string.font_regular));
 
     if (username.isSet() && password.isSet()) {

@@ -96,7 +96,6 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
 
   public static OCRFragment newInstance(Context context) {
     OCRFragment fragment = new OCRFragment();
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
@@ -105,8 +104,8 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_ocr, container, false);
     ButterKnife.bind(this, view);
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
     guest.passportPath = null;
-
     RecognitionSettings recognitionSettings = new RecognitionSettings();
     RecognizerSettings[] settArray = Config.getRecognizerSettings();
     // set recognizer settings array that is used to configure recognition

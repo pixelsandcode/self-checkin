@@ -9,7 +9,6 @@
 package me.tipi.self_check_in.data.api.models;
 
 public class LoginResponse {
-
   public final Hostel data;
 
   public LoginResponse(Hostel data) {

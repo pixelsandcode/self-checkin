@@ -22,10 +22,11 @@ import retrofit.android.AndroidLog;
 import retrofit.client.Client;
 import retrofit.client.OkClient;
 
-@Module(
-    complete = false,
-    library = true
-)
+//@Module(
+//    complete = false,
+//    library = true
+//)
+@Module
 public final class ApiModule {
 
   /**

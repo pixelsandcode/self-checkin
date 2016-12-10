@@ -85,7 +85,7 @@ public class FindUserActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_find_user);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    SelfCheckInApp.get(this).inject(this);
+    ((SelfCheckInApp) getApplication()).getComponent().inject(this);
     ButterKnife.bind(this);
     Timber.d("Created");
 

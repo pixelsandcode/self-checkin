@@ -84,7 +84,6 @@ public class EmailFragment extends Fragment {
 
   public static EmailFragment newInstance(Context context) {
     EmailFragment fragment = new EmailFragment();
-    SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
 
@@ -93,6 +92,8 @@ public class EmailFragment extends Fragment {
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_email, container, false);
     ButterKnife.bind(this, view);
+    ((SelfCheckInApp) getActivity().getApplication()).getComponent().inject(this);
+
     typeface.setTypeface(container, getResources().getString(R.string.font_regular));
 
     matchUserDialog = new MaterialDialog.Builder(getActivity())

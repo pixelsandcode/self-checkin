@@ -115,8 +115,8 @@ public class SignUpActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_sign_up);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    SelfCheckInApp.get(this).inject(this);
     ButterKnife.bind(this);
+    ((SelfCheckInApp) getApplication()).getComponent().inject(this);
 
     loading = new MaterialDialog.Builder(this)
         .content("Please wait...")
