@@ -122,6 +122,8 @@ dependencies {
     compile('com.github.tony19:logback-android-classic:1.1.1-5') {
         exclude group: 'com.google.android', module: 'android'
     }
+    compile files('libs/RT_Android_Bluetooth_SDK_20150204.jar')
+
 }
 
 repositories {
