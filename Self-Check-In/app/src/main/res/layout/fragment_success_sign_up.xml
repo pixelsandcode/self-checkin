@@ -1,22 +1,13 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context="me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment"
-    tools:ignore="ContentDescription">
-
-  <TextView
-      android:id="@+id/title"
-      android:text="@string/thanks_for_checking_in_on_tipi"
-      android:layout_width="350dp"
-      android:layout_height="wrap_content"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/first_key_line"
-      android:gravity="center"
-      android:textColor="@color/main_text"
-      android:textSize="@dimen/font_extra_large"/>
+    tools:ignore="ContentDescription"
+    android:id="@+id/success_layout">
 
   <ImageView
       android:id="@+id/success"
@@ -40,5 +31,28 @@
       android:textColor="@color/colorAccent"
       android:textSize="@dimen/font_normal"
       android:textStyle="bold"/>
+
+  <ImageButton
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentTop="true"
+      android:layout_alignParentRight="true"
+      android:layout_alignParentEnd="true"
+      android:id="@+id/printer_btn"
+      android:background="@drawable/ic_print"
+      android:layout_margin="16dp"
+      android:visibility="gone"/>
+
+  <TextView
+      android:id="@+id/title"
+      android:text="@string/thanks_for_checking_in_on_tipi"
+      android:layout_width="350dp"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_extra_large"
+      android:layout_below="@+id/printer_btn"
+      android:layout_centerHorizontal="true"
+      />
 
 </RelativeLayout>

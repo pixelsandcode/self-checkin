@@ -12,14 +12,16 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.RT_Printer.BluetoothPrinter.BLUETOOTH.BluetoothPrintDriver;
@@ -36,12 +38,14 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.models.Guest;
+import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
@@ -56,12 +60,16 @@ public class SuccessSignUpFragment extends Fragment {
   @Inject
   Guest guest;
   @Inject
+  AppContainer appContainer;
+  @Inject
   Bus bus;
   @Inject
   Tracker tracker;
   @Inject
   @Named(ApiConstants.HOSTEL_NAME)
   Preference<String> hostelName;
+  @Bind(R.id.printer_btn) ImageButton printerBtn;
+  @Bind(R.id.success_layout) RelativeLayout successLayout;
   private BluetoothAdapter mBluetoothAdapter;
   private BluetoothDevice mBluetoothDevice;
   private MaterialDialog loading;
@@ -69,6 +77,7 @@ public class SuccessSignUpFragment extends Fragment {
   private UUID applicationUUID;
   private BluetoothPrintDriver mChatService = null;
   private boolean isVisible = false;
+  private boolean isConnecting = false;
 
   private Handler handler = new Handler();
   private Runnable runnable = new Runnable() {
@@ -103,7 +112,7 @@ public class SuccessSignUpFragment extends Fragment {
     View rootView = inflater.inflate(R.layout.fragment_success_sign_up, container, false);
     ButterKnife.bind(this, rootView);
     loading = new MaterialDialog.Builder(getActivity())
-        .content("Loading")
+        .content("Please wait...")
         .cancelable(false)
         .progress(true, 0)
         .build();
@@ -115,10 +124,7 @@ public class SuccessSignUpFragment extends Fragment {
   @Override
   public void onStart() {
     super.onStart();
-    if (!mBluetoothAdapter.isEnabled()) {
-      Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-      startActivityForResult(enableIntent, 2);
-    } else {
+    if (mBluetoothAdapter.isEnabled()) {
       if (mChatService == null) setupChat();
     }
   }
@@ -138,11 +144,6 @@ public class SuccessSignUpFragment extends Fragment {
 
       handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
 
-    }
-    if (mChatService != null) {
-      if (mChatService.getState() == BluetoothPrintDriver.STATE_NONE) {
-        mChatService.start();
-      }
     }
     tracker.setScreenName("Success");
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -178,10 +179,14 @@ public class SuccessSignUpFragment extends Fragment {
       setupChat();
     }
     mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    if (mChatService.getState() == BluetoothPrintDriver.STATE_NONE && mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
+      mChatService.start();
+    }
     if (mBluetoothAdapter != null) {
       if (!mBluetoothAdapter.isEnabled()) {
         loading.dismiss();
-        Toast.makeText(getActivity(), "Please Turn your bluetooth on", Toast.LENGTH_SHORT).show();
+        printerBtn.setVisibility(View.VISIBLE);
+        showSnackbar();
       } else {
         ListPairedDevices();
       }
@@ -200,7 +205,8 @@ public class SuccessSignUpFragment extends Fragment {
       }
       if (!isVisible) {
         loading.dismiss();
-        Toast.makeText(getActivity(), "Printer is not pair with your device", Toast.LENGTH_SHORT).show();
+        printerBtn.setVisibility(View.VISIBLE);
+        showSnackbar();
       }
     }
   }
@@ -238,19 +244,27 @@ public class SuccessSignUpFragment extends Fragment {
             case BluetoothPrintDriver.STATE_CONNECTED:
               Timber.d("Print connected");
               if (BluetoothPrintDriver.IsNoConnection()) {
-                Toast.makeText(getActivity(), "Printer is not Connected", Toast.LENGTH_SHORT).show();
+                printerBtn.setVisibility(View.VISIBLE);
+                showSnackbar();
               }
               loading.dismiss();
+              isConnecting = false;
               printQR(guest.email);
               break;
             case BluetoothPrintDriver.STATE_CONNECTING:
               loading.show();
+              isConnecting = true;
               Timber.d("Print connecting");
               break;
             case BluetoothPrintDriver.STATE_LISTEN:
             case BluetoothPrintDriver.STATE_NONE:
               loading.dismiss();
-              Timber.d("Print not connected");
+              if (isConnecting) {
+                printerBtn.setVisibility(View.VISIBLE);
+                showSnackbar();
+                isConnecting = false;
+              }
+              Timber.d("Printer not connected");
               break;
           }
           break;
@@ -270,7 +284,8 @@ public class SuccessSignUpFragment extends Fragment {
             if ((readBuf[2] & 0x04) != 0) {
               Timber.d("ERROR: No paper! ");
               loading.dismiss();
-              Toast.makeText(getActivity(), "No paper", Toast.LENGTH_SHORT).show();
+              printerBtn.setVisibility(View.VISIBLE);
+              showSnackbar();
             }
             if ((readBuf[2] & 0x08) != 0) {
               Toast.makeText(getActivity(), "aaa", Toast.LENGTH_SHORT).show();
@@ -296,7 +311,9 @@ public class SuccessSignUpFragment extends Fragment {
 
   private void printQR(String email) {
     int emailLength = email.length();
-    byte[] cmd = new byte[]{(byte) 29, (byte) 40, (byte) 107, (byte) 3, (byte) 0, (byte) 49, (byte) 67, (byte) 3, (byte) 29, (byte) 40, (byte) 107, (byte) 3, (byte) 0, (byte) 49, (byte) 69, (byte) 51, (byte) 29, (byte) 40, (byte) 107, (byte) 10, (byte) 0, (byte) 49, (byte) 80, (byte) 48, (byte) 29, (byte) 40, (byte) 107, (byte) 3, (byte) 0, (byte) 49, (byte) 81, (byte) 48, (byte) 29, (byte) 40, (byte) 107, (byte) 4, (byte) 0, (byte) 49, (byte) 65, (byte) 49, (byte) 0};
+    byte[] feed = new byte[]{(byte) 27, (byte) 100, (byte) 3};
+    BT_Write(feed);
+    byte[] cmd = new byte[]{(byte) 29, (byte) 40, (byte) 107, (byte) 3, (byte) 0, (byte) 49, (byte) 67, (byte) 10, (byte) 29, (byte) 40, (byte) 107, (byte) 3, (byte) 0, (byte) 49, (byte) 69, (byte) 51, (byte) 29, (byte) 40, (byte) 107, (byte) 10, (byte) 0, (byte) 49, (byte) 80, (byte) 48, (byte) 29, (byte) 40, (byte) 107, (byte) 3, (byte) 0, (byte) 49, (byte) 81, (byte) 48,(byte) 27, (byte) 97, (byte) 49, (byte) 29, (byte) 40, (byte) 107, (byte) 4, (byte) 0, (byte) 49, (byte) 65, (byte) 49, (byte) 0};
     byte[] res = new byte[41 + emailLength];
     System.arraycopy(cmd, 0, res, 0, 24);
     res[19] = (byte) (emailLength + 3);
@@ -305,8 +322,27 @@ public class SuccessSignUpFragment extends Fragment {
     }
     System.arraycopy(cmd, 24, res, 24 + emailLength, 16);
     BT_Write(res);
-    byte[] feed = new byte[]{(byte) 27, (byte) 100, (byte) 3};
+    byte[] feed2 = new byte[]{(byte) 27, (byte) 100, (byte) 10};
     BT_Write(feed);
   }
 
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+    ButterKnife.unbind(this);
+  }
+
+  @OnClick(R.id.printer_btn) public void onClick() {
+    connectToPrinter();
+  }
+
+  private void showSnackbar() {
+    final Snackbar snackbar = Snackbar.make(appContainer.bind(getActivity()), getString(R.string.printer_error_snackbar), Snackbar.LENGTH_INDEFINITE);
+    snackbar.setAction("Ok", new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        snackbar.dismiss();
+      }
+    });
+    snackbar.show();
+  }
 }
