@@ -30,21 +30,25 @@ import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import me.tipi.self_check_in.BuildConfig;
 import me.tipi.self_check_in.KioskService;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.PrinterPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import timber.log.Timber;
 
 public class SettingActivity extends AppCompatActivity {
 
   @Inject Tracker tracker;
+  @Inject PrinterPreference printerPreference;
   @Inject TypefaceHelper typeface;
   @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
 
   @Bind(R.id.version) TextView versionTextView;
+  @Bind(R.id.print) TextView print;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,11 @@ public class SettingActivity extends AppCompatActivity {
 
     typeface.setTypeface(this, getResources().getString(R.string.font_regular));
     versionTextView.setText(String.format("Current Version %s", BuildConfig.VERSION_NAME));
+    if (printerPreference.get()) {
+      print.setText(getString(R.string.printer_on));
+    } else {
+      print.setText(getString(R.string.printer_off));
+    }
 
     Timber.d("Created");
   }
@@ -111,4 +120,12 @@ public class SettingActivity extends AppCompatActivity {
     this.finishAffinity();
   }
 
+  @OnClick(R.id.print) public void onClick() {
+    printerPreference.set(!printerPreference.get());
+    if (printerPreference.get()) {
+      print.setText(getString(R.string.printer_on));
+    } else {
+      print.setText(getString(R.string.printer_off));
+    }
+  }
 }

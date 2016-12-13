@@ -41,6 +41,7 @@ import javax.inject.Named;
 import butterknife.ButterKnife;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.PrinterPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
@@ -54,6 +55,7 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity {
 
   @Inject AuthenticationService authenticationService;
+  @Inject PrinterPreference printerPreference;
   @Inject
   @Named(ApiConstants.USER_NAME)
   Preference<String> username;
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
     ButterKnife.bind(this);
     SelfCheckInApp.get(this).inject(this);
     typeface.setTypeface(this, "SF-UI-Text-Regular.otf");
+    printerPreference.set(true);
     loading = new MaterialDialog.Builder(this)
         .content("Loading")
         .cancelable(false)

@@ -38,6 +38,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public final class DataModule {
   static final int DISK_CACHE_SIZE = (int) MEGABYTES.toBytes(50);
   private static final String PREF_USER_AVATAR = "UserAvatar";
+  private static final String PREF_PRINTER = "printer";
   private static final String PREF_PASSPORT_IMAGE = "passportImage";
 
   /**
@@ -79,6 +80,11 @@ public final class DataModule {
   @Provides @Singleton @Named(ApiConstants.HOSTEL_KEY)
   Preference<String> provideHostelKey(RxSharedPreferences prefs) {
     return prefs.getString(ApiConstants.HOSTEL_KEY);
+  }
+
+  @Provides @Singleton
+  PrinterPreference providePrinter(SharedPreferences preferences) {
+    return new PrinterPreference(preferences, PREF_PRINTER);
   }
 
   /**

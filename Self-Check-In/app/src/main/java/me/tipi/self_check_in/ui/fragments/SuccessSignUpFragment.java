@@ -21,8 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.RT_Printer.BluetoothPrinter.BLUETOOTH.BluetoothPrintDriver;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -32,6 +31,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -43,6 +43,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.PrinterPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.ui.AppContainer;
@@ -58,6 +59,8 @@ public class SuccessSignUpFragment extends Fragment {
 
   public static final String TAG = SuccessSignUpFragment.class.getSimpleName();
   @Inject
+  PrinterPreference printerPreference;
+  @Inject
   Guest guest;
   @Inject
   AppContainer appContainer;
@@ -69,7 +72,6 @@ public class SuccessSignUpFragment extends Fragment {
   @Named(ApiConstants.HOSTEL_NAME)
   Preference<String> hostelName;
   @Bind(R.id.printer_btn) ImageButton printerBtn;
-  @Bind(R.id.success_layout) RelativeLayout successLayout;
   private BluetoothAdapter mBluetoothAdapter;
   private BluetoothDevice mBluetoothDevice;
   private MaterialDialog loading;
@@ -117,21 +119,28 @@ public class SuccessSignUpFragment extends Fragment {
         .progress(true, 0)
         .build();
     applicationUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    connectToPrinter();
+    if (printerPreference.get()) {
+      connectToPrinter();
+    }
+
     return rootView;
   }
 
   @Override
   public void onStart() {
     super.onStart();
-    if (mBluetoothAdapter.isEnabled()) {
-      if (mChatService == null) setupChat();
+    if (printerPreference.get()) {
+      if (mBluetoothAdapter.isEnabled()) {
+        if (mChatService == null) setupChat();
+      }
     }
   }
 
   @Override public void onDestroy() {
     super.onDestroy();
-    if (mChatService != null) mChatService.stop();
+    if (printerPreference.get()) {
+      if (mChatService != null) mChatService.stop();
+    }
   }
 
   @Override
@@ -186,7 +195,7 @@ public class SuccessSignUpFragment extends Fragment {
       if (!mBluetoothAdapter.isEnabled()) {
         loading.dismiss();
         printerBtn.setVisibility(View.VISIBLE);
-        showSnackbar();
+        showSnackbar("Bluetooth is OFF");
       } else {
         ListPairedDevices();
       }
@@ -206,7 +215,7 @@ public class SuccessSignUpFragment extends Fragment {
       if (!isVisible) {
         loading.dismiss();
         printerBtn.setVisibility(View.VISIBLE);
-        showSnackbar();
+        showSnackbar("Device is not pair");
       }
     }
   }
@@ -220,11 +229,10 @@ public class SuccessSignUpFragment extends Fragment {
           mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(applicationUUID);
           mBluetoothAdapter.cancelDiscovery();
           mChatService.connect(mBluetoothDevice);
-          Timber.d("ConnectToSocket");
+          Timber.w("ConnectToSocket");
         } catch (IOException eConnectException) {
-          Timber.d("CouldNotConnectToSocket");
+          Timber.w("CouldNotConnectToSocket");
           closeSocket(mBluetoothSocket);
-          return;
         }
       }
     }).start();
@@ -234,86 +242,97 @@ public class SuccessSignUpFragment extends Fragment {
     mChatService = new BluetoothPrintDriver(getActivity(), mHandler);
   }
 
-  private final Handler mHandler = new Handler() {
-    @Override
-    public void handleMessage(Message msg) {
-      switch (msg.what) {
-        case 1:
-          Timber.d("MESSAGE_STATE_CHANGE: " + msg.arg1);
-          switch (msg.arg1) {
-            case BluetoothPrintDriver.STATE_CONNECTED:
-              Timber.d("Print connected");
-              if (BluetoothPrintDriver.IsNoConnection()) {
-                printerBtn.setVisibility(View.VISIBLE);
-                showSnackbar();
-              }
-              loading.dismiss();
-              isConnecting = false;
-              printQR(guest.email);
-              break;
-            case BluetoothPrintDriver.STATE_CONNECTING:
-              loading.show();
-              isConnecting = true;
-              Timber.d("Print connecting");
-              break;
-            case BluetoothPrintDriver.STATE_LISTEN:
-            case BluetoothPrintDriver.STATE_NONE:
-              loading.dismiss();
-              if (isConnecting) {
-                printerBtn.setVisibility(View.VISIBLE);
-                showSnackbar();
+  private final Handler mHandler;
+
+  {
+    mHandler = new Handler() {
+      @Override
+      public void handleMessage(Message msg) {
+        switch (msg.what) {
+          case 1:
+            Timber.w("MESSAGE_STATE_CHANGE: " + msg.arg1);
+            switch (msg.arg1) {
+              case BluetoothPrintDriver.STATE_CONNECTED:
+                Timber.w("Print connected");
+                if (BluetoothPrintDriver.IsNoConnection()) {
+                  printerBtn.setVisibility(View.VISIBLE);
+                  showSnackbar("Printer not connected");
+                }
                 isConnecting = false;
+                printQR(guest.email);
+                loading.dismiss();
+                printFeed(3);
+                break;
+              case BluetoothPrintDriver.STATE_CONNECTING:
+                loading.show();
+                isConnecting = true;
+                Timber.w("Print connecting");
+                break;
+              case BluetoothPrintDriver.STATE_LISTEN:
+
+              case BluetoothPrintDriver.STATE_NONE:
+                Timber.w("Printer not connected");
+                loading.dismiss();
+                if (isConnecting) {
+                  printerBtn.setVisibility(View.VISIBLE);
+                  showSnackbar("Printer not connected");
+                  isConnecting = false;
+                }
+                break;
+            }
+            break;
+          case 3:
+            break;
+          case 2:
+            byte[] readBuf = (byte[]) msg.obj;
+            Timber.w("readBuf[0]:" + readBuf[0] + "  readBuf[1]:" + readBuf[1] + "readBuf[2]:" + readBuf[2]);
+            if (readBuf[2] == 0)
+              Timber.w("NO ERROR!");
+            else {
+              if ((readBuf[2] & 0x02) != 0) {
+                Timber.w("ERROR: No printer connected!");
+                loading.dismiss();
+                printerBtn.setVisibility(View.VISIBLE);
+                showSnackbar("No printer connected!");
               }
-              Timber.d("Printer not connected");
-              break;
-          }
-          break;
-        case 3:
-          break;
-        case 2:
-          String ErrorMsg = null;
-          byte[] readBuf = (byte[]) msg.obj;
-          float Voltage = 0;
-          if (true)
-            Timber.d("readBuf[0]:" + readBuf[0] + "  readBuf[1]:" + readBuf[1] + "readBuf[2]:" + readBuf[2]);
-          if (readBuf[2] == 0)
-            Timber.d("NO ERROR!");
-          else {
-            if ((readBuf[2] & 0x02) != 0)
-              Timber.d("ERROR: No printer connected!");
-            if ((readBuf[2] & 0x04) != 0) {
-              Timber.d("ERROR: No paper! ");
-              loading.dismiss();
-              printerBtn.setVisibility(View.VISIBLE);
-              showSnackbar();
+              if ((readBuf[2] & 0x04) != 0) {
+                Timber.w("ERROR: m! ");
+                loading.dismiss();
+                printerBtn.setVisibility(View.VISIBLE);
+                showSnackbar("No paper!");
+              }
+              if ((readBuf[2] & 0x08) != 0) {
+                Timber.w("ERROR: Voltage is too low!!");
+                loading.dismiss();
+                printerBtn.setVisibility(View.VISIBLE);
+                showSnackbar("Voltage is too low!");
+              }
+              if ((readBuf[2] & 0x40) != 0) {
+                Timber.w("ERROR: Printer Over Heat! ");
+                loading.dismiss();
+                printerBtn.setVisibility(View.VISIBLE);
+                showSnackbar("Printer Over Heat!");
+              }
             }
-            if ((readBuf[2] & 0x08) != 0) {
-              Toast.makeText(getActivity(), "aaa", Toast.LENGTH_SHORT).show();
-              Timber.d("ERROR: Voltage is too low!!");
-            }
-            if ((readBuf[2] & 0x40) != 0)
-              Timber.d("ERROR: Printer Over Heat! ");
-          }
-          Voltage = (float) ((readBuf[0] * 256 + readBuf[1]) / 10.0);
-          break;
+            break;
+        }
       }
-    }
-  };
+    };
+  }
 
   private void closeSocket(BluetoothSocket nOpenSocket) {
     try {
       nOpenSocket.close();
-      Timber.d("SocketClosed");
+      Timber.w("SocketClosed");
     } catch (IOException ex) {
-      Timber.d("CouldNotCloseSocket");
+      Timber.w("CouldNotCloseSocket");
     }
   }
 
   private void printQR(String email) {
     int emailLength = email.length();
-    byte[] feed = new byte[]{(byte) 27, (byte) 100, (byte) 3};
-    BT_Write(feed);
-    byte[] cmd = new byte[]{(byte) 29, (byte) 40, (byte) 107, (byte) 3, (byte) 0, (byte) 49, (byte) 67, (byte) 10, (byte) 29, (byte) 40, (byte) 107, (byte) 3, (byte) 0, (byte) 49, (byte) 69, (byte) 51, (byte) 29, (byte) 40, (byte) 107, (byte) 10, (byte) 0, (byte) 49, (byte) 80, (byte) 48, (byte) 29, (byte) 40, (byte) 107, (byte) 3, (byte) 0, (byte) 49, (byte) 81, (byte) 48,(byte) 27, (byte) 97, (byte) 49, (byte) 29, (byte) 40, (byte) 107, (byte) 4, (byte) 0, (byte) 49, (byte) 65, (byte) 49, (byte) 0};
+    printFeed(3);
+    byte[] cmd = new byte[]{(byte) 29, (byte) 40, (byte) 107, (byte) 3, (byte) 0, (byte) 49, (byte) 67, (byte) 10, (byte) 29, (byte) 40, (byte) 107, (byte) 3, (byte) 0, (byte) 49, (byte) 69, (byte) 51, (byte) 29, (byte) 40, (byte) 107, (byte) 10, (byte) 0, (byte) 49, (byte) 80, (byte) 48, (byte) 29, (byte) 40, (byte) 107, (byte) 3, (byte) 0, (byte) 49, (byte) 81, (byte) 48, (byte) 27, (byte) 97, (byte) 49, (byte) 29, (byte) 40, (byte) 107, (byte) 4, (byte) 0, (byte) 49, (byte) 65, (byte) 49, (byte) 0, (byte) 27, (byte) 100, (byte) 5};
     byte[] res = new byte[41 + emailLength];
     System.arraycopy(cmd, 0, res, 0, 24);
     res[19] = (byte) (emailLength + 3);
@@ -322,8 +341,8 @@ public class SuccessSignUpFragment extends Fragment {
     }
     System.arraycopy(cmd, 24, res, 24 + emailLength, 16);
     BT_Write(res);
-    byte[] feed2 = new byte[]{(byte) 27, (byte) 100, (byte) 10};
-    BT_Write(feed);
+    BluetoothPrintDriver.printString(" ");
+
   }
 
   @Override public void onDestroyView() {
@@ -335,14 +354,23 @@ public class SuccessSignUpFragment extends Fragment {
     connectToPrinter();
   }
 
-  private void showSnackbar() {
-    final Snackbar snackbar = Snackbar.make(appContainer.bind(getActivity()), getString(R.string.printer_error_snackbar), Snackbar.LENGTH_INDEFINITE);
+  private void showSnackbar(String error) {
+    String finalError = String.format(Locale.US, ". \n ( %s )", error);
+    final Snackbar snackbar = Snackbar.make(appContainer.bind(getActivity()), getString(R.string.printer_error_snackbar) + finalError, Snackbar.LENGTH_INDEFINITE);
     snackbar.setAction("Ok", new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         snackbar.dismiss();
       }
     });
+    View snackbarView = snackbar.getView();
+    TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+    textView.setMaxLines(2);
     snackbar.show();
+  }
+
+  private void printFeed(int feedSize) {
+    byte[] feed = new byte[]{(byte) 27, (byte) 100, (byte) feedSize};
+    BT_Write(feed);
   }
 }

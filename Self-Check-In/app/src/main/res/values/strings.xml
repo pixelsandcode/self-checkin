@@ -138,5 +138,7 @@
   <string name="exit_the_app">Exit the App</string>
   <string name="first_name">First Name</string>
   <string name="last_name">Last Name</string>
+  <string name="printer_on">Printer is ON</string>
+  <string name="printer_off">Printer is OFF</string>
   <string name="printer_error_snackbar">Please ask staff to help you</string>
 </resources>
