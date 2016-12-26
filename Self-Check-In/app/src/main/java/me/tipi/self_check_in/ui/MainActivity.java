@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     ButterKnife.bind(this);
     SelfCheckInApp.get(this).inject(this);
     typeface.setTypeface(this, "SF-UI-Text-Regular.otf");
-    printerPreference.set(true);
+    printerPreference.set(false);
     loading = new MaterialDialog.Builder(this)
         .content("Loading")
         .cancelable(false)

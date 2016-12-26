@@ -141,4 +141,5 @@
   <string name="printer_on">Printer is ON</string>
   <string name="printer_off">Printer is OFF</string>
   <string name="printer_error_snackbar">Please ask staff to help you</string>
+  <string name="go_to_reception">Go to reception for check-in</string>
 </resources>

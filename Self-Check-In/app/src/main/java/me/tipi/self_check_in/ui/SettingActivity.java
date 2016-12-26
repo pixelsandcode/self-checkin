@@ -120,7 +120,8 @@ public class SettingActivity extends AppCompatActivity {
     this.finishAffinity();
   }
 
-  @OnClick(R.id.print) public void onClick() {
+  @OnClick(R.id.print)
+  public void onClick() {
     printerPreference.set(!printerPreference.get());
     if (printerPreference.get()) {
       print.setText(getString(R.string.printer_on));

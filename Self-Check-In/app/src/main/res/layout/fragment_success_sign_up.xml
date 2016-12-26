@@ -1,4 +1,5 @@
 <RelativeLayout
+    android:id="@+id/success_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,8 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context="me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment"
-    tools:ignore="ContentDescription"
-    android:id="@+id/success_layout">
+    tools:ignore="ContentDescription">
 
   <ImageView
       android:id="@+id/success"
@@ -17,42 +17,53 @@
       android:scaleType="centerCrop"
       android:src="@drawable/success_image"/>
 
+  <TextView
+      android:layout_width="350dp"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/success"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/second_key_line"
+      android:gravity="center"
+      android:text="@string/go_to_reception"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_extra_large"/>
+
   <Button
       android:id="@+id/continue_btn"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
-      android:background="@drawable/next_button_bg"
-      android:padding="@dimen/first_key_line"
+      android:layout_marginBottom="@dimen/second_key_line"
       android:layout_marginLeft="@dimen/proceed_button_margin"
       android:layout_marginRight="@dimen/proceed_button_margin"
-      android:layout_marginBottom="@dimen/second_key_line"
+      android:background="@drawable/next_button_bg"
+      android:padding="@dimen/first_key_line"
       android:text="@string/next_check_in"
       android:textColor="@color/colorAccent"
       android:textSize="@dimen/font_normal"
       android:textStyle="bold"/>
 
   <ImageButton
+      android:id="@+id/printer_btn"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_alignParentTop="true"
-      android:layout_alignParentRight="true"
       android:layout_alignParentEnd="true"
-      android:id="@+id/printer_btn"
-      android:background="@drawable/ic_print"
+      android:layout_alignParentRight="true"
+      android:layout_alignParentTop="true"
       android:layout_margin="16dp"
+      android:background="@drawable/ic_print"
       android:visibility="gone"/>
 
   <TextView
       android:id="@+id/title"
-      android:text="@string/thanks_for_checking_in_on_tipi"
       android:layout_width="350dp"
       android:layout_height="wrap_content"
-      android:gravity="center"
-      android:textColor="@color/main_text"
-      android:textSize="@dimen/font_extra_large"
       android:layout_below="@+id/printer_btn"
       android:layout_centerHorizontal="true"
+      android:gravity="center"
+      android:text="@string/thanks_for_checking_in_on_tipi"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_extra_large"
       />
 
 </RelativeLayout>
