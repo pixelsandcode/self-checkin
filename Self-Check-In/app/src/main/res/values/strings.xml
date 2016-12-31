@@ -1,50 +1,26 @@
 <resources>
   <string name="app_name">MAD Kiosk</string>
-  <string name="app_name_short">MAD Kiosk</string>
-  <string name="app_description">Mobile Check-in for Travellers</string>
 
   <string name="login_title">Log-in to Your Tipi account …</string>
   <string name="email">Email</string>
   <string name="password">password</string>
-  <string name="login">Login</string>
   <string name="error_invalid_email">This email address is invalid</string>
   <string name="error_incorrect_password">This password is too short!</string>
   <string name="error_field_required">This field is required</string>
-  <string name="error_conflict_email">This booking email is used already!</string>
-  <string name="reset">Reset</string>
-  <string name="smile">Smile!</string>
 
-  <string name="full_name">Full Name</string>
-  <string name="booking_email">Booking Email</string>
-  <string name="home_town">Your City / Country</string>
   <string name="birthday">Birthday</string>
   <string name="passport_number">Passport Number</string>
-  <string name="continue_text">Continue</string>
   <string name="reference_code">Booking Reference (optional)</string>
   <string name="birthday_error">You haven\'t born yet?!!</string>
   <string name="birthday_error_old">You are too old to travel, Sorry!!!</string>
-  <string name="choose_another_photo_text">Picture wasn\'t taken!</string>
   <string name="check_in">Check-in</string>
-  <string name="check_out">Check-out</string>
-  <string name="submit">Submit</string>
   <string name="error_less_than_today">Check-in date must be after today</string>
   <string name="error_check_out_before_check_in">Check-out must be after check-in</string>
   <string name="back">Back</string>
-  <string name="start_over">Start Over</string>
   <string name="success">Success!</string>
-  <string name="success_description">You just checked-in like da boss man…</string>
-  <string name="already_user">Already a Tipi Traveller?</string>
-  <string name="log_in">log-in</string>
-  <string name="scan_passport">Scan Passport</string>
   <string name="number_of_nights">Number of Nights</string>
-  <string name="title_activity_login">LoginActivity</string>
-  <string name="find">Find</string>
-  <string name="find_account_title">Find Your Account</string>
-  <string name="find_account_hint">Enter Tipi email to find\n your account</string>
   <string name="match_found_hint">Found a match</string>
   <string name="no_match_hint">No Matches Found</string>
-  <string name="or">OR</string>
-  <string name="sign_up">Sign up</string>
   <string name="dialog_me_text">This is Me</string>
   <string name="dialog_not_me_text">Not Me</string>
 
@@ -52,19 +28,10 @@
   <!-- Tracker Screen Names -->
   <string name="hostel_login"> Hostel Login</string>
   <string name="guest_landing">Guest Landing</string>
-  <string name="overal_time">Success Overall Timing</string>
-  <string name="forget_password_text">Forget your Password?</string>
-  <string name="reset_button_text">Reset Here</string>
+  <string name="overall_time">Success Overall Timing</string>
 
-  <string name="font_light">SF-UI-Text-Light.otf</string>
   <string name="font_medium">SF-UI-Text-Medium.otf</string>
   <string name="font_regular">SF-UI-Text-Regular.otf</string>
-
-  <!-- TODO: Remove or change this placeholder text -->
-  <string name="hello_blank_fragment">Hello blank fragment</string>
-  <string name="tipi_description_text">Powered by Tipi - Mobile check-in for Travellers</string>
-  <string name="tipi_check_in">Tipi Check-in</string>
-  <string name="fill_details_text">Fill in your details to check-in</string>
   <string name="checked_in_text">Have you checked-in on Tipi before?</string>
   <string name="yes">Yes</string>
   <string name="no">No</string>
@@ -73,20 +40,8 @@
   <string name="download">Download Update</string>
   <string name="send_log">Send log</string>
   <string name="logout">Logout</string>
-  <string name="check_in_details">Check-in Details</string>
   <string name="next">Next</string>
   <string name="email_hint">TIPI EMAIL</string>
-  <string name="create_account">Create Account</string>
-  <string name="no_account_text">NO ACCOUNT?</string>
-  <string name="try_again_text">TRY AGAIN?</string>
-  <string name="take_selfie_hint">Tap the camera icon to\n take a selfie</string>
-  <string name="avatar_fail_titel">Oops… Try Again</string>
-  <string name="avatar_success_title">Nice!</string>
-  <string name="avatar_success_hint">Change your pic anytime\n in Tipi mobile app</string>
-  <string name="take_scan_hint">Tap the camera icon to\n scan passport</string>
-  <string name="hand_back">Please hand back to the staff.</string>
-  <string name="meet_text">Meet other travellers at %s.\n Download Tipi Today!</string>
-  <string name="scan_success_title">Review Passport</string>
   <string name="error_check_out_more_than_one_year">Check-out date should not be more than a year</string>
   <string name="error_invalid_full_name">This name is invalid</string>
   <string name="agree">agree</string>
@@ -103,9 +58,6 @@
   <string name="your_details">Your Details</string>
   <string name="booking_info">Booking Info</string>
   <string name="take_a_selfie">Take a Selfie!</string>
-  <string name="camera">Camera</string>
-  <string name="scan_your_passport_or_drivers_license">Use Back Camera to Take Photo of your Passport or Driver\'s License</string>
-  <string name="scan">Scan</string>
   <string name="retry">Retry</string>
   <string name="thanks_for_checking_in_on_tipi">Thanks for checking-in on Tipi</string>
   <string name="next_check_in">Next Check-in</string>
@@ -114,7 +66,6 @@
   <string name="gender">Gender</string>
   <string name="male">Male</string>
   <string name="female">Female</string>
-  <string name="error_invalid_name_count">Enter your first and last name</string>
   <string name="enter_your_email">Enter your email …</string>
   <string name="verify_your_id">Verify your ID</string>
   <string name="do_you_have_your_passport">Do you have your Passport</string>

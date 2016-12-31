@@ -414,7 +414,7 @@ public class SignUpActivity extends AppCompatActivity {
             long elapsed = Math.abs(guest.time - System.currentTimeMillis());
             long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
             tracker.send(new HitBuilders.EventBuilder()
-                .setCategory(getString(R.string.overal_time))
+                .setCategory(getString(R.string.overall_time))
                 .setAction("Check-In")
                 .setLabel("Sign Up")
                 .setValue(diffSeconds).build());
@@ -485,7 +485,7 @@ public class SignUpActivity extends AppCompatActivity {
             long elapsed = Math.abs(guest.time - System.currentTimeMillis());
             long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
             tracker.send(new HitBuilders.EventBuilder()
-                .setCategory(getString(R.string.overal_time))
+                .setCategory(getString(R.string.overall_time))
                 .setAction("Check-In")
                 .setLabel("Claim")
                 .setValue(diffSeconds).build());
