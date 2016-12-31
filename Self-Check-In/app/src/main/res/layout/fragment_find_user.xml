@@ -90,7 +90,7 @@
       android:layout_marginTop="@dimen/first_key_line"
       android:layout_marginLeft="120dp"
       android:layout_marginRight="120dp"
-      android:visibility="gone">
+      android:visibility="visible">
 
     <ImageView
         android:id="@+id/avatar"
@@ -107,6 +107,8 @@
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/avatar"
         android:layout_toRightOf="@+id/avatar"
+        android:layout_toLeftOf="@+id/arrow"
+        android:layout_toStartOf="@+id/avatar"
         android:gravity="center"
         android:padding="@dimen/normal_padding"
         android:textColor="@color/black"
@@ -115,6 +117,7 @@
         />
 
     <ImageView
+        android:id="@+id/arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

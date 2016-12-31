@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:fitsSystemWindows="true"
     tools:context="me.tipi.self_check_in.ui.SettingActivity"
-    tools:ignore="RtlHardcoded">
+    tools:ignore="RtlHardcoded|ContentDescription">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -14,7 +14,8 @@
         android:clickable="true"
         android:onClick="goToCheckIn"
         android:padding="@dimen/first_key_line"
-        android:src="@drawable/ic_arrow_back_pink_24dp"/>
+        android:src="@drawable/ic_arrow_back_pink_24dp"
+        tools:ignore="ContentDescription"/>
 
     <TextView
         android:id="@+id/title"
@@ -39,15 +40,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/first_key_line"
+            android:layout_marginStart="@dimen/first_key_line"
             android:padding="@dimen/normal_padding"
             android:src="@drawable/ic_dashboard"
-            />
+            tools:ignore="ContentDescription"/>
 
         <TextView
             android:id="@+id/version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/version_icon"
+            android:layout_toEndOf="@id/version_icon"
             android:padding="@dimen/normal_padding"
             android:textColor="@color/main_text"
             android:textSize="@dimen/font_large"
@@ -67,6 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/version"
             android:layout_marginLeft="@dimen/first_key_line"
+            android:layout_marginStart="@dimen/first_key_line"
             android:layout_marginTop="@dimen/first_key_line"
             android:padding="@dimen/normal_padding"
             android:src="@drawable/ic_file_download"
@@ -79,6 +83,7 @@
             android:layout_below="@+id/version"
             android:layout_marginTop="@dimen/first_key_line"
             android:layout_toRightOf="@+id/download_icon"
+            android:layout_toEndOf="@+id/download_icon"
             android:clickable="true"
             android:onClick="goToDownload"
             android:padding="@dimen/normal_padding"
@@ -100,6 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/download"
             android:layout_marginLeft="@dimen/first_key_line"
+            android:layout_marginStart="@dimen/first_key_line"
             android:layout_marginTop="@dimen/first_key_line"
             android:padding="@dimen/normal_padding"
             android:src="@drawable/ic_file_download"
@@ -112,6 +118,7 @@
             android:layout_below="@+id/download"
             android:layout_marginTop="@dimen/first_key_line"
             android:layout_toRightOf="@+id/download_icon"
+            android:layout_toEndOf="@+id/download_icon"
             android:clickable="true"
             android:onClick="goToEmail"
             android:padding="@dimen/normal_padding"
@@ -134,10 +141,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/send_log"
             android:layout_marginLeft="@dimen/first_key_line"
+            android:layout_marginStart="@dimen/first_key_line"
             android:layout_marginTop="@dimen/first_key_line"
             android:padding="@dimen/normal_padding"
             android:src="@drawable/ic_exit_to_app"
-            />
+            tools:ignore="ContentDescription"/>
 
         <TextView
             android:id="@+id/logout"
@@ -146,6 +154,7 @@
             android:layout_below="@+id/send_log"
             android:layout_marginTop="@dimen/first_key_line"
             android:layout_toRightOf="@+id/logout_icon"
+            android:layout_toEndOf="@+id/logout_icon"
             android:clickable="true"
             android:onClick="logout"
             android:padding="@dimen/normal_padding"
@@ -167,10 +176,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/logout"
             android:layout_marginLeft="@dimen/first_key_line"
+            android:layout_marginStart="@dimen/first_key_line"
             android:layout_marginTop="@dimen/first_key_line"
             android:padding="@dimen/normal_padding"
             android:src="@drawable/ic_exit_to_app"
-            />
+            tools:ignore="ContentDescription"/>
 
         <TextView
             android:id="@+id/exit"
@@ -179,6 +189,7 @@
             android:layout_below="@+id/logout"
             android:layout_marginTop="@dimen/first_key_line"
             android:layout_toRightOf="@+id/logout_icon"
+            android:layout_toEndOf="@+id/logout_icon"
             android:clickable="true"
             android:onClick="exitApp"
             android:padding="@dimen/normal_padding"
@@ -200,10 +211,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/exit"
             android:layout_marginLeft="@dimen/first_key_line"
+            android:layout_marginStart="@dimen/first_key_line"
             android:layout_marginTop="@dimen/first_key_line"
             android:padding="@dimen/normal_padding"
             android:src="@drawable/ic_print_setting"
-            />
+            tools:ignore="ContentDescription"/>
 
         <TextView
             android:id="@+id/print"
@@ -212,6 +224,7 @@
             android:layout_below="@+id/exit"
             android:layout_marginTop="@dimen/first_key_line"
             android:layout_toRightOf="@+id/logout_icon"
+            android:layout_toEndOf="@+id/logout_icon"
             android:clickable="true"
             android:padding="@dimen/normal_padding"
             android:textColor="@color/main_text"
