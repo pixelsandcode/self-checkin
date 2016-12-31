@@ -250,7 +250,7 @@ public class SuccessSignUpFragment extends Fragment {
       public void handleMessage(Message msg) {
         switch (msg.what) {
           case 1:
-            Timber.w("MESSAGE_STATE_CHANGE: " + msg.arg1);
+            Timber.w("MESSAGE_STATE_CHANGE: %s",  msg.arg1);
             switch (msg.arg1) {
               case BluetoothPrintDriver.STATE_CONNECTED:
                 Timber.w("Print connected");

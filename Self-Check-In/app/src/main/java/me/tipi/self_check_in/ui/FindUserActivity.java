@@ -76,7 +76,6 @@ public class FindUserActivity extends AppCompatActivity {
   @Bind(R.id.pager) ChangeSwipeViewPager viewPager;
   @Bind(R.id.backBtn) ImageView backButtonView;
 
-  private LoginAdapter adapter;
   private MaterialDialog loading;
   private int loginCount = 0;
 
@@ -97,7 +96,7 @@ public class FindUserActivity extends AppCompatActivity {
         .progress(true, 0)
         .build();
 
-    adapter = new LoginAdapter(getSupportFragmentManager(), this);
+    LoginAdapter adapter = new LoginAdapter(getSupportFragmentManager(), this);
     viewPager.setAdapter(adapter);
     viewPager.setSwipingEnabled(false);
 

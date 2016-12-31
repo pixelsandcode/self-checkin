@@ -326,8 +326,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
     } catch (Exception e) {
       Log.d(TAG, "Can't open camera with id " + cameraID);
       String cameraError = Log.getStackTraceString(e);
-      Timber.w("camera error: " + cameraError);
-      ;
+      Timber.w("camera error: %s", cameraError);
     }
   }
 
