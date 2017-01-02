@@ -13,6 +13,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.Snackbar;
@@ -51,6 +52,8 @@ import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
+import me.tipi.self_check_in.ui.misc.CircleCountDownView;
+import me.tipi.self_check_in.util.Strings;
 import timber.log.Timber;
 
 import static com.RT_Printer.BluetoothPrinter.BLUETOOTH.BluetoothPrintDriver.BT_Write;
@@ -71,7 +74,12 @@ public class SuccessSignUpFragment extends Fragment {
   @Inject
   @Named(ApiConstants.HOSTEL_NAME)
   Preference<String> hostelName;
+
   @Bind(R.id.printer_btn) ImageButton printerBtn;
+  @Bind(R.id.title) TextView titleView;
+  @Bind(R.id.code) TextView codeView;
+  @Bind(R.id.circle_count_down_view) CircleCountDownView circleCountDownView;
+
   private BluetoothAdapter mBluetoothAdapter;
   private BluetoothDevice mBluetoothDevice;
   private MaterialDialog loading;
@@ -80,6 +88,8 @@ public class SuccessSignUpFragment extends Fragment {
   private BluetoothPrintDriver mChatService = null;
   private boolean isVisible = false;
   private boolean isConnecting = false;
+  CountDownTimer countDownTimer;
+  int progress;
 
   private Handler handler = new Handler();
   private Runnable runnable = new Runnable() {
@@ -118,10 +128,14 @@ public class SuccessSignUpFragment extends Fragment {
         .cancelable(false)
         .progress(true, 0)
         .build();
+
     applicationUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     if (printerPreference.get()) {
       connectToPrinter();
     }
+
+    titleView.setText(String.format(Locale.US, "Thanks %s", Strings.getFirstName(guest.name).trim()));
+    codeView.setText(guest.check_in_code);
 
     return rootView;
   }
@@ -150,10 +164,25 @@ public class SuccessSignUpFragment extends Fragment {
     if (getActivity() != null) {
       bus.post(new BackShouldShowEvent(false));
       bus.post(new SettingShouldShowEvent(false));
-
-      handler.postDelayed(runnable, ApiConstants.START_OVER_TIME);
-
     }
+
+    if (getActivity() != null && getActivity() instanceof SignUpActivity) {
+      progress = 1;
+      countDownTimer = new CountDownTimer(15000, 1000) {
+        @Override public void onTick(long millisUntilFinished) {
+          circleCountDownView.setProgress(progress, 15);
+          progress = progress + 1;
+        }
+
+        @Override public void onFinish() {
+          circleCountDownView.setProgress(progress, 15);
+          startOver();
+        }
+      };
+
+      countDownTimer.start();
+    }
+
     tracker.setScreenName("Success");
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
@@ -168,6 +197,26 @@ public class SuccessSignUpFragment extends Fragment {
   public void onStop() {
     super.onStop();
     handler.removeCallbacks(runnable);
+  }
+
+  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    if (getActivity() != null && isVisibleToUser) {
+      progress = 1;
+      countDownTimer = new CountDownTimer(15000, 1000) {
+        @Override public void onTick(long millisUntilFinished) {
+          circleCountDownView.setProgress(progress, 15);
+          progress = progress + 1;
+        }
+
+        @Override public void onFinish() {
+          circleCountDownView.setProgress(progress, 15);
+          startOver();
+        }
+      };
+
+      countDownTimer.start();
+    }
   }
 
   @OnClick(R.id.continue_btn)

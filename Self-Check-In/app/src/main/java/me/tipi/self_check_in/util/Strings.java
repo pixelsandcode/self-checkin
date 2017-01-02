@@ -45,6 +45,11 @@ public final class Strings {
     return parts[0];
   }
 
+  public static String getFirstName(String value) {
+    String[] parts = value.split(" ");
+    return parts[0];
+  }
+
   /**
    * Gets post string split.
    *

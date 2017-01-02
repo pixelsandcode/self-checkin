@@ -410,6 +410,8 @@ public class SignUpActivity extends AppCompatActivity {
             loading.dismiss();
             Timber.w("--------PROCESS FINISHED------- with guest_key: %s", apiResponse.data.guest_key);
             guest.guest_key = apiResponse.data.guest_key;
+            guest.name = apiResponse.data.name;
+            guest.check_in_code = apiResponse.data.check_in_code;
             // Send overall success time
             long elapsed = Math.abs(guest.time - System.currentTimeMillis());
             long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);

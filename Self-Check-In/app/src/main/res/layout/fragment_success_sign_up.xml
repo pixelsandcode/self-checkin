@@ -6,26 +6,57 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context="me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment"
-    tools:ignore="ContentDescription">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-  <ImageView
-      android:id="@+id/success"
+  <TextView
+      android:id="@+id/title"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/printer_btn"
+      android:layout_centerHorizontal="true"
+      android:layout_marginLeft="@dimen/second_key_line"
+      android:layout_marginRight="@dimen/second_key_line"
+      android:gravity="center"
+      tools:text="Thanks Jack"
+      android:textColor="@color/main_text"
+      android:fontFamily="@string/roboto_regular"
+      android:textSize="@dimen/font_extra_large"
+      />
+  
+  <TextView
+      android:layout_width="460dp"
+      android:layout_height="wrap_content"
+      android:text="@string/go_to_reception_code"
+      android:layout_centerHorizontal="true"
+      android:textSize="40sp"
+      android:textColor="@color/main_text"
+      android:layout_above="@+id/code"
+      android:layout_marginBottom="50dp"
+      android:gravity="center"
+      android:fontFamily="@string/roboto_medium"/>
+
+  <TextView
+      android:id="@+id/code"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerInParent="true"
-      android:scaleType="centerCrop"
-      android:src="@drawable/success_image"/>
-
-  <TextView
-      android:layout_width="350dp"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/success"
-      android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/second_key_line"
-      android:gravity="center"
-      android:text="@string/go_to_reception"
       android:textColor="@color/main_text"
-      android:textSize="@dimen/font_extra_large"/>
+      android:textSize="140sp"
+      android:textStyle="bold"
+      android:fontFamily="@string/roboto_regular"
+      tools:text="658"
+      />
+
+  <me.tipi.self_check_in.ui.misc.CircleCountDownView
+      android:id="@+id/circle_count_down_view"
+      android:layout_width="80dp"
+      android:layout_height="80dp"
+      android:layout_centerHorizontal="true"
+      android:layout_above="@+id/continue_btn"
+      android:layout_marginBottom="50dp"
+      android:layout_gravity="center_horizontal"
+      android:visibility="visible"/>
+
 
   <Button
       android:id="@+id/continue_btn"
@@ -52,17 +83,5 @@
       android:layout_margin="16dp"
       android:background="@drawable/ic_print"
       android:visibility="gone"/>
-
-  <TextView
-      android:id="@+id/title"
-      android:layout_width="350dp"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/printer_btn"
-      android:layout_centerHorizontal="true"
-      android:gravity="center"
-      android:text="@string/thanks_for_checking_in_on_tipi"
-      android:textColor="@color/main_text"
-      android:textSize="@dimen/font_extra_large"
-      />
 
 </RelativeLayout>
