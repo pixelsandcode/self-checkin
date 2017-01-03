@@ -215,7 +215,8 @@
             android:layout_marginTop="@dimen/first_key_line"
             android:padding="@dimen/normal_padding"
             android:src="@drawable/ic_print_setting"
-            tools:ignore="ContentDescription"/>
+            tools:ignore="ContentDescription"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/print"
@@ -228,7 +229,8 @@
             android:clickable="true"
             android:padding="@dimen/normal_padding"
             android:textColor="@color/main_text"
-            android:textSize="@dimen/font_large"/>
+            android:textSize="@dimen/font_large"
+            android:visibility="gone"/>
 
         <View
             android:layout_width="match_parent"
@@ -236,7 +238,8 @@
             android:layout_below="@+id/print"
             android:layout_marginLeft="@dimen/normal_margin"
             android:layout_marginRight="@dimen/normal_margin"
-            android:background="#979797"/>
+            android:background="#979797"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 
