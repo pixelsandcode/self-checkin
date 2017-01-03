@@ -134,7 +134,10 @@ public class SuccessSignUpFragment extends Fragment {
       connectToPrinter();
     }
 
-    titleView.setText(String.format(Locale.US, "Thanks %s", Strings.getFirstName(guest.name).trim()));
+    String firstNam = Strings.getFirstName(guest.name);
+    firstNam = firstNam.toLowerCase(Locale.US);
+    firstNam = Character.toString(firstNam.charAt(0)).toUpperCase() + firstNam.substring(1);
+    titleView.setText(String.format(Locale.US, "Thanks %s", firstNam));
     codeView.setText(guest.check_in_code);
 
     return rootView;
@@ -221,7 +224,8 @@ public class SuccessSignUpFragment extends Fragment {
 
   @OnClick(R.id.continue_btn)
   public void finishTapped() {
-    startOver();
+    countDownTimer.cancel();
+    countDownTimer.onFinish();
   }
 
   private void startOver() {
@@ -299,7 +303,7 @@ public class SuccessSignUpFragment extends Fragment {
       public void handleMessage(Message msg) {
         switch (msg.what) {
           case 1:
-            Timber.w("MESSAGE_STATE_CHANGE: %s",  msg.arg1);
+            Timber.w("MESSAGE_STATE_CHANGE: %s", msg.arg1);
             switch (msg.arg1) {
               case BluetoothPrintDriver.STATE_CONNECTED:
                 Timber.w("Print connected");
