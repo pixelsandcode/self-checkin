@@ -199,6 +199,7 @@ public class SuccessSignUpFragment extends Fragment {
   @Override
   public void onStop() {
     super.onStop();
+    countDownTimer.cancel();
     handler.removeCallbacks(runnable);
   }
 
