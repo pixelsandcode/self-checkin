@@ -12,7 +12,10 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.PowerManager;
+import android.util.DisplayMetrics;
 
 import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -20,11 +23,17 @@ import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
+import java.util.Locale;
+
+import javax.inject.Inject;
+
 import dagger.ObjectGraph;
+import me.tipi.self_check_in.data.LanguagePrefrence;
 import me.tipi.self_check_in.util.FileLogger;
 import timber.log.Timber;
 
 public final class SelfCheckInApp extends Application {
+  @Inject LanguagePrefrence languagePrefrence;
   private ObjectGraph objectGraph;
   private Tracker analyticTracker;
   private PowerManager.WakeLock wakeLock;
@@ -47,6 +56,7 @@ public final class SelfCheckInApp extends Application {
 
     TypefaceHelper.initialize(this);
     startKioskService();
+    setLanguage();
     //registerKioskModeScreenOffReceiver();
   }
 
@@ -102,11 +112,20 @@ public final class SelfCheckInApp extends Application {
   }
 
   public PowerManager.WakeLock getWakeLock() {
-    if(wakeLock == null) {
+    if (wakeLock == null) {
       // lazy loading: first call, create wakeLock via PowerManager.
       PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
       wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "wakeup");
     }
     return wakeLock;
+  }
+
+  public void setLanguage() {
+    Locale locale = new Locale(languagePrefrence.get());
+    Resources res = getResources();
+    DisplayMetrics displayMetrics = res.getDisplayMetrics();
+    Configuration configuration = res.getConfiguration();
+    configuration.locale = locale;
+    res.updateConfiguration(configuration, displayMetrics);
   }
 }

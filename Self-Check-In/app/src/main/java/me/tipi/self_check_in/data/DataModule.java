@@ -39,6 +39,7 @@ public final class DataModule {
   static final int DISK_CACHE_SIZE = (int) MEGABYTES.toBytes(50);
   private static final String PREF_USER_AVATAR = "UserAvatar";
   private static final String PREF_PRINTER = "printer";
+  private static final String PREF_LANGUAGE = "language";
   private static final String PREF_PASSPORT_IMAGE = "passportImage";
 
   /**
@@ -85,6 +86,11 @@ public final class DataModule {
   @Provides @Singleton
   PrinterPreference providePrinter(SharedPreferences preferences) {
     return new PrinterPreference(preferences, PREF_PRINTER);
+  }
+
+  @Provides @Singleton
+  LanguagePrefrence provideLanguagePrefrence(SharedPreferences preferences) {
+    return new LanguagePrefrence(preferences, PREF_LANGUAGE, "en");
   }
 
   /**

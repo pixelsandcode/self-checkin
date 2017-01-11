@@ -11,6 +11,8 @@ package me.tipi.self_check_in.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,6 +20,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -52,6 +55,7 @@ import butterknife.OnClick;
 import me.tipi.self_check_in.KioskService;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.LanguagePrefrence;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.Booking;
@@ -70,6 +74,7 @@ import me.tipi.self_check_in.ui.fragments.EmailFragment;
 import me.tipi.self_check_in.ui.fragments.HostelTermsFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LandingFragment;
+import me.tipi.self_check_in.ui.fragments.LanguageFragmnet;
 import me.tipi.self_check_in.ui.fragments.MainFragment;
 import me.tipi.self_check_in.ui.fragments.OCRFragment;
 import me.tipi.self_check_in.ui.fragments.PassportFragment;
@@ -94,6 +99,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Named(ApiConstants.PASSWORD)
   Preference<String> password;
   @Inject Tracker tracker;
+  @Inject LanguagePrefrence languagePrefrence;
 
   @Bind(R.id.settingBtn) ImageView settingButton;
   @Bind(R.id.resetBtn) ImageView resetButton;
@@ -115,7 +121,7 @@ public class SignUpActivity extends AppCompatActivity {
         .cancelable(false)
         .progress(true, 0)
         .build();
-
+    setLanguage("en");
     guest.user_key = null;
     guest.firstName = null;
     guest.lastName = null;
@@ -173,7 +179,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     if (ocrFragment != null && ocrFragment.isVisible()) {
-      if(guest.passportPath != null && !TextUtils.isEmpty(guest.passportPath)){
+      if (guest.passportPath != null && !TextUtils.isEmpty(guest.passportPath)) {
         guest.passportPath = null;
       }
     }
@@ -183,6 +189,16 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     super.onBackPressed();
+  }
+
+  public void setLanguage(String language) {
+    languagePrefrence.set(language);
+    Locale locale = new Locale(languagePrefrence.get());
+    Resources res = getResources();
+    DisplayMetrics displayMetrics = res.getDisplayMetrics();
+    Configuration configuration = res.getConfiguration();
+    configuration.locale = locale;
+    res.updateConfiguration(configuration, displayMetrics);
   }
 
   @Override public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -223,6 +239,12 @@ public class SignUpActivity extends AppCompatActivity {
     MainFragment fragment = MainFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
         .add(R.id.container_main, fragment).commit();
+  }
+
+  public void showLanguageFragment() {
+    LanguageFragmnet fragment = LanguageFragmnet.newInstance(this);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container_main, fragment).addToBackStack(LanguageFragmnet.TAG).commit();
   }
 
   public void showLandingFragment() {
@@ -550,17 +572,17 @@ public class SignUpActivity extends AppCompatActivity {
    * @param view the view
    */
   public void goToLanding(View view) {
-    loading.show();
     Timber.w("----------PROCESS STARTED----------");
+    loading.show();
     firstLogin();
   }
 
-  private void firstLogin() {
+  public void firstLogin() {
     authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
       @Override public void success(LoginResponse response, Response response2) {
         loading.dismiss();
         Timber.d("LoggedIn");
-        showLandingFragment();
+        showLanguageFragment();
       }
 
       @Override public void failure(RetrofitError error) {
