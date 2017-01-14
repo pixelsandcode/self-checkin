@@ -23,6 +23,7 @@
     <string name="match_found_hint">Found a match</string>
     <string name="no_match_hint">No Matches Found</string>
     <string name="dialog_me_text">This is Me</string>
+    <string name="dialog_not_me_text">Not Me</string>
     <string name="english">ENGLISH</string>
     <string name="french">FRANÇAIS</string>
     <string name="german">DEUTSCHE</string>

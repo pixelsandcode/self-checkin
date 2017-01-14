@@ -16,9 +16,9 @@
     <string name="check_in">Registrese</string>
     <string name="error_less_than_today">La fecha de entrada debe ser posterior a hoy.</string>
     <string name="error_check_out_before_check_in">La salida debe ser después del ingreso</string>
-    <string name="back">Atras.</string>
+    <string name="back">Atras</string>
     <string name="success">Success!</string>
-    <string name="number_of_nights">Número de noches.</string>
+    <string name="number_of_nights">Número de noches</string>
     <string name="match_found_hint">Found a match</string>
     <string name="no_match_hint">No Matches Found</string>
     <string name="dialog_me_text">This is Me</string>
@@ -45,7 +45,7 @@
     <string name="error_check_out_more_than_one_year">La fecha de salida no debe ser superior a un año</string>
     <string name="error_invalid_full_name">Este nombre es invalido</string>
     <string name="agree">Acepto</string>
-    <string name="terms"><![CDATA[Terminos y condiciones.]]></string>
+    <string name="terms"><![CDATA[Terminos y condiciones]]></string>
     <string name="about_you">Tell us about you</string>
     <string name="next_travel">Where are you travelling next?</string>
     <string name="previous_travel">Which country you have just come from?</string>
@@ -69,7 +69,7 @@
     <string name="enter_your_email">Enter your email …</string>
     <string name="verify_your_id">Verify your ID</string>
     <string name="do_you_have_your_passport">Do you have your Passport</string>
-    <string name="take_a_picture">Si no funciona? tomese una foto.</string>
+    <string name="take_a_picture">Si no funciona? tomese una foto...</string>
     <string name="use_back_camera_to_scan_passport">Use back camera with passport inside white guide to scan</string>
     <string name="use_back_camera_to_take_a_picture_of_your_license">Use la camara trasera  para hacer una foto de su licencia.</string>
     <string name="license_no">Número de identificacion</string>
@@ -93,5 +93,5 @@
     <string name="printer_off">Printer is OFF</string>
     <string name="printer_error_snackbar">Please ask staff to help you</string>
     <string name="go_to_reception">Acerquese a la recepcion para registrar su ingreso</string>
-    <string name="go_to_reception_code"><![CDATA[Go to Reception & quote this code:]]></string>
+    <string name="go_to_reception_code"><![CDATA[Acerquese a la recepcion con este numero:]]></string>
 </resources>

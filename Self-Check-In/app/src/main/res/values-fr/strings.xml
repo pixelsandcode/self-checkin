@@ -1,24 +1,24 @@
 <resources>
     <string name="app_name">MAD Kiosk</string>
 
-    <string name="login_title">Log-in to Your Tipi account …</string>
+    <string name="login_title">Connectez-vous à votre compte TIPI</string>
     <string name="email">Email</string>
     <string name="password">password</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_incorrect_password">This password is too short!</string>
-    <string name="error_field_required">d\'accord</string>
+    <string name="error_field_required">Ce champ est obligatoire</string>
 
     <string name="birthday">date de naissance</string>
     <string name="passport_number">numéro de passeport</string>
     <string name="reference_code">Booking Reference (optional)</string>
-    <string name="birthday_error">etes vous déjà né?</string>
-    <string name="birthday_error_old">trop vieux mec/Vous êtes trop vieux pour voyager?  pardon!!</string>
+    <string name="birthday_error">Vous n\'êtes pas encore né</string>
+    <string name="birthday_error_old">Vous êtes trop âgé pour voyagér, desolé!!</string>
     <string name="check_in">enregistrement</string>
-    <string name="error_less_than_today">date d\'enregistrement doit être avant hier.</string>
-    <string name="error_check_out_before_check_in">la date de retour doit être avant la date prévue à cet effet.</string>
-    <string name="back">retour</string>
+    <string name="error_less_than_today">La date d\'enregistrement doit être après aujourd\'hui.</string>
+    <string name="error_check_out_before_check_in">La date de retour doit être après la date d\'enregistrement.</string>
+    <string name="back">Retour</string>
     <string name="success">Success!</string>
-    <string name="number_of_nights">nombre de nuits torrides</string>
+    <string name="number_of_nights">Nombre de nuits souhaitées</string>
     <string name="match_found_hint">Found a match</string>
     <string name="no_match_hint">No Matches Found</string>
     <string name="dialog_me_text">This is Me</string>
@@ -32,7 +32,7 @@
 
     <string name="font_medium">SF-UI-Text-Medium.otf</string>
     <string name="font_regular">SF-UI-Text-Regular.otf</string>
-    <string name="checked_in_text">Vous-êtes vous déjà enregistré sur Tipi?</string>
+    <string name="checked_in_text">Vous-êtes vous déjà enregistré sur Tipi auparavant ?</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="title_activity_setting">Settings</string>
@@ -40,13 +40,13 @@
     <string name="download">Download Update</string>
     <string name="send_log">Send log</string>
     <string name="logout">Logout</string>
-    <string name="next">suivant</string>
-    <string name="email_hint">TIPI EMAIL</string>
-    <string name="error_check_out_more_than_one_year">la date de retour dois être un an après.</string>
-    <string name="error_invalid_full_name">Ce nom n\'est pas invalide</string>
-    <string name="agree">approuver</string>
-    <string name="terms"><![CDATA[thermes et conditionnement]]></string>
-    <string name="about_you">Parlez-nous de vous?</string>
+    <string name="next">Suivant</string>
+    <string name="email_hint">Email Tipi</string>
+    <string name="error_check_out_more_than_one_year">La date de retour dois être moins un an après la date d\'aujourd\'hui</string>
+    <string name="error_invalid_full_name">Ce nom n\'est pas valide</string>
+    <string name="agree">Accepter</string>
+    <string name="terms"><![CDATA[Termes et conditions]]></string>
+    <string name="about_you">Parlez-nous de vous</string>
     <string name="next_travel">Where are you travelling next?</string>
     <string name="previous_travel">Which country you have just come from?</string>
     <string name="how_long">How long you are staying in the country</string>
@@ -57,22 +57,22 @@
     <string name="setting">Settings</string>
     <string name="your_details">Vos informations</string>
     <string name="booking_info">Informations de réservation</string>
-    <string name="take_a_selfie">prenez un selfie</string>
-    <string name="retry">essayez encore</string>
+    <string name="take_a_selfie">Prenez une photo avec la caméra de devant</string>
+    <string name="retry">Essayez encore</string>
     <string name="thanks_for_checking_in_on_tipi">Thanks for checking-in on Tipi</string>
     <string name="next_check_in">Start New Check-in</string>
-    <string name="enter_your_tipi_email">Enter your Tipi email …</string>
+    <string name="enter_your_tipi_email">Entrez votre email Tipi...</string>
     <string name="which_city_are_you_from">De quelle ville venez-vous?</string>
     <string name="gender">Sexe</string>
-    <string name="male">homme</string>
-    <string name="female">femme</string>
-    <string name="enter_your_email">Enter your email …</string>
+    <string name="male">Homme</string>
+    <string name="female">Femme</string>
+    <string name="enter_your_email">Entrez votre email Tipi</string>
     <string name="verify_your_id">Verify your ID</string>
     <string name="do_you_have_your_passport">Do you have your Passport</string>
-    <string name="take_a_picture">ça ne marche pas? Prenez un photo.</string>
+    <string name="take_a_picture">Ça ne marche pas? Prenez un photo.</string>
     <string name="use_back_camera_to_scan_passport">Use back camera with passport inside white guide to scan</string>
-    <string name="use_back_camera_to_take_a_picture_of_your_license">utilisez la caméra de pour prendre une photo de votre derrière.</string>
-    <string name="license_no">numéro d\'identification</string>
+    <string name="use_back_camera_to_take_a_picture_of_your_license">Utilisez la caméra arrière pour prendre une photo de votre passeport</string>
+    <string name="license_no">Numéro d\'identification</string>
     <string name="passport_no">Número de passeport</string>
     <string name="enter_details">Veuillez entrer plus d\'information ci-dessous</string>
     <string name="no_connection">Please check the WI-FI connection!</string>
@@ -92,6 +92,6 @@
     <string name="printer_on">Printer is ON</string>
     <string name="printer_off">Printer is OFF</string>
     <string name="printer_error_snackbar">Please ask staff to help you</string>
-    <string name="go_to_reception">allez à la réception pour l\'enregistrement.</string>
-    <string name="go_to_reception_code"><![CDATA[Go to Reception & quote this code:]]></string>
+    <string name="go_to_reception">Allez à la réception pour vous enregistrer</string>
+    <string name="go_to_reception_code"><![CDATA[Aller à la réception avec ce numéro:]]></string>
 </resources>

@@ -5,7 +5,7 @@
     android:id="@+id/fragmnet_language"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="me.tipi.self_check_in.ui.LanguageActivity">
+    tools:context="me.tipi.self_check_in.ui.fragments.LanguageFragment">
 
     <ImageView
         android:id="@+id/backBtn"
@@ -18,7 +18,7 @@
         android:clickable="true"
         android:padding="@dimen/first_key_line"
         android:src="@drawable/ic_arrow_back_pink_24dp"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/title"
@@ -56,12 +56,13 @@
         android:layout_marginRight="159dp"
         android:layout_marginTop="40dp"
         android:background="@drawable/next_button_bg"
+        android:onClick="french"
         android:padding="@dimen/normal_padding"
         android:text="@string/french"
-        android:onClick="french"
         android:textColor="@color/colorAccent"
         android:textSize="@dimen/font_large"
         android:textStyle="bold"/>
+
     <Button
         android:id="@+id/german_btn"
         android:layout_width="match_parent"
@@ -77,6 +78,7 @@
         android:textColor="@color/colorAccent"
         android:textSize="@dimen/font_large"
         android:textStyle="bold"/>
+
     <Button
         android:id="@+id/spanish_btn"
         android:layout_width="match_parent"
@@ -92,6 +94,7 @@
         android:textColor="@color/colorAccent"
         android:textSize="@dimen/font_large"
         android:textStyle="bold"/>
+
     <Button
         android:id="@+id/japanese_btn"
         android:layout_width="match_parent"

@@ -74,7 +74,7 @@ import me.tipi.self_check_in.ui.fragments.EmailFragment;
 import me.tipi.self_check_in.ui.fragments.HostelTermsFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LandingFragment;
-import me.tipi.self_check_in.ui.fragments.LanguageFragmnet;
+import me.tipi.self_check_in.ui.fragments.LanguageFragment;
 import me.tipi.self_check_in.ui.fragments.MainFragment;
 import me.tipi.self_check_in.ui.fragments.OCRFragment;
 import me.tipi.self_check_in.ui.fragments.PassportFragment;
@@ -242,9 +242,9 @@ public class SignUpActivity extends AppCompatActivity {
   }
 
   public void showLanguageFragment() {
-    LanguageFragmnet fragment = LanguageFragmnet.newInstance(this);
+    LanguageFragment fragment = LanguageFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment).addToBackStack(LanguageFragmnet.TAG).commit();
+        .replace(R.id.container_main, fragment).addToBackStack(LanguageFragment.TAG).commit();
   }
 
   public void showLandingFragment() {

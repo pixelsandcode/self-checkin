@@ -16,7 +16,7 @@
     <string name="birthday_error_old">日付を確認してください</string>
     <string name="check_in">チェックイン</string>
     <string name="error_less_than_today">本日以降でチェックインの日を選択して下さい</string>
-    <string name="error_check_out_before_check_in">Check-out must be after check-in</string>
+    <string name="error_check_out_before_check_in">チェックイン以降でチェックアウトの日を選択して下さい</string>
     <string name="back">戻る</string>
     <string name="success">Success!</string>
     <string name="number_of_nights">何泊</string>
@@ -46,7 +46,7 @@
     <string name="error_check_out_more_than_one_year">チェックアウトは一年以内にしてください</string>
     <string name="error_invalid_full_name">この名前は無効です</string>
     <string name="agree">同意する</string>
-    <string name="terms"><![CDATA[조건?&상태]]></string>
+    <string name="terms"><![CDATA[条件規約]]></string>
     <string name="about_you">あなたについて教えて下さい</string>
     <string name="next_travel">Where are you travelling next?</string>
     <string name="previous_travel">Which country you have just come from?</string>
@@ -58,7 +58,7 @@
     <string name="setting">Settings</string>
     <string name="your_details">あなたの詳細</string>
     <string name="booking_info">予約情報</string>
-    <string name="take_a_selfie">셀카찍기</string>
+    <string name="take_a_selfie">自撮り写真</string>
     <string name="retry">リトライ</string>
     <string name="thanks_for_checking_in_on_tipi">Thanks for checking-in on Tipi</string>
     <string name="next_check_in">Start New Check-in</string>
@@ -74,7 +74,7 @@
     <string name="use_back_camera_to_scan_passport">Use back camera with passport inside white guide to scan</string>
     <string name="use_back_camera_to_take_a_picture_of_your_license">後ろのカメラを使用してあなたのライセンスの写真を撮って下さい</string>
     <string name="license_no">License No</string>
-    <string name="passport_no">パスポート番号</string>
+    <string name="passport_no">ライセンス番号</string>
     <string name="enter_details">あなたの詳細を入力して下さい</string>
     <string name="no_connection">Please check the WI-FI connection!</string>
     <string name="something_wrong_try_again">Sorry something went wrong, please try again!</string>
@@ -93,6 +93,6 @@
     <string name="printer_on">Printer is ON</string>
     <string name="printer_off">Printer is OFF</string>
     <string name="printer_error_snackbar">Please ask staff to help you</string>
-    <string name="go_to_reception">체크인을 위해 안내실로 가세요</string>
-    <string name="go_to_reception_code"><![CDATA[Go to Reception & quote this code:]]></string>
+    <string name="go_to_reception">受付にてチェックインをお願いします</string>
+    <string name="go_to_reception_code"><![CDATA[受付にこの番号を伝えてください:]]></string>
 </resources>

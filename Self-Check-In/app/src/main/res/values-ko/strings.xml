@@ -15,7 +15,7 @@
     <string name="birthday_error_old">죄송합니다. 당신은 여행하기에는 고령자이기에 어렵습니다.</string>
     <string name="check_in">체크인</string>
     <string name="error_less_than_today">금일 체크인 해야함</string>
-    <string name="error_check_out_before_check_in">Check-out must be after check-in</string>
+    <string name="error_check_out_before_check_in">체크인 이후 가능</string>
     <string name="back">뒤로</string>
     <string name="success">Success!</string>
     <string name="number_of_nights">체류기간(이용기간</string>

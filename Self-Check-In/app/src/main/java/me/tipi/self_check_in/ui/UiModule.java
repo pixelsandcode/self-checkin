@@ -20,7 +20,7 @@ import me.tipi.self_check_in.ui.fragments.FindUserFragment;
 import me.tipi.self_check_in.ui.fragments.HostelTermsFragment;
 import me.tipi.self_check_in.ui.fragments.IdentityFragment;
 import me.tipi.self_check_in.ui.fragments.LandingFragment;
-import me.tipi.self_check_in.ui.fragments.LanguageFragmnet;
+import me.tipi.self_check_in.ui.fragments.LanguageFragment;
 import me.tipi.self_check_in.ui.fragments.LoginFragment;
 import me.tipi.self_check_in.ui.fragments.MainFragment;
 import me.tipi.self_check_in.ui.fragments.OCRFragment;
@@ -50,7 +50,7 @@ import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
         OCRFragment.class,
         EmailFragment.class,
         ScanIDFragment.class,
-        LanguageFragmnet.class
+        LanguageFragment.class
     },
 
     complete = false,

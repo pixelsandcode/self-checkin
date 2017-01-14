@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.squareup.otto.Bus;
 
 import java.util.Locale;
 
@@ -24,11 +25,13 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.LanguagePrefrence;
 import me.tipi.self_check_in.ui.SignUpActivity;
+import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
+import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 
 
-public class LanguageFragmnet extends Fragment {
+public class LanguageFragment extends Fragment {
 
-  public static final String TAG = LanguageFragmnet.class.getSimpleName();
+  public static final String TAG = LanguageFragment.class.getSimpleName();
 
   @Bind(R.id.english_btn) Button englishBtn;
   @Bind(R.id.french_btn) Button frenchBtn;
@@ -37,12 +40,14 @@ public class LanguageFragmnet extends Fragment {
   @Bind(R.id.japanese_btn) Button japaneseBtn;
   @Bind(R.id.korean_btn) Button koreanBtn;
 
+  @Inject Bus bus;
   @Inject LanguagePrefrence languagePrefrence;
+
 
   private MaterialDialog loading;
 
-  public static LanguageFragmnet newInstance(Context context) {
-    LanguageFragmnet fragment = new LanguageFragmnet();
+  public static LanguageFragment newInstance(Context context) {
+    LanguageFragment fragment = new LanguageFragment();
     SelfCheckInApp.get(context).inject(fragment);
     return fragment;
   }
@@ -53,6 +58,15 @@ public class LanguageFragmnet extends Fragment {
     View view = inflater.inflate(R.layout.fragment_language, container, false);
     ButterKnife.bind(this, view);
     return view;
+  }
+
+  @Override public void onResume() {
+    super.onResume();
+    bus.register(this);
+    if (getActivity() != null) {
+      bus.post(new SettingShouldShowEvent(false));
+      bus.post(new BackShouldShowEvent(true));
+    }
   }
 
   @Override public void onDestroyView() {
@@ -93,4 +107,5 @@ public class LanguageFragmnet extends Fragment {
     res.updateConfiguration(configuration, displayMetrics);
     ((SignUpActivity)getActivity()).showLandingFragment();
   }
+
 }
