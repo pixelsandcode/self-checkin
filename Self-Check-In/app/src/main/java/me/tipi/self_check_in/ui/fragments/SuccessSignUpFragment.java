@@ -137,7 +137,7 @@ public class SuccessSignUpFragment extends Fragment {
     String firstNam = Strings.getFirstName(guest.name);
     firstNam = firstNam.toLowerCase(Locale.US);
     firstNam = Character.toString(firstNam.charAt(0)).toUpperCase() + firstNam.substring(1);
-    titleView.setText(String.format(Locale.US, "Thanks %s", firstNam));
+    titleView.setText(String.format(Locale.US, getString(R.string.thanks), firstNam));
     codeView.setText(guest.check_in_code);
 
     return rootView;
@@ -194,12 +194,18 @@ public class SuccessSignUpFragment extends Fragment {
   public void onPause() {
     super.onPause();
     bus.unregister(this);
+    if (countDownTimer != null) {
+      countDownTimer.cancel();
+    }
   }
 
   @Override
   public void onStop() {
     super.onStop();
-    countDownTimer.cancel();
+
+    if (countDownTimer != null) {
+      countDownTimer.cancel();
+    }
     handler.removeCallbacks(runnable);
   }
 
