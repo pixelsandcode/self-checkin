@@ -18,7 +18,7 @@
       android:layout_height="250dp"
       android:layout_centerHorizontal="true"
       android:layout_marginTop="192dp"
-      android:src="@drawable/main_icon"/>
+      android:src="@drawable/group"/>
 
   <Button
       android:layout_width="match_parent"
