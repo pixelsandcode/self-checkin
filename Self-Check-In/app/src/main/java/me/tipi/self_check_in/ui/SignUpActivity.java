@@ -552,6 +552,7 @@ public class SignUpActivity extends AppCompatActivity {
     guest.time = System.currentTimeMillis();
     Timber.w("---------GOING TO FIND USER--------");
     startActivity(new Intent(this, FindUserActivity.class));
+    finish();
   }
 
   /**
