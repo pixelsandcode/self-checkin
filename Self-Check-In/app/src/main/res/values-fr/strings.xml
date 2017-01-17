@@ -89,9 +89,18 @@
     <string name="exit_the_app">Exit the App</string>
     <string name="first_name">Prénom</string>
     <string name="last_name">Nom de famille</string>
+    <string name="full_name">Nom complet</string>
     <string name="printer_on">Printer is ON</string>
     <string name="printer_off">Printer is OFF</string>
     <string name="printer_error_snackbar">Please ask staff to help you</string>
     <string name="go_to_reception">Allez à la réception pour vous enregistrer</string>
     <string name="go_to_reception_code"><![CDATA[Aller à la réception avec ce numéro:]]></string>
+    <string name="thanks">Merci %s</string>
+    <string name="document_no">Numéro d\'identification</string>
+    <string name="saving_photo">Sauvegarde de la photo</string>
+    <string name="please_take_a_selfie">S\'il vous plait, prenez une photo avec la caméra faciale</string>
+    <string name="hostel_terms">En cliquant sur Suivant, j\'accepte les termes et conditions de l\'hôtel.</string>
+    <string name="set">Confirmer</string>
+    <string name="cancel">Annuler</string>
+
 </resources>

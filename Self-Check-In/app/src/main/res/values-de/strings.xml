@@ -89,9 +89,17 @@
     <string name="exit_the_app">Exit the App</string>
     <string name="first_name">Vorname</string>
     <string name="last_name">Nachname</string>
+    <string name="full_name">Kompletter Name</string>
     <string name="printer_on">Printer is ON</string>
     <string name="printer_off">Printer is OFF</string>
     <string name="printer_error_snackbar">Please ask staff to help you</string>
     <string name="go_to_reception">Gehe Sie zur Rezeption um einzuchecken</string>
     <string name="go_to_reception_code"><![CDATA[Gehe Sie zur Rezeption mit dieser Nummer:]]></string>
+    <string name="thanks">Danke %s</string>
+    <string name="document_no">Ausweisnummer</string>
+    <string name="saving_photo">Saving Photo</string>
+    <string name="please_take_a_selfie">Please take a selfie</string>
+    <string name="hostel_terms">By tapping Next I agree to the Hostels Terms &amp; Conditions</string>
+    <string name="set">auswählen/bestätigen</string>
+    <string name="cancel">beenden</string>
 </resources>

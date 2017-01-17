@@ -95,6 +95,7 @@
   <string name="your_country">Your Country</string>
   <string name="exit_the_app">Exit the App</string>
   <string name="first_name">First Name</string>
+  <string name="full_name">Full Name</string>
   <string name="last_name">Last Name</string>
   <string name="printer_on">Printer is ON</string>
   <string name="printer_off">Printer is OFF</string>
@@ -102,7 +103,12 @@
   <string name="go_to_reception">Go to reception for check-in</string>
   <string name="go_to_reception_code"><![CDATA[Go to Reception & quote this code:]]></string>
   <string name="thanks">Thanks %s</string>
-
+  <string name="document_no">Document No</string>
+  <string name="saving_photo">Saving Photo</string>
+  <string name="please_take_a_selfie">Please take a selfie</string>
+  <string name="hostel_terms">By tapping \'Next\' I agree to the Hostels Terms &amp; Conditions</string>
+  <string name="set">Set</string>
+  <string name="cancel">Cancel</string>
   <!-- TODO: Remove or change this placeholder text -->
   <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

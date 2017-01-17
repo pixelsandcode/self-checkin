@@ -90,7 +90,7 @@ public class LanguageFragment extends Fragment {
         setLanguage("es");
         break;
       case R.id.japanese_btn:
-        setLanguage("ja");
+        setLanguage("mdr");
         break;
       case R.id.korean_btn:
         setLanguage("ko");

@@ -46,7 +46,7 @@
     <string name="error_invalid_full_name">Este nombre es invalido</string>
     <string name="agree">Acepto</string>
     <string name="terms"><![CDATA[Terminos y condiciones]]></string>
-    <string name="about_you">Tell us about you</string>
+    <string name="about_you">Hablenos acerca de Usted? por favor, responda la siguiente pregunta.</string>
     <string name="next_travel">Where are you travelling next?</string>
     <string name="previous_travel">Which country you have just come from?</string>
     <string name="how_long">How long you are staying in the country</string>
@@ -89,9 +89,18 @@
     <string name="exit_the_app">Exit the App</string>
     <string name="first_name">Nombre</string>
     <string name="last_name">Apellido</string>
+    <string name="full_name">Nombre completo</string>
     <string name="printer_on">Printer is ON</string>
     <string name="printer_off">Printer is OFF</string>
     <string name="printer_error_snackbar">Please ask staff to help you</string>
     <string name="go_to_reception">Acerquese a la recepcion para registrar su ingreso</string>
     <string name="go_to_reception_code"><![CDATA[Acerquese a la recepcion con este numero:]]></string>
+    <string name="thanks">Gracias %s</string>
+    <string name="document_no">Número de identificacion</string>
+    <string name="saving_photo">Saving Photo</string>
+    <string name="please_take_a_selfie">Please take a selfie</string>
+    <string name="hostel_terms">By tapping Next I agree to the Hostels Terms &amp; Conditions</string>
+    <string name="set">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+
 </resources>

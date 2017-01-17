@@ -1,0 +1,115 @@
+<resources>
+    <string name="app_name">MAD Kiosk</string>
+
+    <string name="login_title">登录你的Tipi账户</string>
+    <string name="email">Email</string>
+    <string name="password">password</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_incorrect_password">This password is too short!</string>
+    <string name="error_field_required">此字段必填 </string>
+
+    <string name="birthday">出生日期</string>
+    <string name="passport_number">护照号码</string>
+    <string name="reference_code">Booking Reference (optional)</string>
+    <string name="birthday_error">你还没有出生？!!</string>
+    <string name="birthday_error_old">对不起，你已超出规定年龄去旅游 </string>
+    <string name="check_in">登记入住</string>
+    <string name="select_language">Select language…</string>
+    <string name="error_less_than_today">入住日期必须在今天之后</string>
+    <string name="error_check_out_before_check_in">退房必须在入住日期之后</string>
+    <string name="back">上一步</string>
+    <string name="success">Success!</string>
+    <string name="number_of_nights">入住几晚 </string>
+    <string name="match_found_hint">Found a match</string>
+    <string name="no_match_hint">No Matches Found</string>
+    <string name="dialog_me_text">This is Me</string>
+    <string name="dialog_not_me_text">Not Me</string>
+    <string name="english">ENGLISH</string>
+    <string name="french">FRANÇAIS</string>
+    <string name="german">DEUTSCHE</string>
+    <string name="spanish">ESPAÑOL</string>
+    <string name="japanese">日本語</string>
+    <string name="korean">한국어</string>
+
+
+    <!-- Tracker Screen Names -->
+    <string name="hostel_login"> Hostel Login</string>
+    <string name="guest_landing">Guest Landing</string>
+    <string name="overall_time">Success Overall Timing</string>
+
+    <string name="font_medium">SF-UI-Text-Medium.otf</string>
+    <string name="font_regular">SF-UI-Text-Regular.otf</string>
+    <string name="checked_in_text">你之前使用过Tipi登记入住过吗</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="title_activity_setting">Settings</string>
+    <string name="start_check_in">Start Check-in</string>
+    <string name="download">Download Update</string>
+    <string name="send_log">Send log</string>
+    <string name="logout">Logout</string>
+    <string name="next">下一步</string>
+    <string name="email_hint">TIPI EMAIL</string>
+    <string name="error_check_out_more_than_one_year">退房日期不得超过一年 </string>
+    <string name="error_invalid_full_name">此名称无效</string>
+    <string name="agree">同意</string>
+    <string name="terms"><![CDATA[条款和条件]]></string>
+    <string name="about_you">请回答下列问题</string>
+    <string name="next_travel">Where are you travelling next?</string>
+    <string name="previous_travel">Which country you have just come from?</string>
+    <string name="how_long">How long you are staying in the country</string>
+    <string name="visit_farser">Are you visiting Fraser island?</string>
+    <string name="need_job">Are you looking for a job?</string>
+    <string name="home_town_error">请 在下拉列表中选择你的城市／国家</string>
+    <string name="tap_to_check_in">点击登记入住</string>
+    <string name="setting">Settings</string>
+    <string name="your_details">你的详细情况</string>
+    <string name="booking_info">预约资料</string>
+    <string name="take_a_selfie">自拍 </string>
+    <string name="retry">重新操作</string>
+    <string name="thanks_for_checking_in_on_tipi">Thanks for checking-in on Tipi</string>
+    <string name="next_check_in">Start New Check-in</string>
+    <string name="enter_your_tipi_email">输入你的Tipi email...</string>
+    <string name="which_city_are_you_from">你来自哪个城市</string>
+    <string name="gender">性别 </string>
+    <string name="male">男士</string>
+    <string name="female">女士</string>
+    <string name="enter_your_email">Enter your email …</string>
+    <string name="verify_your_id">Verify your ID</string>
+    <string name="do_you_have_your_passport">Do you have your Passport</string>
+    <string name="take_a_picture">无法扫描？照张相</string>
+    <string name="use_back_camera_to_scan_passport">Use back camera with passport inside white guide to scan</string>
+    <string name="use_back_camera_to_take_a_picture_of_your_license">请使用后置摄像头拍摄你的证件</string>
+    <string name="license_no">License No</string>
+    <string name="passport_no">护照号码</string>
+    <string name="enter_details">输入你的详细情况 </string>
+    <string name="no_connection">Please check the WI-FI connection!</string>
+    <string name="something_wrong_try_again">Sorry something went wrong, please try again!</string>
+    <string name="enter_correct_email_password">Please enter correct email and password!</string>
+    <string name="no_terms"><![CDATA[Sorry this hostel\'s Terms & Condition isn\'t available!]]></string>
+    <string name="ask_staff_login">Please ask one of the staff to log this tablet in again!</string>
+    <string name="check_from_date">Please check your check-in date again and retry!</string>
+    <string name="log_email_subject">Log file</string>
+    <string name="log_email_text">Log File attached</string>
+    <string name="log_email_to">ashkan.hesaraki@gmail.com</string>
+    <string name="do_you_want_to_learn_how_to_surf">Do you want to learn how to surf?</string>
+    <string name="your_country">国籍</string>
+    <string name="exit_the_app">Exit the App</string>
+    <string name="first_name">名</string>
+    <string name="last_name">姓</string>
+    <string name="full_name">全名</string>
+    <string name="printer_on">Printer is ON</string>
+    <string name="printer_off">Printer is OFF</string>
+    <string name="printer_error_snackbar">Please ask staff to help you</string>
+    <string name="go_to_reception">请去前台登记入住 </string>
+    <string name="go_to_reception_code"><![CDATA[请到前台登记使用编号:]]></string>
+    <string name="thanks">谢谢 %s</string>
+    <string name="document_no">证件号码</string>
+    <string name="saving_photo">保存照片</string>
+    <string name="please_take_a_selfie">请自拍 </string>
+    <string name="hostel_terms">通过点击\‘下一步\’我同意旅馆的条款和条件 </string>
+    <string name="set">确认</string>
+    <string name="cancel">取消 </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

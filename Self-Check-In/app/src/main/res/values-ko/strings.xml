@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MAD Kiosk</string>
 
-    <string name="login_title">Log-in to Your Tipi account …</string>
+    <string name="login_title">당신의 계정으로 로그인 하세요 …</string>
     <string name="email">Email</string>
     <string name="password">password</string>
     <string name="error_invalid_email">This email address is invalid</string>
@@ -41,12 +41,12 @@
     <string name="send_log">Send log</string>
     <string name="logout">Logout</string>
     <string name="next">다음</string>
-    <string name="email_hint">TIPI EMAIL</string>
+    <string name="email_hint">티피 이메일</string>
     <string name="error_check_out_more_than_one_year">체크아웃 날짜는 1년을 초과할수없음</string>
     <string name="error_invalid_full_name">유효 이름?(실제이름)</string>
     <string name="agree">동의</string>
     <string name="terms"><![CDATA[조건?&상태]]></string>
-    <string name="about_you">Tell us about you</string>
+    <string name="about_you">개인정보에 답해주세요(아래질문에 답해주세요)</string>
     <string name="next_travel">Where are you travelling next?</string>
     <string name="previous_travel">Which country you have just come from?</string>
     <string name="how_long">How long you are staying in the country</string>
@@ -61,7 +61,7 @@
     <string name="retry">재 시도</string>
     <string name="thanks_for_checking_in_on_tipi">Thanks for checking-in on Tipi</string>
     <string name="next_check_in">Start New Check-in</string>
-    <string name="enter_your_tipi_email">Enter your Tipi email …</string>
+    <string name="enter_your_tipi_email">당신의 티피 이메일을 입력하세요 …</string>
     <string name="which_city_are_you_from">어느 도시로 부터 왔습니까?</string>
     <string name="gender">성별</string>
     <string name="male">남성</string>
@@ -89,9 +89,17 @@
     <string name="exit_the_app">Exit the App</string>
     <string name="first_name">이름</string>
     <string name="last_name">성</string>
+    <string name="full_name">성명</string>
     <string name="printer_on">Printer is ON</string>
     <string name="printer_off">Printer is OFF</string>
     <string name="printer_error_snackbar">Please ask staff to help you</string>
     <string name="go_to_reception">체크인을 위해 안내실로 가세요</string>
-    <string name="go_to_reception_code"><![CDATA[Go to Reception & quote this code:]]></string>
+    <string name="go_to_reception_code"><![CDATA[립셉션으로 가세요:]]></string>
+    <string name="thanks">감사합니다 %s</string>
+    <string name="document_no">면허증 번호</string>
+    <string name="saving_photo">사진저장</string>
+    <string name="set">확인</string>
+    <string name="cancel">취소</string>
+    <string name="please_take_a_selfie">셀카를 찍어주세요</string>
+    <string name="hostel_terms">호스텔 이용약관에 동의하시면 \'Next\'를 눌러주세요</string>
 </resources>
