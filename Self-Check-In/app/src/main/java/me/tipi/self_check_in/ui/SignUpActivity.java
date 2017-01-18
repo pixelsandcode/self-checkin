@@ -55,7 +55,7 @@ import butterknife.OnClick;
 import me.tipi.self_check_in.KioskService;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
-import me.tipi.self_check_in.data.LanguagePrefrence;
+import me.tipi.self_check_in.data.LanguagePreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.Booking;
@@ -99,7 +99,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Named(ApiConstants.PASSWORD)
   Preference<String> password;
   @Inject Tracker tracker;
-  @Inject LanguagePrefrence languagePrefrence;
+  @Inject LanguagePreference languagePreference;
 
   @Bind(R.id.settingBtn) ImageView settingButton;
   @Bind(R.id.resetBtn) ImageView resetButton;
@@ -192,8 +192,8 @@ public class SignUpActivity extends AppCompatActivity {
   }
 
   public void setLanguage(String language) {
-    languagePrefrence.set(language);
-    Locale locale = new Locale(languagePrefrence.get());
+    languagePreference.set(language);
+    Locale locale = new Locale(languagePreference.get());
     Resources res = getResources();
     DisplayMetrics displayMetrics = res.getDisplayMetrics();
     Configuration configuration = res.getConfiguration();

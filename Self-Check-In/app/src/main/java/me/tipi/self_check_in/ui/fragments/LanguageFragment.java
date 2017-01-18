@@ -9,21 +9,18 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.otto.Bus;
 
 import java.util.Locale;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
-import me.tipi.self_check_in.data.LanguagePrefrence;
+import me.tipi.self_check_in.data.LanguagePreference;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
@@ -33,18 +30,8 @@ public class LanguageFragment extends Fragment {
 
   public static final String TAG = LanguageFragment.class.getSimpleName();
 
-  @Bind(R.id.english_btn) Button englishBtn;
-  @Bind(R.id.french_btn) Button frenchBtn;
-  @Bind(R.id.german_btn) Button germanBtn;
-  @Bind(R.id.spanish_btn) Button spanishBtn;
-  @Bind(R.id.japanese_btn) Button japaneseBtn;
-  @Bind(R.id.korean_btn) Button koreanBtn;
-
   @Inject Bus bus;
-  @Inject LanguagePrefrence languagePrefrence;
-
-
-  private MaterialDialog loading;
+  @Inject LanguagePreference languagePreference;
 
   public static LanguageFragment newInstance(Context context) {
     LanguageFragment fragment = new LanguageFragment();
@@ -98,8 +85,8 @@ public class LanguageFragment extends Fragment {
     }
   }
   public void setLanguage(String language) {
-    languagePrefrence.set(language);
-    Locale locale = new Locale(languagePrefrence.get());
+    languagePreference.set(language);
+    Locale locale = new Locale(languagePreference.get());
     Resources res = getResources();
     DisplayMetrics displayMetrics = res.getDisplayMetrics();
     Configuration configuration = res.getConfiguration();

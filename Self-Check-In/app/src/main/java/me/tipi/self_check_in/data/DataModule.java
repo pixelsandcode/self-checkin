@@ -88,9 +88,8 @@ public final class DataModule {
     return new PrinterPreference(preferences, PREF_PRINTER);
   }
 
-  @Provides @Singleton
-  LanguagePrefrence provideLanguagePrefrence(SharedPreferences preferences) {
-    return new LanguagePrefrence(preferences, PREF_LANGUAGE, "en");
+  @Provides @Singleton LanguagePreference provideLanguagePrefrence(SharedPreferences preferences) {
+    return new LanguagePreference(preferences, PREF_LANGUAGE, "en");
   }
 
   /**

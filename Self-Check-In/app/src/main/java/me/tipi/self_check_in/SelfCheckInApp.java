@@ -28,12 +28,12 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import dagger.ObjectGraph;
-import me.tipi.self_check_in.data.LanguagePrefrence;
+import me.tipi.self_check_in.data.LanguagePreference;
 import me.tipi.self_check_in.util.FileLogger;
 import timber.log.Timber;
 
 public final class SelfCheckInApp extends Application {
-  @Inject LanguagePrefrence languagePrefrence;
+  @Inject LanguagePreference languagePreference;
   private ObjectGraph objectGraph;
   private Tracker analyticTracker;
   private PowerManager.WakeLock wakeLock;
@@ -121,7 +121,7 @@ public final class SelfCheckInApp extends Application {
   }
 
   public void setLanguage() {
-    Locale locale = new Locale(languagePrefrence.get());
+    Locale locale = new Locale(languagePreference.get());
     Resources res = getResources();
     DisplayMetrics displayMetrics = res.getDisplayMetrics();
     Configuration configuration = res.getConfiguration();
