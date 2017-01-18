@@ -12,11 +12,13 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -39,6 +41,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import butterknife.ButterKnife;
+import me.tipi.self_check_in.KioskService;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.PrinterPreference;
@@ -91,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
         .cancelable(false)
         .progress(true, 0)
         .build();
+
+    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+    sp.edit().putBoolean(KioskService.PREF_KIOSK_MODE, false).apply();
 
     if (!checkWriteStoragePermission()) {
       requestWriteStoragePermission();

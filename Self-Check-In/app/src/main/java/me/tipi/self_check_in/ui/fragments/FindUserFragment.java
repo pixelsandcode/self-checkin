@@ -209,6 +209,7 @@ public class FindUserFragment extends Fragment {
 
         @Override public void failure(RetrofitError error) {
 
+          loading.dismiss();
           if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
             Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
             return;
@@ -222,7 +223,6 @@ public class FindUserFragment extends Fragment {
 
           if (error.getResponse() != null && error.getResponse().getStatus() == 404){
             // Handling show/hide views
-            loading.dismiss();
             tryAgainView.setVisibility(View.VISIBLE);
             matchedUserContainer.setVisibility(View.GONE);
             Timber.d("Error finding: %s", error.toString());

@@ -109,7 +109,4 @@
     <string name="hostel_terms">通过点击\‘下一步\’我同意旅馆的条款和条件 </string>
     <string name="set">确认</string>
     <string name="cancel">取消 </string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
