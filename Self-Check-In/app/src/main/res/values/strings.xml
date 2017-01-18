@@ -109,6 +109,4 @@
   <string name="hostel_terms">By tapping \'Next\' I agree to the Hostels Terms &amp; Conditions</string>
   <string name="set">Set</string>
   <string name="cancel">Cancel</string>
-  <!-- TODO: Remove or change this placeholder text -->
-  <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

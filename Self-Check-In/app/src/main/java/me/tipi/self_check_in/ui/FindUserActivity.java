@@ -201,7 +201,6 @@ public class FindUserActivity extends AppCompatActivity {
             Timber.d("Claimed");
             guest.guest_key = apiResponse.data.guest_key;
             guest.name = apiResponse.data.name;
-            guest.check_in_code = apiResponse.data.check_in_code;
             viewPager.setCurrentItem(3);
             tracker.send(new HitBuilders.EventBuilder("Check-in", "Claim").build());
 

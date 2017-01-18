@@ -31,7 +31,6 @@ public final class Guest {
   public String guest_key;
   public String passportPath;
   public String avatarPath;
-  public String check_in_code;
 
   /**
    * Instantiates a new Guest.

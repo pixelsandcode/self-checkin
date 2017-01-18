@@ -77,7 +77,6 @@ public class SuccessSignUpFragment extends Fragment {
 
   @Bind(R.id.printer_btn) ImageButton printerBtn;
   @Bind(R.id.title) TextView titleView;
-  @Bind(R.id.code) TextView codeView;
   @Bind(R.id.circle_count_down_view) CircleCountDownView circleCountDownView;
 
   private BluetoothAdapter mBluetoothAdapter;
@@ -138,7 +137,6 @@ public class SuccessSignUpFragment extends Fragment {
     firstNam = firstNam.toLowerCase(Locale.US);
     firstNam = Character.toString(firstNam.charAt(0)).toUpperCase() + firstNam.substring(1);
     titleView.setText(String.format(Locale.US, getString(R.string.thanks), firstNam));
-    codeView.setText(guest.check_in_code);
 
     return rootView;
   }
