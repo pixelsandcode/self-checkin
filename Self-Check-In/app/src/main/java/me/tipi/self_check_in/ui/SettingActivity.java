@@ -66,6 +66,9 @@ public class SettingActivity extends AppCompatActivity {
       print.setText(getString(R.string.printer_off));
     }
 
+    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+    sp.edit().putBoolean(KioskService.PREF_KIOSK_MODE, false).apply();
+
     Timber.d("Created");
   }
 
