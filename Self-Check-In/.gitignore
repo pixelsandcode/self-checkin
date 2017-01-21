@@ -106,3 +106,7 @@ gradle-app.setting
 gradle/
 gradlew
 gradlew.bat
+app/libs/
+/app/src/main/java/me/tipi/self_check_in/SecretKey.java
+libs/
+/app/gradle.properties
