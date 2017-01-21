@@ -1,7 +1,7 @@
 <resources>
   <string name="app_name">MAD Kiosk</string>
 
-  <string name="login_title">Log-in to Your Tipi account …</string>
+  <string name="login_title">Log-in to Your Hostel account …</string>
   <string name="email">Email</string>
   <string name="password">password</string>
   <string name="error_invalid_email">This email address is invalid</string>

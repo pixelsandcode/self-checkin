@@ -61,12 +61,12 @@
     <string name="retry">Erneut versuchen</string>
     <string name="thanks_for_checking_in_on_tipi">Thanks for checking-in on Tipi</string>
     <string name="next_check_in">Start New Check-in</string>
-    <string name="enter_your_tipi_email">Enter your Tipi email …</string>
+    <string name="enter_your_tipi_email">geben sie ihre Tipi E-Mail Adresse ein …</string>
     <string name="which_city_are_you_from">Aus welcher Stadt kommen Sie?</string>
     <string name="gender">Geschlecht</string>
     <string name="male">männlich</string>
     <string name="female">weiblich</string>
-    <string name="enter_your_email">Enter your email …</string>
+    <string name="enter_your_email">geben sie ihre E-Mail Adresse ein …</string>
     <string name="verify_your_id">Verify your ID</string>
     <string name="do_you_have_your_passport">Do you have your Passport</string>
     <string name="take_a_picture">funktioniert es nicht? Mache ein Bild</string>

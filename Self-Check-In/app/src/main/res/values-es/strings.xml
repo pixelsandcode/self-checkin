@@ -41,7 +41,7 @@
     <string name="send_log">Send log</string>
     <string name="logout">Logout</string>
     <string name="next">Siguiente</string>
-    <string name="email_hint">TIPI EMAIL</string>
+    <string name="email_hint">TIPI correo electrónico</string>
     <string name="error_check_out_more_than_one_year">La fecha de salida no debe ser superior a un año</string>
     <string name="error_invalid_full_name">Este nombre es invalido</string>
     <string name="agree">Acepto</string>
@@ -61,12 +61,12 @@
     <string name="retry">Retire </string>
     <string name="thanks_for_checking_in_on_tipi">Thanks for checking-in on Tipi</string>
     <string name="next_check_in">Start New Check-in</string>
-    <string name="enter_your_tipi_email">Enter your Tipi email …</string>
+    <string name="enter_your_tipi_email">Ingrese su correo electrónico Tipi …</string>
     <string name="which_city_are_you_from">De que ciudad eres?</string>
     <string name="gender">Genero</string>
     <string name="male">Hombre</string>
     <string name="female">Mujer</string>
-    <string name="enter_your_email">Enter your email …</string>
+    <string name="enter_your_email">Introduce tu correo electrónico …</string>
     <string name="verify_your_id">Verify your ID</string>
     <string name="do_you_have_your_passport">Do you have your Passport</string>
     <string name="take_a_picture">Si no funciona? tomese una foto...</string>
