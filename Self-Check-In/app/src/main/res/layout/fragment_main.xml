@@ -30,8 +30,9 @@
       android:background="@drawable/next_button_bg_white"
       android:onClick="goToLanding"
       android:padding="@dimen/first_key_line"
-      android:text="@string/tap_to_check_in"
+      android:text="tap to check-in"
       android:textColor="@color/white"
-      android:textSize="@dimen/font_normal"/>
+      android:textSize="@dimen/font_normal"
+      tools:ignore="HardcodedText"/>
 
 </RelativeLayout>
