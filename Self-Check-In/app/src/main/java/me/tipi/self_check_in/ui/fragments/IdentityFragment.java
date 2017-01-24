@@ -29,11 +29,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -71,6 +71,7 @@ import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.adapters.HomeTownAutoCompleteAdapter;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
+import me.tipi.self_check_in.ui.misc.DelayAutoCompleteTextView;
 import me.tipi.self_check_in.util.Strings;
 import timber.log.Timber;
 
@@ -88,7 +89,7 @@ public class IdentityFragment extends Fragment {
   @Bind(R.id.your_country) TextView yourCountryLabel;
   @Bind(R.id.first_name) EditText firstNameTextView;
   @Bind(R.id.last_name) EditText lastNameTextView;
-  @Bind(R.id.home_town) AutoCompleteTextView homeTownACView;
+  @Bind(R.id.home_town) DelayAutoCompleteTextView homeTownACView;
   @Bind(R.id.birthday) EditText birthDayPickerView;
   @Bind(R.id.first_name_input_layout) TextInputLayout firstNameLayout;
   @Bind(R.id.last_name_input_layout) TextInputLayout lastNameLayout;
@@ -98,6 +99,7 @@ public class IdentityFragment extends Fragment {
   @Bind(R.id.passport) EditText passportEditText;
   @Bind(R.id.passport_input_layout) TextInputLayout passportLayout;
   @Bind(R.id.passport_label) TextView passportLabel;
+  @Bind(R.id.pb_loading_indicator) ProgressBar progressBar;
 
   private Date dob = null;
   private String enteredFirstName;
@@ -209,6 +211,7 @@ public class IdentityFragment extends Fragment {
 
     homeTownACView.setAdapter(new HomeTownAutoCompleteAdapter(getActivity()));
     homeTownACView.setThreshold(1);
+    homeTownACView.setLoadingIndicator(progressBar);
 
     if (getActivity() != null) {
       bus.post(new BackShouldShowEvent(true));

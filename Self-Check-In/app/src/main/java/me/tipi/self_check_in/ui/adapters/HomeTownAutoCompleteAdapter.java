@@ -12,11 +12,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,12 +31,13 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
+public class HomeTownAutoCompleteAdapter extends BaseAdapter implements Filterable {
 
   @Inject AuthenticationService authenticationService;
 
   private LayoutInflater mInflater;
-  private List<Country> countries = Collections.emptyList();
+  private List<String> countries = new ArrayList<>();
+  List<Country> data = Collections.emptyList();
 
   /**
    * Instantiates a new Home town auto complete adapter.
@@ -43,9 +45,20 @@ public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements
    * @param context the context
    */
   public HomeTownAutoCompleteAdapter(final Context context) {
-    super(context, -1);
     SelfCheckInApp.get(context).inject(this);
     mInflater = LayoutInflater.from(context);
+  }
+
+  @Override public int getCount() {
+    return countries.size();
+  }
+
+  @Override public String getItem(int position) {
+    return countries.get(position);
+  }
+
+  @Override public long getItemId(int position) {
+    return position;
   }
 
   @Override
@@ -61,6 +74,24 @@ public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements
     return tv;
   }
 
+  private List<Country> findCountries(String query) {
+    authenticationService.getSuggestedCountries(query, new Callback<CountryResponse>() {
+      @Override
+      public void success(CountryResponse countryResponse, Response response) {
+        if (countryResponse.data != null && countryResponse.data.size() > 0) {
+          data = countryResponse.data;
+        }
+      }
+
+      @Override
+      public void failure(RetrofitError error) {
+
+      }
+    });
+
+    return data;
+  }
+
   @Override
   public Filter getFilter() {
     return new Filter() {
@@ -68,23 +99,12 @@ public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements
       protected FilterResults performFiltering(final CharSequence constraint) {
         final FilterResults filterResults = new FilterResults();
         if (constraint != null) {
-          if (constraint.toString().trim().length() >= 0) {
-            authenticationService.getSuggestedCountries(constraint.toString(), new Callback<CountryResponse>() {
-              @Override
-              public void success(CountryResponse countryResponse, Response response) {
-                HomeTownAutoCompleteAdapter.this.countries = countryResponse.data;
-              }
+          List<Country> countries = findCountries(constraint.toString());
 
-              @Override
-              public void failure(RetrofitError error) {
-
-              }
-            });
-          }
+          filterResults.values = countries;
+          filterResults.count = countries.size();
         }
 
-        filterResults.values = countries;
-        filterResults.count = countries.size();
         return filterResults;
       }
 
@@ -92,17 +112,18 @@ public class HomeTownAutoCompleteAdapter extends ArrayAdapter<String> implements
       @Override
       protected void publishResults(final CharSequence constraint, final FilterResults results) {
         if (results != null && results.count > 0) {
-          clear();
+          countries.clear();
           for (Country country : (List<Country>) results.values) {
             String homeTown;
             for (int i = 0; i < country.cities.size(); i++) {
               homeTown = String.format("%s - %s", country.cities.get(i), country.name);
-              add(homeTown);
+              countries.add(homeTown);
             }
           }
           notifyDataSetChanged();
-
         } else {
+          countries.clear();
+          data.clear();
           notifyDataSetInvalidated();
         }
       }
