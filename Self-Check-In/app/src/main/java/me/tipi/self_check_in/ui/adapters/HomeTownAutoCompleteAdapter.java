@@ -26,10 +26,6 @@ import javax.inject.Inject;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.AuthenticationService;
 import me.tipi.self_check_in.data.api.models.Country;
-import me.tipi.self_check_in.data.api.models.CountryResponse;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class HomeTownAutoCompleteAdapter extends BaseAdapter implements Filterable {
 
@@ -74,24 +70,6 @@ public class HomeTownAutoCompleteAdapter extends BaseAdapter implements Filterab
     return tv;
   }
 
-  private List<Country> findCountries(String query) {
-    authenticationService.getSuggestedCountries(query, new Callback<CountryResponse>() {
-      @Override
-      public void success(CountryResponse countryResponse, Response response) {
-        if (countryResponse.data != null && countryResponse.data.size() > 0) {
-          data = countryResponse.data;
-        }
-      }
-
-      @Override
-      public void failure(RetrofitError error) {
-
-      }
-    });
-
-    return data;
-  }
-
   @Override
   public Filter getFilter() {
     return new Filter() {
@@ -99,7 +77,7 @@ public class HomeTownAutoCompleteAdapter extends BaseAdapter implements Filterab
       protected FilterResults performFiltering(final CharSequence constraint) {
         final FilterResults filterResults = new FilterResults();
         if (constraint != null) {
-          List<Country> countries = findCountries(constraint.toString());
+          List<Country> countries = authenticationService.getCountries(constraint.toString()).data;
 
           filterResults.values = countries;
           filterResults.count = countries.size();

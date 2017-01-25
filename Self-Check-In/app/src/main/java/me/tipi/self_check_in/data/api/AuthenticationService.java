@@ -46,6 +46,9 @@ public interface AuthenticationService {
   @GET(ApiConstants.HOME_TOWN)
   void getSuggestedCountries(@Query("q") String query, Callback<CountryResponse> cb);
 
+  @GET(ApiConstants.HOME_TOWN)
+  CountryResponse getCountries(@Query("q") String query);
+
   /**
    * Find user.
    *
