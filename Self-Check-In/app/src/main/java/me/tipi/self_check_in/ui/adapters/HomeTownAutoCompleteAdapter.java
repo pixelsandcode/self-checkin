@@ -81,6 +81,8 @@ public class HomeTownAutoCompleteAdapter extends BaseAdapter implements Filterab
 
           filterResults.values = countries;
           filterResults.count = countries.size();
+        } else {
+          data.clear();
         }
 
         return filterResults;
@@ -98,10 +100,9 @@ public class HomeTownAutoCompleteAdapter extends BaseAdapter implements Filterab
               countries.add(homeTown);
             }
           }
+
           notifyDataSetChanged();
         } else {
-          countries.clear();
-          data.clear();
           notifyDataSetInvalidated();
         }
       }
