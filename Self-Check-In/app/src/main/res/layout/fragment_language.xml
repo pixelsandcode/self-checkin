@@ -83,7 +83,7 @@
       android:textSize="@dimen/font_large"/>
 
   <Button
-      android:id="@+id/japanese_btn"
+      android:id="@+id/mandarin_btn"
       android:layout_width="match_parent"
       android:layout_height="72dp"
       android:layout_below="@+id/spanish_btn"
@@ -94,7 +94,7 @@
       android:background="@drawable/next_button_bg"
       android:fontFamily="@string/roboto_light"
       android:padding="@dimen/normal_padding"
-      android:text="@string/japanese"
+      android:text="@string/mandarin"
       android:textColor="@color/colorAccent"
       android:textSize="@dimen/font_large"/>
 
@@ -102,7 +102,7 @@
       android:id="@+id/korean_btn"
       android:layout_width="match_parent"
       android:layout_height="72dp"
-      android:layout_below="@+id/japanese_btn"
+      android:layout_below="@+id/mandarin_btn"
       android:layout_marginBottom="@dimen/second_key_line"
       android:layout_marginLeft="159dp"
       android:layout_marginRight="159dp"

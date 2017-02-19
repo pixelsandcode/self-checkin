@@ -61,7 +61,7 @@ public class LanguageFragment extends Fragment {
     ButterKnife.unbind(this);
   }
 
-  @OnClick({R.id.english_btn, R.id.french_btn, R.id.german_btn, R.id.spanish_btn, R.id.japanese_btn, R.id.korean_btn})
+  @OnClick({R.id.english_btn, R.id.french_btn, R.id.german_btn, R.id.spanish_btn, R.id.mandarin_btn, R.id.korean_btn})
   public void onClick(View view) {
     switch (view.getId()) {
       case R.id.english_btn:
@@ -76,7 +76,7 @@ public class LanguageFragment extends Fragment {
       case R.id.spanish_btn:
         setLanguage("es");
         break;
-      case R.id.japanese_btn:
+      case R.id.mandarin_btn:
         setLanguage("mdr");
         break;
       case R.id.korean_btn:
