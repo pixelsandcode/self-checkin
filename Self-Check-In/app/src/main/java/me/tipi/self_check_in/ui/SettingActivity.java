@@ -84,6 +84,11 @@ public class SettingActivity extends AppCompatActivity {
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
+  @Override public void onBackPressed() {
+    startActivity(new Intent(this, SignUpActivity.class));
+    finish();
+  }
+
   public void goToDownload(View view) {
     tracker.send(new HitBuilders.EventBuilder("Download", "Tapped").build());
     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(ApiConstants.BASE_DOWNLOAD_PAGE));

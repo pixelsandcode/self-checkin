@@ -16,9 +16,12 @@ import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -329,8 +332,25 @@ public class SignUpActivity extends AppCompatActivity {
    */
   @OnClick(R.id.settingBtn)
   public void settingClicked() {
-    startActivity(new Intent(this, SettingActivity.class));
-    finish();
+    new MaterialDialog.Builder(this)
+        .title("Verification Needed")
+        .content("Please enter hostel password")
+        .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
+        .inputRange(6, 50, ContextCompat.getColor(SignUpActivity.this, R.color.colorAccent))
+        .input("Hostel Password", "", false, new MaterialDialog.InputCallback() {
+          @Override public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+            if (password != null && !TextUtils.isEmpty(password.get()) &&
+                password.get() != null && password.get().equals(input.toString())) {
+              startActivity(new Intent(SignUpActivity.this, SettingActivity.class));
+              finish();
+            } else {
+              Snackbar.make(appContainer.bind(SignUpActivity.this), "Invalid password", Snackbar.LENGTH_LONG)
+                  .show();
+            }
+          }
+        })
+    .show();
+
   }
 
   /**
