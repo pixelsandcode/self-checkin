@@ -112,4 +112,67 @@
   <string name="mandarin">中文</string>
   <string name="download_tipi">Download Tipi</string>
   <string name="meet"><![CDATA[Meet other guests & see what’s on at this hostel. Download Tipi now.]]></string>
+
+  <string-array name="kiosk_names">
+    <item>Apollo</item>
+    <item>Astro</item>
+    <item>Aurora</item>
+    <item>Barcelona</item>
+    <item>Barney</item>
+    <item>Barracuda</item>
+    <item>Batman</item>
+    <item>Bender</item>
+    <item>Bigfish</item>
+    <item>Bladerunner</item>
+    <item>Bongo</item>
+    <item>Bordeaux</item>
+    <item>Bride of Buster</item>
+    <item>Bulldozer</item>
+    <item>Bullwinkle</item>
+    <item>Camelot</item>
+    <item>Canary</item>
+    <item>Casanova</item>
+    <item>Cascade</item>
+    <item>Cauldron</item>
+    <item>Cheerio</item>
+    <item>Cherrystone</item>
+    <item>Cinnamon</item>
+    <item>Cold Fusion</item>
+    <item>Colossus</item>
+    <item>Colusa</item>
+    <item>Constantine</item>
+    <item>Crusader</item>
+    <item>Cyclone</item>
+    <item>Dagwood</item>
+    <item>Darwin</item>
+    <item>Deepmind</item>
+    <item>dejaVu</item>
+    <item>Diesel</item>
+    <item>Duracell</item>
+    <item>Duraflame</item>
+    <item>Eagle</item>
+    <item>Echo Lake</item>
+    <item>Edison</item>
+    <item>Einstein</item>
+    <item>Elixir</item>
+    <item>Elmer</item>
+    <item>Excalibur</item>
+    <item>Fester</item>
+    <item>Fireball</item>
+    <item>Firefly</item>
+    <item>Firestorm</item>
+    <item>Firetruck</item>
+    <item>Flamingo</item>
+    <item>Fusion</item>
+    <item>Galactica</item>
+    <item>Gemini-64</item>
+    <item>Green Jade</item>
+    <item>Hades</item>
+    <item>Honeycomb</item>
+    <item>HotJava</item>
+    <item>Hydra</item>
+    <item>Indigo</item>
+    <item>Irongate</item>
+    <item>Ivory</item>
+  </string-array>
 </resources>

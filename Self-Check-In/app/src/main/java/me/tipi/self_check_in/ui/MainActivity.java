@@ -18,12 +18,14 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -37,8 +39,7 @@ import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Random;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -74,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
   @Inject
   @Named(ApiConstants.HOSTEL_KEY)
   Preference<String> hostelKey;
+  @Inject
+  @Named(ApiConstants.KIOSK_NAME)
+  Preference<String> kioskNamePref;
 
   @Inject AppContainer appContainer;
   @Inject Tracker tracker;
@@ -85,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
 
   long oneMinute = 60000;
   long period = 5 * oneMinute;
-  Timer timer = new Timer();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -104,9 +107,21 @@ public class MainActivity extends AppCompatActivity {
 
     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
     sp.edit().putBoolean(KioskService.PREF_KIOSK_MODE, false).apply();
+    Timber.w("KIOSK mode is OFF");
 
     if (!checkWriteStoragePermission()) {
       requestWriteStoragePermission();
+    }
+
+    if (TextUtils.isEmpty(kioskNamePref.get())) {
+      String[] kioskNames = getResources().getStringArray(R.array.kiosk_names);
+      String randomName = kioskNames[new Random().nextInt(kioskNames.length)];
+      if (randomName != null && !TextUtils.isEmpty(randomName)) {
+        kioskNamePref.set(randomName);
+        Timber.w("Kiosk named randomly: %s", randomName);
+      } else {
+        Timber.w("Failed setting random name");
+      }
     }
 
     if (username.isSet() && password.isSet()) {
@@ -128,13 +143,6 @@ public class MainActivity extends AppCompatActivity {
   @Override protected void onPause() {
     super.onPause();
     Timber.d("Paused");
-  }
-
-  @Override protected void onStop() {
-    super.onStop();
-    if (timer != null) {
-      timer.cancel();
-    }
   }
 
   @TargetApi(Build.VERSION_CODES.M)
@@ -268,10 +276,10 @@ public class MainActivity extends AppCompatActivity {
         loading.dismiss();
         showLoginFragment();
 
-        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+        /*if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
           Snackbar.make(appContainer.bind(MainActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
           return;
-        }
+        }*/
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
           Snackbar.make(appContainer.bind(MainActivity.this), R.string.enter_correct_email_password, Snackbar.LENGTH_LONG).show();
@@ -281,12 +289,20 @@ public class MainActivity extends AppCompatActivity {
 
         Snackbar.make(appContainer.bind(MainActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
         Timber.w(error.getMessage());
-        timer.scheduleAtFixedRate(new TimerTask() {
+        MainActivity.this.runOnUiThread(new Runnable() {
           @Override public void run() {
-            login();
-            period = Math.round(period * 1.5);
+
           }
-        }, 1000, period);
+        });
+
+
+        period = Math.round(period * 1.5);
+        new Handler().postDelayed(new Runnable() {
+          @Override public void run() {
+            Timber.w("trying to login again after %d millis", period);
+            login();
+          }
+        }, period);
       }
     });
   }

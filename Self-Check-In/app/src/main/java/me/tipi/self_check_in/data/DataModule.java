@@ -83,6 +83,11 @@ public final class DataModule {
     return prefs.getString(ApiConstants.HOSTEL_KEY);
   }
 
+  @Provides @Singleton @Named(ApiConstants.KIOSK_NAME)
+  Preference<String> provideKioskName(RxSharedPreferences prefs) {
+    return prefs.getString(ApiConstants.KIOSK_NAME);
+  }
+
   @Provides @Singleton
   PrinterPreference providePrinter(SharedPreferences preferences) {
     return new PrinterPreference(preferences, PREF_PRINTER);
@@ -124,18 +129,6 @@ public final class DataModule {
   Preference<String> providePassport(RxSharedPreferences prefs) {
     return prefs.getString(ApiConstants.PASSPORT);
   }
-
-  /*
-  @Provides @Singleton
-  AvatarPreference provideAvatarPathPreference(SharedPreferences preferences) {
-    return new AvatarPreference(preferences, PREF_USER_AVATAR);
-  }
-
-  @Provides @Singleton
-  PassportPreference providePassportPathPreference(SharedPreferences preferences) {
-    return new PassportPreference(preferences, PREF_PASSPORT_IMAGE);
-  }
-  */
 
   /**
    * Provide clock clock.

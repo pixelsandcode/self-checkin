@@ -13,17 +13,24 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.drivemode.android.typeface.TypefaceHelper;
 import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,9 +53,13 @@ public class SettingActivity extends AppCompatActivity {
   @Inject TypefaceHelper typeface;
   @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
+  @Inject
+  @Named(ApiConstants.KIOSK_NAME)
+  Preference<String> kioskNamePref;
 
   @Bind(R.id.version) TextView versionTextView;
   @Bind(R.id.print) TextView print;
+  @Bind(R.id.kiosk_name) TextView kioskName;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +71,18 @@ public class SettingActivity extends AppCompatActivity {
 
     typeface.setTypeface(this, getResources().getString(R.string.font_regular));
     versionTextView.setText(String.format("Current Version %s", BuildConfig.VERSION_NAME));
+
     if (printerPreference.get()) {
       print.setText(getString(R.string.printer_on));
     } else {
       print.setText(getString(R.string.printer_off));
     }
 
+    handleKioskModeText();
+
     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
     sp.edit().putBoolean(KioskService.PREF_KIOSK_MODE, false).apply();
-
+    Timber.w("KIOSK mode is OFF");
     Timber.d("Created");
   }
 
@@ -128,6 +142,24 @@ public class SettingActivity extends AppCompatActivity {
     this.finishAffinity();
   }
 
+  public void changeKioskName(View view) {
+    new MaterialDialog.Builder(this)
+        .title("Enter a Name")
+        .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS)
+        .inputRange(3, 50, ContextCompat.getColor(SettingActivity.this, R.color.colorAccent))
+        .input("New Hostel Name", "", false, new MaterialDialog.InputCallback() {
+          @Override public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+            if (!TextUtils.isEmpty(input.toString())) {
+              kioskNamePref.set(input.toString());
+              handleKioskModeText();
+            } else {
+              Toast.makeText(SettingActivity.this, "Can't rename to empty text", Toast.LENGTH_LONG).show();
+            }
+          }
+        })
+        .show();
+  }
+
   @OnClick(R.id.print)
   public void onClick() {
     printerPreference.set(!printerPreference.get());
@@ -135,6 +167,12 @@ public class SettingActivity extends AppCompatActivity {
       print.setText(getString(R.string.printer_on));
     } else {
       print.setText(getString(R.string.printer_off));
+    }
+  }
+
+  private void handleKioskModeText() {
+    if (kioskNamePref != null && kioskNamePref.get() != null && !TextUtils.isEmpty(kioskNamePref.get())) {
+      kioskName.setText(String.format(Locale.US, "%s (Tap to change kiosk name)", kioskNamePref.get()));
     }
   }
 }

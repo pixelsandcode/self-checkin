@@ -45,6 +45,7 @@ public class ApiConstants {
   public static final String HOSTEL_NAME = "hostelName";
   public static final String PRINTER = "printer";
   public static final String HOSTEL_KEY = "hostelKey";
+  public static final String KIOSK_NAME = "kioskName";
 
   public static String getApiBaseUrl() {
     if (BuildConfig.STG) {

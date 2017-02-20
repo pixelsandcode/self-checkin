@@ -8,254 +8,287 @@
     tools:context="me.tipi.self_check_in.ui.SettingActivity"
     tools:ignore="RtlHardcoded|ContentDescription">
 
+  <ImageView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:clickable="true"
+      android:onClick="goToCheckIn"
+      android:padding="@dimen/first_key_line"
+      android:src="@drawable/ic_arrow_back_pink_24dp"
+      tools:ignore="ContentDescription"/>
+
+  <TextView
+      android:id="@+id/title"
+      android:layout_width="350dp"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="@dimen/first_key_line"
+      android:gravity="center"
+      android:text="@string/setting"
+      android:textColor="@color/main_text"
+      android:textSize="@dimen/font_extra_large"/>
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+      android:layout_marginLeft="@dimen/third_key_line"
+      android:layout_marginRight="@dimen/third_key_line">
+
     <ImageView
+        android:id="@+id/version_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:onClick="goToCheckIn"
-        android:padding="@dimen/first_key_line"
-        android:src="@drawable/ic_arrow_back_pink_24dp"
+        android:layout_marginLeft="@dimen/first_key_line"
+        android:layout_marginStart="@dimen/first_key_line"
+        android:padding="@dimen/normal_padding"
+        android:src="@drawable/ic_dashboard"
         tools:ignore="ContentDescription"/>
 
     <TextView
-        android:id="@+id/title"
-        android:layout_width="350dp"
+        android:id="@+id/version"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/first_key_line"
-        android:gravity="center"
-        android:text="@string/setting"
+        android:layout_toEndOf="@id/version_icon"
+        android:layout_toRightOf="@id/version_icon"
+        android:padding="@dimen/normal_padding"
         android:textColor="@color/main_text"
-        android:textSize="@dimen/font_extra_large"/>
+        android:textSize="@dimen/font_large"
+        tools:text="Version 1.2"/>
 
-    <RelativeLayout
+    <View
         android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/version"
+        android:layout_marginLeft="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:background="#979797"/>
+
+    <ImageView
+        android:id="@+id/download_icon"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="@dimen/third_key_line"
-        android:layout_marginRight="@dimen/third_key_line">
+        android:layout_below="@+id/version"
+        android:layout_marginLeft="@dimen/first_key_line"
+        android:layout_marginStart="@dimen/first_key_line"
+        android:layout_marginTop="@dimen/first_key_line"
+        android:padding="@dimen/normal_padding"
+        android:src="@drawable/ic_file_download"
+        tools:ignore="ContentDescription"/>
 
-        <ImageView
-            android:id="@+id/version_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/first_key_line"
-            android:layout_marginStart="@dimen/first_key_line"
-            android:padding="@dimen/normal_padding"
-            android:src="@drawable/ic_dashboard"
-            tools:ignore="ContentDescription"/>
+    <TextView
+        android:id="@+id/download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/version"
+        android:layout_marginTop="@dimen/first_key_line"
+        android:layout_toEndOf="@+id/download_icon"
+        android:layout_toRightOf="@+id/download_icon"
+        android:clickable="true"
+        android:onClick="goToDownload"
+        android:padding="@dimen/normal_padding"
+        android:text="@string/download"
+        android:textColor="@color/main_text"
+        android:textSize="@dimen/font_large"/>
 
-        <TextView
-            android:id="@+id/version"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/version_icon"
-            android:layout_toEndOf="@id/version_icon"
-            android:padding="@dimen/normal_padding"
-            android:textColor="@color/main_text"
-            android:textSize="@dimen/font_large"
-            tools:text="Version 1.2"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/version"
-            android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginRight="@dimen/normal_margin"
-            android:background="#979797"/>
-
-        <ImageView
-            android:id="@+id/download_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/version"
-            android:layout_marginLeft="@dimen/first_key_line"
-            android:layout_marginStart="@dimen/first_key_line"
-            android:layout_marginTop="@dimen/first_key_line"
-            android:padding="@dimen/normal_padding"
-            android:src="@drawable/ic_file_download"
-            tools:ignore="ContentDescription"/>
-
-        <TextView
-            android:id="@+id/download"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/version"
-            android:layout_marginTop="@dimen/first_key_line"
-            android:layout_toRightOf="@+id/download_icon"
-            android:layout_toEndOf="@+id/download_icon"
-            android:clickable="true"
-            android:onClick="goToDownload"
-            android:padding="@dimen/normal_padding"
-            android:text="@string/download"
-            android:textColor="@color/main_text"
-            android:textSize="@dimen/font_large"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/download"
-            android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginRight="@dimen/normal_margin"
-            android:background="#979797"/>
-
-        <ImageView
-            android:id="@+id/send_log_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/download"
-            android:layout_marginLeft="@dimen/first_key_line"
-            android:layout_marginStart="@dimen/first_key_line"
-            android:layout_marginTop="@dimen/first_key_line"
-            android:padding="@dimen/normal_padding"
-            android:src="@drawable/ic_file_download"
-            tools:ignore="ContentDescription"/>
-
-        <TextView
-            android:id="@+id/send_log"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/download"
-            android:layout_marginTop="@dimen/first_key_line"
-            android:layout_toRightOf="@+id/download_icon"
-            android:layout_toEndOf="@+id/download_icon"
-            android:clickable="true"
-            android:onClick="goToEmail"
-            android:padding="@dimen/normal_padding"
-            android:text="@string/send_log"
-            android:textColor="@color/main_text"
-            android:textSize="@dimen/font_large"/>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/send_log"
-            android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginRight="@dimen/normal_margin"
-            android:background="#979797"/>
-
-        <ImageView
-            android:id="@+id/logout_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/send_log"
-            android:layout_marginLeft="@dimen/first_key_line"
-            android:layout_marginStart="@dimen/first_key_line"
-            android:layout_marginTop="@dimen/first_key_line"
-            android:padding="@dimen/normal_padding"
-            android:src="@drawable/ic_exit_to_app"
-            tools:ignore="ContentDescription"/>
-
-        <TextView
-            android:id="@+id/logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/send_log"
-            android:layout_marginTop="@dimen/first_key_line"
-            android:layout_toRightOf="@+id/logout_icon"
-            android:layout_toEndOf="@+id/logout_icon"
-            android:clickable="true"
-            android:onClick="logout"
-            android:padding="@dimen/normal_padding"
-            android:text="@string/logout"
-            android:textColor="@color/main_text"
-            android:textSize="@dimen/font_large"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/logout"
-            android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginRight="@dimen/normal_margin"
-            android:background="#979797"/>
-
-        <ImageView
-            android:id="@+id/exit_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/logout"
-            android:layout_marginLeft="@dimen/first_key_line"
-            android:layout_marginStart="@dimen/first_key_line"
-            android:layout_marginTop="@dimen/first_key_line"
-            android:padding="@dimen/normal_padding"
-            android:src="@drawable/ic_exit_to_app"
-            tools:ignore="ContentDescription"/>
-
-        <TextView
-            android:id="@+id/exit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/logout"
-            android:layout_marginTop="@dimen/first_key_line"
-            android:layout_toRightOf="@+id/logout_icon"
-            android:layout_toEndOf="@+id/logout_icon"
-            android:clickable="true"
-            android:onClick="exitApp"
-            android:padding="@dimen/normal_padding"
-            android:text="@string/exit_the_app"
-            android:textColor="@color/main_text"
-            android:textSize="@dimen/font_large"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/exit"
-            android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginRight="@dimen/normal_margin"
-            android:background="#979797"/>
-
-        <ImageView
-            android:id="@+id/print_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/exit"
-            android:layout_marginLeft="@dimen/first_key_line"
-            android:layout_marginStart="@dimen/first_key_line"
-            android:layout_marginTop="@dimen/first_key_line"
-            android:padding="@dimen/normal_padding"
-            android:src="@drawable/ic_print_setting"
-            tools:ignore="ContentDescription"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/print"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/exit"
-            android:layout_marginTop="@dimen/first_key_line"
-            android:layout_toRightOf="@+id/logout_icon"
-            android:layout_toEndOf="@+id/logout_icon"
-            android:clickable="true"
-            android:padding="@dimen/normal_padding"
-            android:textColor="@color/main_text"
-            android:textSize="@dimen/font_large"
-            android:visibility="gone"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/print"
-            android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginRight="@dimen/normal_margin"
-            android:background="#979797"
-            android:visibility="gone"/>
-
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/submit_btn"
+    <View
         android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/download"
+        android:layout_marginLeft="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:background="#979797"/>
+
+    <ImageView
+        android:id="@+id/send_log_icon"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/second_key_line"
-        android:layout_marginLeft="@dimen/proceed_button_margin"
-        android:layout_marginRight="@dimen/proceed_button_margin"
-        android:background="@drawable/next_button_bg"
-        android:onClick="goToCheckIn"
-        android:padding="@dimen/first_key_line"
-        android:text="@string/start_check_in"
-        android:textColor="@color/colorAccent"
-        android:textSize="@dimen/font_normal"
-        android:textStyle="bold"/>
+        android:layout_below="@+id/download"
+        android:layout_marginLeft="@dimen/first_key_line"
+        android:layout_marginStart="@dimen/first_key_line"
+        android:layout_marginTop="@dimen/first_key_line"
+        android:padding="@dimen/normal_padding"
+        android:src="@drawable/ic_file_download"
+        tools:ignore="ContentDescription"/>
+
+    <TextView
+        android:id="@+id/send_log"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/send_log_icon"
+        android:layout_toEndOf="@+id/send_log_icon"
+        android:layout_toRightOf="@+id/send_log_icon"
+        android:clickable="true"
+        android:onClick="goToEmail"
+        android:padding="@dimen/normal_padding"
+        android:text="@string/send_log"
+        android:textColor="@color/main_text"
+        android:textSize="@dimen/font_large"/>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/send_log"
+        android:layout_marginLeft="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:background="#979797"/>
+
+    <ImageView
+        android:id="@+id/kiosk_name_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/send_log"
+        android:layout_marginLeft="@dimen/first_key_line"
+        android:layout_marginStart="@dimen/first_key_line"
+        android:layout_marginTop="@dimen/first_key_line"
+        android:padding="@dimen/normal_padding"
+        android:src="@drawable/ic_dashboard"
+        tools:ignore="ContentDescription"/>
+
+    <TextView
+        android:id="@+id/kiosk_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/kiosk_name_icon"
+        android:layout_toEndOf="@+id/kiosk_name_icon"
+        android:layout_toRightOf="@+id/kiosk_name_icon"
+        android:clickable="true"
+        android:onClick="changeKioskName"
+        android:padding="@dimen/normal_padding"
+        android:text="@string/app_name"
+        android:textColor="@color/main_text"
+        android:textSize="@dimen/font_large"/>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/kiosk_name"
+        android:layout_marginLeft="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:background="#979797"/>
+
+    <ImageView
+        android:id="@+id/logout_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/kiosk_name"
+        android:layout_marginLeft="@dimen/first_key_line"
+        android:layout_marginStart="@dimen/first_key_line"
+        android:layout_marginTop="@dimen/first_key_line"
+        android:padding="@dimen/normal_padding"
+        android:src="@drawable/ic_exit_to_app"
+        tools:ignore="ContentDescription"/>
+
+    <TextView
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/logout_icon"
+        android:layout_toEndOf="@+id/logout_icon"
+        android:layout_toRightOf="@+id/logout_icon"
+        android:clickable="true"
+        android:onClick="logout"
+        android:padding="@dimen/normal_padding"
+        android:text="@string/logout"
+        android:textColor="@color/main_text"
+        android:textSize="@dimen/font_large"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/logout"
+        android:layout_marginLeft="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:background="#979797"/>
+
+    <ImageView
+        android:id="@+id/exit_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logout"
+        android:layout_marginLeft="@dimen/first_key_line"
+        android:layout_marginStart="@dimen/first_key_line"
+        android:layout_marginTop="@dimen/first_key_line"
+        android:padding="@dimen/normal_padding"
+        android:src="@drawable/ic_exit_to_app"
+        tools:ignore="ContentDescription"/>
+
+    <TextView
+        android:id="@+id/exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logout"
+        android:layout_marginTop="@dimen/first_key_line"
+        android:layout_toEndOf="@+id/logout_icon"
+        android:layout_toRightOf="@+id/logout_icon"
+        android:clickable="true"
+        android:onClick="exitApp"
+        android:padding="@dimen/normal_padding"
+        android:text="@string/exit_the_app"
+        android:textColor="@color/main_text"
+        android:textSize="@dimen/font_large"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/exit"
+        android:layout_marginLeft="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:background="#979797"/>
+
+    <ImageView
+        android:id="@+id/print_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/exit"
+        android:layout_marginLeft="@dimen/first_key_line"
+        android:layout_marginStart="@dimen/first_key_line"
+        android:layout_marginTop="@dimen/first_key_line"
+        android:padding="@dimen/normal_padding"
+        android:src="@drawable/ic_print_setting"
+        android:visibility="gone"
+        tools:ignore="ContentDescription"/>
+
+    <TextView
+        android:id="@+id/print"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/exit"
+        android:layout_marginTop="@dimen/first_key_line"
+        android:layout_toEndOf="@+id/logout_icon"
+        android:layout_toRightOf="@+id/logout_icon"
+        android:clickable="true"
+        android:padding="@dimen/normal_padding"
+        android:textColor="@color/main_text"
+        android:textSize="@dimen/font_large"
+        android:visibility="gone"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/print"
+        android:layout_marginLeft="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:background="#979797"
+        android:visibility="gone"/>
+
+  </RelativeLayout>
+
+  <Button
+      android:id="@+id/submit_btn"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="@dimen/second_key_line"
+      android:layout_marginLeft="@dimen/proceed_button_margin"
+      android:layout_marginRight="@dimen/proceed_button_margin"
+      android:background="@drawable/next_button_bg"
+      android:onClick="goToCheckIn"
+      android:padding="@dimen/first_key_line"
+      android:text="@string/start_check_in"
+      android:textColor="@color/colorAccent"
+      android:textSize="@dimen/font_normal"
+      android:textStyle="bold"/>
 </RelativeLayout>
