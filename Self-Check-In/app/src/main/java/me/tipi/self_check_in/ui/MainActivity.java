@@ -37,6 +37,9 @@ import com.f2prateek.rx.preferences.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -80,6 +83,10 @@ public class MainActivity extends AppCompatActivity {
   private static final int PERMISSION_REQUEST_CODE = 8000;
   private static final int CAMERA_GALLERY_PERMISSIONS_REQUEST = 9000;
 
+  long oneMinute = 60000;
+  long period = 5 * oneMinute;
+  Timer timer = new Timer();
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -121,6 +128,13 @@ public class MainActivity extends AppCompatActivity {
   @Override protected void onPause() {
     super.onPause();
     Timber.d("Paused");
+  }
+
+  @Override protected void onStop() {
+    super.onStop();
+    if (timer != null) {
+      timer.cancel();
+    }
   }
 
   @TargetApi(Build.VERSION_CODES.M)
@@ -267,6 +281,12 @@ public class MainActivity extends AppCompatActivity {
 
         Snackbar.make(appContainer.bind(MainActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
         Timber.w(error.getMessage());
+        timer.scheduleAtFixedRate(new TimerTask() {
+          @Override public void run() {
+            login();
+            period = Math.round(period * 1.5);
+          }
+        }, 1000, period);
       }
     });
   }
