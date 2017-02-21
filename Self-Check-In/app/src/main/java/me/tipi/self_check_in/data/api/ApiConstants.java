@@ -26,13 +26,14 @@ public class ApiConstants {
   public static final int START_OVER_TIME = 600000;
 
   // Routes
-  public static final String LOGIN = "/dashboard/login";
-  public static final String HOME_TOWN = "/countries/suggest";
-  public static final String SIGN_UP = "/dashboard/users/signup";
-  public static final String FIND = "/dashboard/users/find";
-  public static final String CLAIM = "/dashboard/users/{user_key}/claim";
-  public static final String TERMS = "/hostels/{hostel_key}/terms";
-  public static final String NOTE = "/dashboard/guests/{guest_key}/notes/append";
+  static final String LOGIN = "/dashboard/login";
+  static final String HOME_TOWN = "/countries/suggest";
+  static final String SIGN_UP = "/dashboard/users/signup";
+  static final String FIND = "/dashboard/users/find";
+  static final String CLAIM = "/dashboard/users/{user_key}/claim";
+  static final String TERMS = "/hostels/{hostel_key}/terms";
+  static final String NOTE = "/dashboard/guests/{guest_key}/notes/append";
+  static final String LOG = "/dashboard/me/logs";
 
   // Images
   public static final String AVATAR_URL = "/user/%s/savatar";

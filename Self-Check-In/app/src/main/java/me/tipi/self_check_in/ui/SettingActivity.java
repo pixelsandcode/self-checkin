@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -44,10 +45,17 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.PrinterPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
+import me.tipi.self_check_in.data.api.AuthenticationService;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.mime.TypedFile;
 import timber.log.Timber;
 
 public class SettingActivity extends AppCompatActivity {
 
+  @Inject AuthenticationService authenticationService;
+  @Inject AppContainer appContainer;
   @Inject Tracker tracker;
   @Inject PrinterPreference printerPreference;
   @Inject TypefaceHelper typeface;
@@ -109,7 +117,35 @@ public class SettingActivity extends AppCompatActivity {
     startActivity(browserIntent);
   }
 
-  public void goToEmail(View view){
+  public void sendLog(View view) {
+    TypedFile logFile = new TypedFile("log/txt", new File("/storage/emulated/0/Download/kiosk.txt"));
+    String kioskName = (kioskNamePref != null && kioskNamePref.get() != null) ? kioskNamePref.get() : null;
+    if (kioskName != null) {
+      if (logFile != null) {
+        authenticationService.sendLog(kioskName, logFile, new Callback<Response>() {
+          @Override public void success(Response response, Response response2) {
+            Toast.makeText(SettingActivity.this, "Thank You.", Toast.LENGTH_SHORT).show();
+          }
+
+          @Override public void failure(RetrofitError error) {
+            if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+              Snackbar.make(appContainer.bind(SettingActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+              return;
+            }
+
+            Timber.w("ERROR %s", error.getMessage() != null ? error.getMessage() : error.toString());
+            Toast.makeText(SettingActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_SHORT).show();
+          }
+        });
+      } else {
+        Timber.w("logFile is null");
+      }
+    } else {
+      Timber.w("Kiosk name is null!!!");
+    }
+  }
+
+/*  public void goToEmail(View view) {
     Intent emailIntent = new Intent(Intent.ACTION_SEND);
     String emailTo = getResources().getString(R.string.log_email_to);
     String emailSubject = getResources().getString(R.string.log_email_subject);
@@ -121,7 +157,7 @@ public class SettingActivity extends AppCompatActivity {
     emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File("/storage/emulated/0/Download/kiosk.txt")));
     emailIntent.setType("text/plain");
     startActivity(Intent.createChooser(emailIntent, "Send mail"));
-  }
+  }*/
 
   public void logout(View view) {
     username.delete();

@@ -276,10 +276,10 @@ public class MainActivity extends AppCompatActivity {
         loading.dismiss();
         showLoginFragment();
 
-        /*if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
+        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
           Snackbar.make(appContainer.bind(MainActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
           return;
-        }*/
+        }
 
         if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
           Snackbar.make(appContainer.bind(MainActivity.this), R.string.enter_correct_email_password, Snackbar.LENGTH_LONG).show();

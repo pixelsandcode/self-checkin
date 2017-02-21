@@ -17,6 +17,7 @@ import me.tipi.self_check_in.data.api.models.LoginRequest;
 import me.tipi.self_check_in.data.api.models.LoginResponse;
 import me.tipi.self_check_in.data.api.models.NoteRequest;
 import retrofit.Callback;
+import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Multipart;
@@ -90,6 +91,13 @@ public interface AuthenticationService {
       @Part("booking[to]") String to,
       @Part("gender") int gender,
       Callback<ClaimResponse> cb);
+
+  @Multipart
+  @POST(ApiConstants.LOG)
+  void sendLog(
+      @Part("name") String name,
+      @Part("file") TypedFile log,
+      Callback<Response> cb);
 
   /**
    * Claim.
