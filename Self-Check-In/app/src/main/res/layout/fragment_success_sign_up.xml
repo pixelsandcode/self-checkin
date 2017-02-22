@@ -20,17 +20,14 @@
       android:id="@+id/title"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/tick_image"
-      android:layout_centerHorizontal="true"
-      android:layout_marginLeft="@dimen/second_key_line"
-      android:layout_marginRight="@dimen/second_key_line"
-      android:layout_marginTop="12dp"
       android:fontFamily="@string/roboto_regular"
       android:gravity="center"
       android:textColor="@color/white"
+      android:layout_marginTop="@dimen/second_key_line"
       android:textSize="40sp"
       tools:text="Thanks Jack"
-      />
+      android:layout_below="@+id/tick_image"
+      android:layout_centerHorizontal="true"/>
 
   <TextView
       android:id="@+id/show_code"

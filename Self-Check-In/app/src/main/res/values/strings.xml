@@ -110,8 +110,8 @@
   <string name="set">Set</string>
   <string name="cancel">Cancel</string>
   <string name="mandarin">中文</string>
-  <string name="download_tipi">Download Tipi</string>
-  <string name="meet"><![CDATA[Meet other guests & see what’s on at this hostel. Download Tipi now.]]></string>
+  <string name="download_tipi">Download Tipi Now</string>
+  <string name="meet"><![CDATA[Meet other guests & see what’s on at this hostel.]]></string>
 
   <string-array name="kiosk_names">
     <item>Apollo</item>

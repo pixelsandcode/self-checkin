@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.drivemode.android.typeface.TypefaceHelper;
 import com.f2prateek.rx.preferences.Preference;
@@ -68,6 +69,7 @@ public class SettingActivity extends AppCompatActivity {
   @Bind(R.id.version) TextView versionTextView;
   @Bind(R.id.print) TextView print;
   @Bind(R.id.kiosk_name) TextView kioskName;
+  private MaterialDialog loading;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +89,12 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     handleKioskModeText();
+
+    loading = new MaterialDialog.Builder(this)
+        .content("Loading")
+        .cancelable(false)
+        .progress(true, 0)
+        .build();
 
     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
     sp.edit().putBoolean(KioskService.PREF_KIOSK_MODE, false).apply();
@@ -122,12 +130,26 @@ public class SettingActivity extends AppCompatActivity {
     String kioskName = (kioskNamePref != null && kioskNamePref.get() != null) ? kioskNamePref.get() : null;
     if (kioskName != null) {
       if (logFile != null) {
+        loading.show();
         authenticationService.sendLog(kioskName, logFile, new Callback<Response>() {
           @Override public void success(Response response, Response response2) {
-            Toast.makeText(SettingActivity.this, "Thank You.", Toast.LENGTH_SHORT).show();
+            loading.dismiss();
+            new MaterialDialog.Builder(SettingActivity.this)
+                .title("Thank you!")
+                .content("Log file sent successfully")
+                .cancelable(true)
+                .positiveText("OK")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                  @Override
+                  public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    dialog.dismiss();
+                  }
+                })
+                .build().show();
           }
 
           @Override public void failure(RetrofitError error) {
+            loading.dismiss();
             if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
               Snackbar.make(appContainer.bind(SettingActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
               return;
@@ -208,7 +230,7 @@ public class SettingActivity extends AppCompatActivity {
 
   private void handleKioskModeText() {
     if (kioskNamePref != null && kioskNamePref.get() != null && !TextUtils.isEmpty(kioskNamePref.get())) {
-      kioskName.setText(String.format(Locale.US, "%s (Tap to change kiosk name)", kioskNamePref.get()));
+      kioskName.setText(String.format(Locale.US, "%s Kiosk", kioskNamePref.get()));
     }
   }
 }

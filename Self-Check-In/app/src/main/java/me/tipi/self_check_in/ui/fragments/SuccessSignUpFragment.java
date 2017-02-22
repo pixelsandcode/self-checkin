@@ -169,14 +169,14 @@ public class SuccessSignUpFragment extends Fragment {
 
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
       progress = 1;
-      countDownTimer = new CountDownTimer(15000, 1000) {
+      countDownTimer = new CountDownTimer(30000, 1000) {
         @Override public void onTick(long millisUntilFinished) {
-          circleCountDownView.setProgress(progress, 15);
+          circleCountDownView.setProgress(progress, 30);
           progress = progress + 1;
         }
 
         @Override public void onFinish() {
-          circleCountDownView.setProgress(progress, 15);
+          circleCountDownView.setProgress(progress, 30);
           startOver();
         }
       };
@@ -211,14 +211,14 @@ public class SuccessSignUpFragment extends Fragment {
     super.setUserVisibleHint(isVisibleToUser);
     if (getActivity() != null && isVisibleToUser) {
       progress = 1;
-      countDownTimer = new CountDownTimer(15000, 1000) {
+      countDownTimer = new CountDownTimer(30000, 1000) {
         @Override public void onTick(long millisUntilFinished) {
-          circleCountDownView.setProgress(progress, 15);
+          circleCountDownView.setProgress(progress, 30);
           progress = progress + 1;
         }
 
         @Override public void onFinish() {
-          circleCountDownView.setProgress(progress, 15);
+          circleCountDownView.setProgress(progress, 30);
           startOver();
         }
       };

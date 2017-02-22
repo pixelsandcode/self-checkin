@@ -492,10 +492,9 @@ public class SignUpActivity extends AppCompatActivity {
                 // Timber.e("ERROR" + error.toString() +
                 //    "error body = " + error.getBody().toString() + "error kind = " + error.getKind().toString());
                 Timber.w("ERROR %s", error.getMessage() != null ? error.getMessage() : error.toString());
-                Toast.makeText(SignUpActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_LONG).show();
+                Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
               }
             } else {
-              // Timber.e("ERROR %s", error.toString());
               Timber.w("ERROR %s", error.getMessage() != null ? error.getMessage() : error.toString());
               Toast.makeText(SignUpActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
