@@ -112,6 +112,7 @@
   <string name="mandarin">中文</string>
   <string name="download_tipi">Download Tipi Now</string>
   <string name="meet"><![CDATA[Meet other guests & see what’s on at this hostel.]]></string>
+  <string name="server_issue">Cannot contact server, please check your wifi connection!</string>
 
   <string-array name="kiosk_names">
     <item>Apollo</item>
