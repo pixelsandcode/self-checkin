@@ -323,7 +323,7 @@ public class IdentityFragment extends Fragment {
       focusView = homeTownACView;
       cancel = true;
     } else if (!hasSelectedHometown) {
-      homeTownLayout.setError(getString(R.string.home_town_error));
+      homeTownACView.setError(getString(R.string.home_town_error));
       focusView = homeTownACView;
       cancel = true;
       homeTownACView.setText("");

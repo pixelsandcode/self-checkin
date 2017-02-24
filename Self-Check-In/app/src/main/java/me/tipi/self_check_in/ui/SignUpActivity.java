@@ -133,6 +133,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
     sp.edit().putBoolean(KioskService.PREF_KIOSK_MODE, true).apply();
+    Timber.w("KIOSK mode is ON");
   }
 
   @Override protected void onResume() {
@@ -529,6 +530,7 @@ public class SignUpActivity extends AppCompatActivity {
             loading.dismiss();
             Timber.d("Claimed");
             guest.guest_key = apiResponse.data.guest_key;
+            guest.name = apiResponse.data.name;
             tracker.send(new HitBuilders.EventBuilder("Check-in", "Claim").build());
 
             // Send overall success time
