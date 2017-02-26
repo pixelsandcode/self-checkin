@@ -333,18 +333,26 @@ public class SignUpActivity extends AppCompatActivity {
    */
   @OnClick(R.id.settingBtn)
   public void settingClicked() {
+    Timber.w("------Setting button Tapped----");
     new MaterialDialog.Builder(this)
         .title("Verification Needed")
         .content("Please enter hostel password")
         .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
-        .inputRange(6, 50, ContextCompat.getColor(SignUpActivity.this, R.color.colorAccent))
+        .inputRange(4, 50, ContextCompat.getColor(SignUpActivity.this, R.color.colorAccent))
         .input("Hostel Password", "", false, new MaterialDialog.InputCallback() {
           @Override public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+            Timber.w("Input password is: %s and hostel password is: %s and master password is: %s", input.toString(), password.get(), ApiConstants.MASTER_PASSWORD);
             if (password != null && !TextUtils.isEmpty(password.get()) &&
                 password.get() != null && password.get().equals(input.toString())) {
+              Timber.w("Correct hostel password going to setting");
+              startActivity(new Intent(SignUpActivity.this, SettingActivity.class));
+              finish();
+            } else if (input.toString().equals(ApiConstants.MASTER_PASSWORD)) {
+              Timber.w("Correct master password going to setting");
               startActivity(new Intent(SignUpActivity.this, SettingActivity.class));
               finish();
             } else {
+              Timber.w("Incorrect password");
               Snackbar.make(appContainer.bind(SignUpActivity.this), "Invalid password", Snackbar.LENGTH_LONG)
                   .show();
             }

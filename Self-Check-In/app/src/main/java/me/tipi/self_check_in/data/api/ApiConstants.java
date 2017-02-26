@@ -24,6 +24,7 @@ public class ApiConstants {
   public static final String BASE_DOWNLOAD_PAGE = "https://play.google.com/store/apps/details?id=me.tipi.self_check_in";
 
   public static final int START_OVER_TIME = 600000;
+  public static final String MASTER_PASSWORD = "tipikiosk2016";
 
   // Routes
   static final String LOGIN = "/dashboard/login";
