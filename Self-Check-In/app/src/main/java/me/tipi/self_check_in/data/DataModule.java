@@ -179,9 +179,9 @@ public final class DataModule {
     CookieManager cookieManager = new CookieManager();
     cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
     client.setCookieHandler(cookieManager);
-    client.setConnectTimeout(15, SECONDS);
-    client.setReadTimeout(15, SECONDS);
-    client.setWriteTimeout(15, SECONDS);
+    client.setConnectTimeout(1000, SECONDS);
+    client.setReadTimeout(1000, SECONDS);
+    client.setWriteTimeout(1000, SECONDS);
 
     // Install an HTTP cache in the application cache directory.
     File cacheDir = new File(app.getCacheDir(), "http");

@@ -1,8 +1,8 @@
 // Manifest version information!
 def versionMajor = 4
 def versionMinor = 7
-def versionPatch = 1
-def versionBuild = 3 // bump for dogfood builds, public betas, etc.
+def versionPatch = 3
+def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'

@@ -133,10 +133,12 @@ public class SuccessSignUpFragment extends Fragment {
       connectToPrinter();
     }
 
-    String firstNam = Strings.getFirstName(guest.name);
-    firstNam = firstNam.toLowerCase(Locale.US);
-    firstNam = Character.toString(firstNam.charAt(0)).toUpperCase() + firstNam.substring(1);
-    titleView.setText(String.format(Locale.US, getString(R.string.thanks), firstNam));
+    Timber.w("Read name from memory with value: %s", guest.name);
+    String firstName = Strings.getFirstName(guest.name);
+    firstName = firstName.toLowerCase(Locale.US);
+    firstName = Character.toString(firstName.charAt(0)).toUpperCase() + firstName.substring(1);
+    Timber.w("Showing name from memory with value: %s", firstName);
+    titleView.setText(String.format(Locale.US, getString(R.string.thanks), firstName));
 
     return rootView;
   }

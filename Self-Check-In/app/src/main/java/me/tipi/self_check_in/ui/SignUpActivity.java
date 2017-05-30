@@ -462,6 +462,7 @@ public class SignUpActivity extends AppCompatActivity {
             Timber.w("--------PROCESS FINISHED------- with guest_key: %s", apiResponse.data.guest_key);
             guest.guest_key = apiResponse.data.guest_key;
             guest.name = apiResponse.data.name;
+            Timber.w("Got name from server with value: %s. name stored with value: %s", apiResponse.data.name, guest.name);
             // Send overall success time
             long elapsed = Math.abs(guest.time - System.currentTimeMillis());
             long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
@@ -479,18 +480,19 @@ public class SignUpActivity extends AppCompatActivity {
             Timber.w("--------PROCESS Terminated-------");
             if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
               Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+              Timber.w("ERROR %s, status: %s, kind: %s", error.getMessage(), error.getResponse().getStatus(), error.getKind() != null ? error.getKind().toString() : null);
               return;
             }
 
             if (error.getResponse() != null) {
               if (error.getResponse().getStatus() == 409) {
-                Timber.w("ERROR %s, status: %s", error.getMessage(), error.getResponse().getStatus());
+                Timber.w("ERROR %s, status: %s, kind: %s", error.getMessage(), error.getResponse().getStatus(), error.getKind() != null ? error.getKind().toString() : null);
                 showSuccessFragment();
               } else if (error.getResponse().getStatus() == 401) {
-                Timber.w("ERROR %s", error.getMessage());
+                Timber.w("ERROR %s, status: %s, kind: %s", error.getMessage(), error.getResponse().getStatus(), error.getKind() != null ? error.getKind().toString() : null);
                 login();
               } else if (error.getResponse().getStatus() == 400) {
-                Timber.w("ERROR %s, status: %s", error.getMessage(), error.getResponse().getStatus());
+                Timber.w("ERROR %s, status: %s, kind: %s", error.getMessage(), error.getResponse().getStatus(), error.getKind() != null ? error.getKind().toString() : null);
                 new MaterialDialog.Builder(SignUpActivity.this)
                     .cancelable(true)
                     .autoDismiss(true)
@@ -500,20 +502,20 @@ public class SignUpActivity extends AppCompatActivity {
               } else {
                 // Timber.e("ERROR" + error.toString() +
                 //    "error body = " + error.getBody().toString() + "error kind = " + error.getKind().toString());
-                Timber.w("ERROR %s", error.getMessage() != null ? error.getMessage() : error.toString());
+                Timber.w("ERROR %s, kind: %s", error.getMessage() != null ? error.getMessage() : error.toString(), error.getKind() != null ? error.getKind().toString() : null);
                 Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT)
                     .show();
               }
             } else {
               if (error.getMessage() != null) {
-                Timber.w("ERROR %s", error.getMessage());
+                Timber.w("ERROR %s, kind: %s", error.getMessage(), error.getKind() != null ? error.getKind().toString() : null);
               } else if (error.getBody() != null) {
-                Timber.w("ERROR %s", error.getBody().toString());
+                Timber.w("ERROR %s, kind: %s", error.getBody().toString(), error.getKind() != null ? error.getKind().toString() : null);
               } else {
-                Timber.w("ERROR %s", error.getMessage() != null ? error.getMessage() : error.toString());
+                Timber.w("ERROR %s, kind: %s", error.getMessage() != null ? error.getMessage() : error.toString(), error.getKind() != null ? error.getKind().toString() : null);
               }
 
-              Toast.makeText(SignUpActivity.this, R.string.server_issue + error.getMessage(), Toast.LENGTH_SHORT).show();
+              Toast.makeText(SignUpActivity.this, "Cannot contact server, please check your wifi connection!", Toast.LENGTH_LONG).show();
             }
           }
         }
