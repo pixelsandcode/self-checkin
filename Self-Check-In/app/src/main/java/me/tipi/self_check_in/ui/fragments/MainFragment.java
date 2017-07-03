@@ -58,7 +58,9 @@ public class MainFragment extends Fragment {
 
   @Override public void onPause() {
     super.onPause();
-    bus.unregister(this);
+    if (getActivity() != null && bus != null) {
+      bus.unregister(this);
+    }
   }
 
   private void deleteMadKioskContent() {

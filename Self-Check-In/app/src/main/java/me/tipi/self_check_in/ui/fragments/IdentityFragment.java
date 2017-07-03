@@ -12,15 +12,11 @@ package me.tipi.self_check_in.ui.fragments;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -31,8 +27,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -49,7 +43,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -366,7 +359,7 @@ public class IdentityFragment extends Fragment {
    * Show dob dialog.
    */
   private void showDobDialog() {
-    DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), android.R.style.Theme_Holo_Light_Dialog,
+    DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
         new DatePickerDialog.OnDateSetListener() {
           @Override
           public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -375,43 +368,11 @@ public class IdentityFragment extends Fragment {
             birthDayPickerView.setText(String.format(Locale.US, "%d - %d - %d", dayOfMonth, monthOfYear + 1, year));
             calendar.set(year, monthOfYear, dayOfMonth);
             dob = calendar.getTime();
+            passportEditText.setFocusableInTouchMode(true);
+            passportEditText.requestFocus();
           }
         }, 1985, 6, 15);
-    DatePicker datePicker = datePickerDialog.getDatePicker();
-    datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-    styleDatePicker(datePicker);
     datePickerDialog.show();
-  }
-
-  /**
-   * Style date picker.
-   *
-   * @param datePicker the date picker
-   */
-  private void styleDatePicker(DatePicker datePicker) {
-    datePicker.setCalendarViewShown(false);
-    datePicker.setSpinnersShown(true);
-    LinearLayout llFirst = (LinearLayout) datePicker.getChildAt(0);
-    LinearLayout llSecond = (LinearLayout) llFirst.getChildAt(0);
-    for (int i = 0; i < llSecond.getChildCount(); i++) {
-      NumberPicker picker = (NumberPicker) llSecond.getChildAt(i); // NumberPickers in llSecond
-      Field[] pickerFields = NumberPicker.class.getDeclaredFields();
-      for (Field pf : pickerFields) {
-        if (pf.getName().equals("mSelectionDivider")) {
-          pf.setAccessible(true);
-          try {
-            pf.set(picker, ContextCompat.getDrawable(getActivity(), R.drawable.picker_divider));
-          } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-          } catch (Resources.NotFoundException e) {
-            e.printStackTrace();
-          } catch (IllegalAccessException e) {
-            e.printStackTrace();
-          }
-          break;
-        }
-      }
-    }
   }
 
   /**
