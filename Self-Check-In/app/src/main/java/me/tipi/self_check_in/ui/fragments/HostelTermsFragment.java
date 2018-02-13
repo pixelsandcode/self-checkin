@@ -1,6 +1,5 @@
 package me.tipi.self_check_in.ui.fragments;
 
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,18 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.f2prateek.rx.preferences.Preference;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.squareup.otto.Bus;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.f2prateek.rx.preferences2.Preference;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.squareup.otto.Bus;
+import javax.inject.Inject;
+import javax.inject.Named;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
@@ -48,8 +44,7 @@ public class HostelTermsFragment extends Fragment {
   @Inject Tracker tracker;
   @Inject AuthenticationService authenticationService;
   @Inject
-  @Named(ApiConstants.HOSTEL_KEY)
-  Preference<String> hostelKey;
+  @Named(ApiConstants.HOSTEL_KEY) Preference<String> hostelKey;
   @Inject AppContainer appContainer;
 
   @Bind(R.id.hostel_terms) TextView termsTextView;

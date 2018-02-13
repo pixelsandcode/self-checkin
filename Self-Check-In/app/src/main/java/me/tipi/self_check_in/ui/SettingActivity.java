@@ -23,23 +23,19 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.drivemode.android.typeface.TypefaceHelper;
-import com.f2prateek.rx.preferences.Preference;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
-import java.io.File;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.drivemode.android.typeface.TypefaceHelper;
+import com.f2prateek.rx.preferences2.Preference;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import java.io.File;
+import java.util.Locale;
+import javax.inject.Inject;
+import javax.inject.Named;
 import me.tipi.self_check_in.BuildConfig;
 import me.tipi.self_check_in.KioskService;
 import me.tipi.self_check_in.R;

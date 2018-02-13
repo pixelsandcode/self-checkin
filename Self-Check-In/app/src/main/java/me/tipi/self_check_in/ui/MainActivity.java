@@ -32,19 +32,15 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
-
+import butterknife.ButterKnife;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.drivemode.android.typeface.TypefaceHelper;
-import com.f2prateek.rx.preferences.Preference;
+import com.f2prateek.rx.preferences2.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-
 import java.util.Random;
-
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import butterknife.ButterKnife;
 import me.tipi.self_check_in.KioskService;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
@@ -64,8 +60,7 @@ public class MainActivity extends AppCompatActivity {
   @Inject AuthenticationService authenticationService;
   @Inject PrinterPreference printerPreference;
   @Inject
-  @Named(ApiConstants.USER_NAME)
-  Preference<String> username;
+  @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject
   @Named(ApiConstants.PASSWORD)
   Preference<String> password;

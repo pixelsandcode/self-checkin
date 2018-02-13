@@ -3,27 +3,22 @@ package me.tipi.self_check_in.data;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.net.Uri;
-
-import com.f2prateek.rx.preferences.Preference;
-import com.f2prateek.rx.preferences.RxSharedPreferences;
+import com.f2prateek.rx.preferences2.Preference;
+import com.f2prateek.rx.preferences2.RxSharedPreferences;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
-
-import org.threeten.bp.Clock;
-
+import dagger.Module;
+import dagger.Provides;
 import java.io.File;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import dagger.Module;
-import dagger.Provides;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.ApiModule;
+import org.threeten.bp.Clock;
 import timber.log.Timber;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -68,8 +63,7 @@ public final class DataModule {
    * @param prefs the prefs
    * @return the preference
    */
-  @Provides @Singleton @Named(ApiConstants.USER_NAME)
-  Preference<String> provideUsername(RxSharedPreferences prefs) {
+  @Provides @Singleton @Named(ApiConstants.USER_NAME) Preference<String> provideUsername(RxSharedPreferences prefs) {
     return prefs.getString(ApiConstants.USER_NAME);
   }
 

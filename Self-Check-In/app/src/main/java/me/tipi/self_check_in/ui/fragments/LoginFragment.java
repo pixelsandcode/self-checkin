@@ -17,16 +17,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-
-import com.drivemode.android.typeface.TypefaceHelper;
-import com.f2prateek.rx.preferences.Preference;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.drivemode.android.typeface.TypefaceHelper;
+import com.f2prateek.rx.preferences2.Preference;
+import javax.inject.Inject;
+import javax.inject.Named;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;

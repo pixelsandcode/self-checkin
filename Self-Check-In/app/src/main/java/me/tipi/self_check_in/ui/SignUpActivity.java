@@ -31,30 +31,23 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.f2prateek.rx.preferences.Preference;
+import com.f2prateek.rx.preferences2.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.microblink.recognizers.RecognitionResults;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.UpdateManager;
-
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import me.tipi.self_check_in.KioskService;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
@@ -84,6 +77,8 @@ import me.tipi.self_check_in.ui.fragments.PassportFragment;
 import me.tipi.self_check_in.ui.fragments.QuestionFragment;
 import me.tipi.self_check_in.ui.fragments.ScanIDFragment;
 import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.UpdateManager;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -96,8 +91,7 @@ public class SignUpActivity extends AppCompatActivity {
   @Inject AppContainer appContainer;
   @Inject AuthenticationService authenticationService;
   @Inject
-  @Named(ApiConstants.USER_NAME)
-  Preference<String> username;
+  @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject
   @Named(ApiConstants.PASSWORD)
   Preference<String> password;

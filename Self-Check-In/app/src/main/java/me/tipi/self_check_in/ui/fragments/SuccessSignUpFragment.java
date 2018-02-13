@@ -23,25 +23,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.RT_Printer.BluetoothPrinter.BLUETOOTH.BluetoothPrintDriver;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.f2prateek.rx.preferences.Preference;
+import com.f2prateek.rx.preferences2.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
-
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
-
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.PrinterPreference;
@@ -72,8 +68,7 @@ public class SuccessSignUpFragment extends Fragment {
   @Inject
   Tracker tracker;
   @Inject
-  @Named(ApiConstants.HOSTEL_NAME)
-  Preference<String> hostelName;
+  @Named(ApiConstants.HOSTEL_NAME) Preference<String> hostelName;
 
   @Bind(R.id.printer_btn) ImageButton printerBtn;
   @Bind(R.id.title) TextView titleView;
