@@ -8,7 +8,7 @@
 
 package me.tipi.self_check_in.data.api.models;
 
-public class FindResponse {
+public class FindResponse extends BaseResponse{
   public final User data;
 
   /**

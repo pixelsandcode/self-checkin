@@ -53,13 +53,15 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.LanguagePreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
-import me.tipi.self_check_in.data.api.AuthenticationService;
+import me.tipi.self_check_in.data.api.AppCallback;
+import me.tipi.self_check_in.data.api.NetworkRequestManager;
+import me.tipi.self_check_in.data.api.AddGuestCallback;
+import me.tipi.self_check_in.data.api.models.BaseResponse;
 import me.tipi.self_check_in.data.api.models.Booking;
 import me.tipi.self_check_in.data.api.models.ClaimRequest;
 import me.tipi.self_check_in.data.api.models.ClaimResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
-import me.tipi.self_check_in.data.api.models.LoginResponse;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
@@ -79,22 +81,16 @@ import me.tipi.self_check_in.ui.fragments.ScanIDFragment;
 import me.tipi.self_check_in.ui.fragments.SuccessSignUpFragment;
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-import retrofit.mime.TypedFile;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class SignUpActivity extends AppCompatActivity {
   @Inject Bus bus;
   @Inject Guest guest;
   @Inject AppContainer appContainer;
-  @Inject AuthenticationService authenticationService;
-  @Inject
-  @Named(ApiConstants.USER_NAME) Preference<String> username;
-  @Inject
-  @Named(ApiConstants.PASSWORD)
-  Preference<String> password;
+  @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
+  @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
   @Inject Tracker tracker;
   @Inject LanguagePreference languagePreference;
 
@@ -105,16 +101,14 @@ public class SignUpActivity extends AppCompatActivity {
   private MaterialDialog loading;
   private int loginCount = 0;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_sign_up);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     SelfCheckInApp.get(this).inject(this);
     ButterKnife.bind(this);
 
-    loading = new MaterialDialog.Builder(this)
-        .content("Please wait...")
+    loading = new MaterialDialog.Builder(this).content("Please wait...")
         .cancelable(false)
         .progress(true, 0)
         .build();
@@ -161,7 +155,8 @@ public class SignUpActivity extends AppCompatActivity {
 
   @Override public void onBackPressed() {
     Fragment questionFragment = getSupportFragmentManager().findFragmentByTag(QuestionFragment.TAG);
-    Fragment successFragment = getSupportFragmentManager().findFragmentByTag(SuccessSignUpFragment.TAG);
+    Fragment successFragment =
+        getSupportFragmentManager().findFragmentByTag(SuccessSignUpFragment.TAG);
     Fragment scanFragment = getSupportFragmentManager().findFragmentByTag(ScanIDFragment.TAG);
     Fragment ocrFragment = getSupportFragmentManager().findFragmentByTag(OCRFragment.TAG);
     if (questionFragment != null && questionFragment.isVisible()) {
@@ -208,11 +203,11 @@ public class SignUpActivity extends AppCompatActivity {
     if (view instanceof EditText) {
       EditText innerView = (EditText) getCurrentFocus();
 
-      if (ev.getAction() == MotionEvent.ACTION_UP &&
-          !getLocationOnScreen(innerView).contains(x, y)) {
+      if (ev.getAction() == MotionEvent.ACTION_UP && !getLocationOnScreen(innerView).contains(x,
+          y)) {
 
-        InputMethodManager input = (InputMethodManager)
-            getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager input =
+            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         input.hideSoftInputFromWindow(view.getWindowToken(), 0);
       }
     }
@@ -235,107 +230,125 @@ public class SignUpActivity extends AppCompatActivity {
 
   public void showMainFragment() {
     MainFragment fragment = MainFragment.newInstance(this);
-    getSupportFragmentManager().beginTransaction()
-        .add(R.id.container_main, fragment).commit();
+    getSupportFragmentManager().beginTransaction().add(R.id.container_main, fragment).commit();
   }
 
   public void showLanguageFragment() {
     LanguageFragment fragment = LanguageFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment).addToBackStack(LanguageFragment.TAG).commit();
+        .replace(R.id.container_main, fragment)
+        .addToBackStack(LanguageFragment.TAG)
+        .commit();
   }
 
   public void showLandingFragment() {
     LandingFragment fragment = LandingFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment).addToBackStack(LandingFragment.TAG).commit();
+        .replace(R.id.container_main, fragment)
+        .addToBackStack(LandingFragment.TAG)
+        .commit();
   }
 
   public void showIdentityFragment(RecognitionResults results) {
     IdentityFragment fragment = IdentityFragment.newInstance(this, results);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment).addToBackStack(IdentityFragment.TAG).commit();
+        .replace(R.id.container_main, fragment)
+        .addToBackStack(IdentityFragment.TAG)
+        .commit();
   }
 
   public void showPassportFragment() {
     PassportFragment fragment = PassportFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment).addToBackStack(PassportFragment.TAG).commit();
+        .replace(R.id.container_main, fragment)
+        .addToBackStack(PassportFragment.TAG)
+        .commit();
   }
 
   public void showDateFragment() {
     DateFragment fragment = DateFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment).addToBackStack(DateFragment.TAG).commit();
+        .replace(R.id.container_main, fragment)
+        .addToBackStack(DateFragment.TAG)
+        .commit();
   }
 
   public void showAvatarFragment() {
     AvatarFragment fragment = AvatarFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment).addToBackStack(AvatarFragment.TAG).commit();
+        .replace(R.id.container_main, fragment)
+        .addToBackStack(AvatarFragment.TAG)
+        .commit();
   }
 
   public void showTermsFragment() {
     HostelTermsFragment fragment = HostelTermsFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment).addToBackStack(HostelTermsFragment.TAG).commit();
+        .replace(R.id.container_main, fragment)
+        .addToBackStack(HostelTermsFragment.TAG)
+        .commit();
   }
 
   public void showQuestionFragment() {
     QuestionFragment fragment = QuestionFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment, QuestionFragment.TAG).addToBackStack(QuestionFragment.TAG).commit();
+        .replace(R.id.container_main, fragment, QuestionFragment.TAG)
+        .addToBackStack(QuestionFragment.TAG)
+        .commit();
   }
 
   public void showSuccessFragment() {
     SuccessSignUpFragment fragment = SuccessSignUpFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.container_main, fragment, SuccessSignUpFragment.TAG)
-        .addToBackStack(SuccessSignUpFragment.TAG).commit();
+        .addToBackStack(SuccessSignUpFragment.TAG)
+        .commit();
   }
 
   public void showScanFragment() {
     OCRFragment fragment = OCRFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container_main, fragment, OCRFragment.TAG).addToBackStack(OCRFragment.TAG).commit();
+        .replace(R.id.container_main, fragment, OCRFragment.TAG)
+        .addToBackStack(OCRFragment.TAG)
+        .commit();
   }
 
   public void showEmailFragment() {
     EmailFragment fragment = EmailFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.container_main, fragment, EmailFragment.TAG)
-        .addToBackStack(EmailFragment.TAG).commit();
+        .addToBackStack(EmailFragment.TAG)
+        .commit();
   }
 
   public void showScanIDFragment() {
     ScanIDFragment fragment = ScanIDFragment.newInstance(this);
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.container_main, fragment, ScanIDFragment.TAG)
-        .addToBackStack(ScanIDFragment.TAG).commit();
+        .addToBackStack(ScanIDFragment.TAG)
+        .commit();
   }
 
   /**
    * Start over.
    */
-  @OnClick(R.id.resetBtn)
-  public void startOver() {
+  @OnClick(R.id.resetBtn) public void startOver() {
     reset();
   }
 
   /**
    * Back clicked.
    */
-  @OnClick(R.id.settingBtn)
-  public void settingClicked() {
+  @OnClick(R.id.settingBtn) public void settingClicked() {
     Timber.w("------Setting button Tapped----");
-    new MaterialDialog.Builder(this)
-        .title("Verification Needed")
+    new MaterialDialog.Builder(this).title("Verification Needed")
         .content("Please enter hostel password")
         .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
         .inputRange(4, 50, ContextCompat.getColor(SignUpActivity.this, R.color.colorAccent))
         .input("Hostel Password", "", false, new MaterialDialog.InputCallback() {
           @Override public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-            Timber.w("Input password is: %s and hostel password is: %s and master password is: %s", input.toString(), password.get(), ApiConstants.MASTER_PASSWORD);
+            Timber.w("Input password is: %s and hostel password is: %s and master password is: %s",
+                input.toString(), password.get(), ApiConstants.MASTER_PASSWORD);
             if (password != null && !TextUtils.isEmpty(password.get()) &&
                 password.get() != null && password.get().equals(input.toString())) {
               Timber.w("Correct hostel password going to setting");
@@ -347,20 +360,18 @@ public class SignUpActivity extends AppCompatActivity {
               finish();
             } else {
               Timber.w("Incorrect password");
-              Snackbar.make(appContainer.bind(SignUpActivity.this), "Invalid password", Snackbar.LENGTH_LONG)
-                  .show();
+              Snackbar.make(appContainer.bind(SignUpActivity.this), "Invalid password",
+                  Snackbar.LENGTH_LONG).show();
             }
           }
         })
-    .show();
-
+        .show();
   }
 
   /**
    * Back clicked.
    */
-  @OnClick(R.id.backBtn)
-  public void backClicked() {
+  @OnClick(R.id.backBtn) public void backClicked() {
     View view = this.getCurrentFocus();
     if (view != null) {
       InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -375,8 +386,7 @@ public class SignUpActivity extends AppCompatActivity {
    *
    * @param event the event
    */
-  @Subscribe
-  public void onSettingShown(SettingShouldShowEvent event) {
+  @Subscribe public void onSettingShown(SettingShouldShowEvent event) {
     settingButton.setVisibility(event.show ? View.VISIBLE : View.GONE);
   }
 
@@ -385,13 +395,11 @@ public class SignUpActivity extends AppCompatActivity {
    *
    * @param event the event
    */
-  @Subscribe
-  public void onBackShown(BackShouldShowEvent event) {
+  @Subscribe public void onBackShown(BackShouldShowEvent event) {
     backButtonView.setVisibility(event.show ? View.VISIBLE : View.GONE);
   }
 
-  @Subscribe
-  public void onRefreshShouldShow(RefreshShouldShowEvent event) {
+  @Subscribe public void onRefreshShouldShow(RefreshShouldShowEvent event) {
     resetButton.setVisibility(event.show ? View.VISIBLE : View.GONE);
   }
 
@@ -400,32 +408,34 @@ public class SignUpActivity extends AppCompatActivity {
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     if (guest.avatarPath == null) {
       Timber.w("AVATAR pref is null");
-      Snackbar.make(appContainer.bind(SignUpActivity.this), "Your avatar didn't save successfully, please take another selfie", Snackbar.LENGTH_LONG).show();
+      Snackbar.make(appContainer.bind(SignUpActivity.this),
+          "Your avatar didn't save successfully, please take another selfie", Snackbar.LENGTH_LONG)
+          .show();
       return;
     }
 
     if (TextUtils.isEmpty(guest.avatarPath)) {
       Timber.w("AVATAR path not saved it is: %s", guest.avatarPath);
-      Snackbar.make(appContainer.bind(SignUpActivity.this), "Your avatar didn't save successfully, please take another selfie", Snackbar.LENGTH_LONG).show();
+      Snackbar.make(appContainer.bind(SignUpActivity.this),
+          "Your avatar didn't save successfully, please take another selfie", Snackbar.LENGTH_LONG)
+          .show();
       return;
     }
 
     if (guest.passportPath == null || TextUtils.isEmpty(guest.passportPath)) {
       Timber.w("Passport path not saved it is: %s", guest.passportPath);
-      Snackbar.make(appContainer.bind(SignUpActivity.this), "Your passport image didn't save successfully, please re-capture", Snackbar.LENGTH_LONG).show();
+      Snackbar.make(appContainer.bind(SignUpActivity.this),
+          "Your passport image didn't save successfully, please re-capture", Snackbar.LENGTH_LONG)
+          .show();
       return;
     }
-
-    @SuppressWarnings("ConstantConditions")
-    TypedFile avatarFile = new TypedFile("image/jpeg", new File(guest.avatarPath));
-    @SuppressWarnings("ConstantConditions")
-    TypedFile passportFile = new TypedFile("image/jpeg", new File(guest.passportPath));
 
     String fullName = "";
 
     if (guest.firstName != null && !TextUtils.isEmpty(guest.firstName)) {
       if (guest.lastName != null && !TextUtils.isEmpty(guest.lastName)) {
-        fullName = String.format(Locale.US, "%s  %s", guest.firstName.trim(), guest.lastName.trim()).trim();
+        fullName = String.format(Locale.US, "%s  %s", guest.firstName.trim(), guest.lastName.trim())
+            .trim();
       } else {
         Timber.w("We don't have last name. it is: %s", guest.lastName);
       }
@@ -436,140 +446,163 @@ public class SignUpActivity extends AppCompatActivity {
     loading.show();
     Timber.w("sending data with values  %s", guest.toString());
 
+    NetworkRequestManager.getInstance()
+        .callAddGuestApi(new File(guest.avatarPath), new File(guest.passportPath), guest.email,
+            fullName, (guest.city == null || TextUtils.isEmpty(guest.city)) ? null : guest.city,
+            (guest.country == null || TextUtils.isEmpty(guest.country)) ? null : guest.country,
+            guest.passportNumber, guest.dob == null ? null : dateFormat.format(guest.dob),
+            guest.referenceCode != null ? guest.referenceCode : null,
+            dateFormat.format(guest.checkInDate), dateFormat.format(guest.checkOutDate),
+            guest.gender, new AddGuestCallback() {
+              @Override public void onRequestSuccess(Call call, Response response) {
 
-    authenticationService.addGuest(
-        avatarFile,
-        passportFile,
-        guest.email,
-        fullName,
-        (guest.city == null || TextUtils.isEmpty(guest.city)) ? null : guest.city,
-        (guest.country == null || TextUtils.isEmpty(guest.country)) ? null : guest.country,
-        guest.passportNumber,
-        guest.dob == null ? null : dateFormat.format(guest.dob),
-        guest.referenceCode != null ? guest.referenceCode : null,
-        dateFormat.format(guest.checkInDate),
-        dateFormat.format(guest.checkOutDate),
-        guest.gender,
-        new Callback<ClaimResponse>() {
-          @Override public void success(ClaimResponse apiResponse, Response response) {
-            loading.dismiss();
-            Timber.w("--------PROCESS FINISHED------- with guest_key: %s", apiResponse.data.guest_key);
-            guest.guest_key = apiResponse.data.guest_key;
-            guest.name = apiResponse.data.name;
-            Timber.w("Got name from server with value: %s. name stored with value: %s", apiResponse.data.name, guest.name);
-            // Send overall success time
-            long elapsed = Math.abs(guest.time - System.currentTimeMillis());
-            long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
-            tracker.send(new HitBuilders.EventBuilder()
-                .setCategory(getString(R.string.overall_time))
-                .setAction("Check-In")
-                .setLabel("Sign Up")
-                .setValue(diffSeconds).build());
-            tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
-            showQuestionFragment();
-          }
+                loading.dismiss();
 
-          @Override public void failure(RetrofitError error) {
-            loading.dismiss();
-            Timber.w("--------PROCESS Terminated-------");
-            if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-              Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-              Timber.w("ERROR %s, status: %s, kind: %s", error.getMessage(), error.getResponse().getStatus(), error.getKind() != null ? error.getKind().toString() : null);
-              return;
-            }
+                ClaimResponse claimResponse = (ClaimResponse) response.body();
+                Timber.w("--------PROCESS FINISHED------- with guest_key: %s",
+                    claimResponse.data.guest_key);
+                guest.guest_key = claimResponse.data.guest_key;
+                guest.name = claimResponse.data.name;
+                Timber.w("Got name from server with value: %s. name stored with value: %s",
+                    claimResponse.data.name, guest.name);
+                // Send overall success time
+                long elapsed = Math.abs(guest.time - System.currentTimeMillis());
+                long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
+                tracker.send(
+                    new HitBuilders.EventBuilder().setCategory(getString(R.string.overall_time))
+                        .setAction("Check-In")
+                        .setLabel("Sign Up")
+                        .setValue(diffSeconds)
+                        .build());
+                tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
+                showQuestionFragment();
+              }
 
-            if (error.getResponse() != null) {
-              if (error.getResponse().getStatus() == 409) {
-                Timber.w("ERROR %s, status: %s, kind: %s", error.getMessage(), error.getResponse().getStatus(), error.getKind() != null ? error.getKind().toString() : null);
+              @Override public void onRequestFail(Call call, BaseResponse response) {
+                loading.dismiss();
+                Toast.makeText(SignUpActivity.this,
+                    "Cannot contact server, please check your wifi connection!", Toast.LENGTH_LONG)
+                    .show();
+              }
+
+              @Override public void onConflict(Call call, BaseResponse response) {
+                loading.dismiss();
+                Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
+                    response.getStatusCode(), "");
                 showSuccessFragment();
-              } else if (error.getResponse().getStatus() == 401) {
-                Timber.w("ERROR %s, status: %s, kind: %s", error.getMessage(), error.getResponse().getStatus(), error.getKind() != null ? error.getKind().toString() : null);
-                login();
-              } else if (error.getResponse().getStatus() == 400) {
-                Timber.w("ERROR %s, status: %s, kind: %s", error.getMessage(), error.getResponse().getStatus(), error.getKind() != null ? error.getKind().toString() : null);
-                new MaterialDialog.Builder(SignUpActivity.this)
-                    .cancelable(true)
+              }
+
+              @Override public void onBadRequest(Call call, BaseResponse response) {
+                loading.dismiss();
+                Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
+                    response.getStatusCode(), "");
+                new MaterialDialog.Builder(SignUpActivity.this).cancelable(true)
                     .autoDismiss(true)
                     .title("Bad info")
                     .content("Please check your check-in date again and retry")
-                    .positiveText("OK").build().show();
-              } else {
-                // Timber.e("ERROR" + error.toString() +
-                //    "error body = " + error.getBody().toString() + "error kind = " + error.getKind().toString());
-                Timber.w("ERROR %s, kind: %s", error.getMessage() != null ? error.getMessage() : error.toString(), error.getKind() != null ? error.getKind().toString() : null);
-                Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT)
+                    .positiveText("OK")
+                    .build()
                     .show();
               }
-            } else {
-              if (error.getMessage() != null) {
-                Timber.w("ERROR %s, kind: %s", error.getMessage(), error.getKind() != null ? error.getKind().toString() : null);
-              } else if (error.getBody() != null) {
-                Timber.w("ERROR %s, kind: %s", error.getBody().toString(), error.getKind() != null ? error.getKind().toString() : null);
-              } else {
-                Timber.w("ERROR %s, kind: %s", error.getMessage() != null ? error.getMessage() : error.toString(), error.getKind() != null ? error.getKind().toString() : null);
+
+              @Override public void onAuthError(Call call, BaseResponse response) {
+                loading.dismiss();
+                Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
+                    response.getStatusCode(), "");
+                login();
               }
 
-              Toast.makeText(SignUpActivity.this, "Cannot contact server, please check your wifi connection!", Toast.LENGTH_LONG).show();
-            }
-          }
-        }
-    );
+              @Override public void onServerError(Call call, BaseResponse response) {
+                loading.dismiss();
+                Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection,
+                    Snackbar.LENGTH_LONG).show();
+                Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
+                    response.getStatusCode(), "");
+              }
 
+              @Override public void onRequestTimeOut(Call call, Throwable t) {
+                loading.dismiss();
+              }
+
+              @Override public void onNullResponse(Call call) {
+                loading.dismiss();
+              }
+            });
   }
 
-  @Subscribe
-  public void onClaimEvent(ClaimEvent event) {
+  @Subscribe public void onClaimEvent(ClaimEvent event) {
     Timber.i("Entered claim event");
     Timber.w("Claiming with data: Guest key = %s - Email = %s", guest.user_key, guest.email);
     loading.show();
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-    authenticationService.claim(guest.user_key, new ClaimRequest(
-            guest.email,
-            new Booking(
-                guest.referenceCode != null ? guest.referenceCode : null,
-                dateFormat.format(guest.checkInDate),
-                dateFormat.format(guest.checkOutDate))),
-        new Callback<ClaimResponse>() {
-          @Override public void success(ClaimResponse apiResponse, Response response) {
+
+    NetworkRequestManager.getInstance().callClaimApi(guest.user_key, new ClaimRequest(guest.email,
+            new Booking(guest.referenceCode != null ? guest.referenceCode : null, dateFormat.format(guest.checkInDate), dateFormat.format(guest.checkOutDate))),
+        new AppCallback() {
+          @Override public void onRequestSuccess(Call call, Response response) {
             loading.dismiss();
+
+            ClaimResponse claimResponse = (ClaimResponse) response.body();
+
             Timber.d("Claimed");
-            guest.guest_key = apiResponse.data.guest_key;
-            guest.name = apiResponse.data.name;
+            guest.guest_key = claimResponse.data.guest_key;
+            guest.name = claimResponse.data.name;
             tracker.send(new HitBuilders.EventBuilder("Check-in", "Claim").build());
 
             // Send overall success time
             long elapsed = Math.abs(guest.time - System.currentTimeMillis());
             long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
-            tracker.send(new HitBuilders.EventBuilder()
-                .setCategory(getString(R.string.overall_time))
-                .setAction("Check-In")
-                .setLabel("Claim")
-                .setValue(diffSeconds).build());
+            tracker.send(
+                new HitBuilders.EventBuilder().setCategory(getString(R.string.overall_time))
+                    .setAction("Check-In")
+                    .setLabel("Claim")
+                    .setValue(diffSeconds)
+                    .build());
             showQuestionFragment();
           }
 
-          @Override public void failure(RetrofitError error) {
+          @Override public void onApiNotFound(Call call, BaseResponse response) {
             loading.dismiss();
-            if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-              Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-              return;
-            }
+          }
 
-            if (error.getResponse() != null && error.getResponse().getStatus() == 400) {
-              Timber.w("ERROR %s - status: %s", error.getMessage(), error.getResponse().getStatus());
-              new MaterialDialog.Builder(SignUpActivity.this)
-                  .cancelable(true)
-                  .autoDismiss(true)
-                  .title("Bad info")
-                  .content(R.string.check_from_date)
-                  .positiveText("OK").build().show();
-              Timber.w("Please check your check-in date again and retry!");
-              return;
-            }
+          @Override public void onRequestFail(Call call, BaseResponse response) {
+            loading.dismiss();
+            Timber.w("Claim error : %s",
+                response.getMessage() != null ? response.getMessage() : response.toString());
+            Snackbar.make(appContainer.bind(SignUpActivity.this),
+                R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT).show();
+          }
 
-            Timber.w("Claim error : %s", error.getMessage() != null ? error.getMessage() : error.toString());
-            Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT)
+          @Override public void onBadRequest(Call call, BaseResponse response) {
+            loading.dismiss();
+            Timber.w("ERROR %s - status: %s", response.getMessage(),
+                response.getStatusCode());
+            new MaterialDialog.Builder(SignUpActivity.this).cancelable(true)
+                .autoDismiss(true)
+                .title("Bad info")
+                .content(R.string.check_from_date)
+                .positiveText("OK")
+                .build()
                 .show();
+            Timber.w("Please check your check-in date again and retry!");
+          }
+
+          @Override public void onAuthError(Call call, BaseResponse response) {
+            loading.dismiss();
+          }
+
+          @Override public void onServerError(Call call, BaseResponse response) {
+            loading.dismiss();
+            Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection,
+                Snackbar.LENGTH_LONG).show();
+          }
+
+          @Override public void onRequestTimeOut(Call call, Throwable t) {
+            loading.dismiss();
+          }
+
+          @Override public void onNullResponse(Call call) {
+            loading.dismiss();
           }
         });
   }
@@ -610,35 +643,53 @@ public class SignUpActivity extends AppCompatActivity {
   }
 
   public void firstLogin() {
-    authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
-      @Override public void success(LoginResponse response, Response response2) {
-        loading.dismiss();
-        Timber.d("LoggedIn");
-        showLanguageFragment();
-      }
 
-      @Override public void failure(RetrofitError error) {
-        loading.dismiss();
-        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-          Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-          return;
-        }
+    NetworkRequestManager.getInstance()
+        .callLoginApi(new LoginRequest(username.get(), password.get()), new AppCallback() {
+          @Override public void onRequestSuccess(Call call, Response response) {
 
-        if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
-          Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
-          Timber.w("cannot login in pink after retry");
-          return;
-        }
+            loading.dismiss();
+            Timber.d("LoggedIn");
+            showLanguageFragment();
+          }
 
-        Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_INDEFINITE)
-            .setAction("RETRY", new View.OnClickListener() {
-              @Override public void onClick(View v) {
-                firstLogin();
-              }
-            }).show();
-        Timber.w("firstLogin Error: %s", error.getMessage() != null ? error.getMessage() : error.toString());
-      }
-    });
+          @Override public void onApiNotFound(Call call, BaseResponse response) {
+
+          }
+
+          @Override public void onRequestFail(Call call, BaseResponse response) {
+            Snackbar.make(appContainer.bind(SignUpActivity.this),
+                R.string.something_wrong_try_again, Snackbar.LENGTH_INDEFINITE)
+                .setAction("RETRY", new View.OnClickListener() {
+                  @Override public void onClick(View v) {
+                    firstLogin();
+                  }
+                })
+                .show();
+            Timber.w("firstLogin Error: %s",
+                response.getMessage() != null ? response.getMessage() : response.toString());
+          }
+
+          @Override public void onBadRequest(Call call, BaseResponse response) {
+
+          }
+
+          @Override public void onAuthError(Call call, BaseResponse response) {
+          }
+
+          @Override public void onServerError(Call call, BaseResponse response) {
+            Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection,
+                Snackbar.LENGTH_LONG).show();
+          }
+
+          @Override public void onRequestTimeOut(Call call, Throwable t) {
+
+          }
+
+          @Override public void onNullResponse(Call call) {
+
+          }
+        });
   }
 
   /**
@@ -648,41 +699,60 @@ public class SignUpActivity extends AppCompatActivity {
 
     if (loginCount >= 2) {
 
-      Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
+      Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.ask_staff_login,
+          Snackbar.LENGTH_LONG).show();
       Timber.w("cannot login when got authentication error in submit after retry!");
       return;
     }
 
     loginCount++;
-    authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
-      @Override public void success(LoginResponse response, Response response2) {
-        Timber.d("LoggedIn");
-        submit();
-      }
 
-      @Override public void failure(RetrofitError error) {
-        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-          Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-          Timber.d("Please check the WI-FI connection!");
-          return;
-        }
+    NetworkRequestManager.getInstance()
+        .callLoginApi(new LoginRequest(username.get(), password.get()), new AppCallback() {
+          @Override public void onRequestSuccess(Call call, Response response) {
+            Timber.d("LoggedIn");
+            submit();
+          }
 
-        if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
-          login();
-          return;
-        }
+          @Override public void onApiNotFound(Call call, BaseResponse response) {
 
-        Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
-        Timber.w("Submit login Error: %s", error.getMessage() != null ? error.getMessage() : error.toString());
-      }
-    });
+          }
+
+          @Override public void onRequestFail(Call call, BaseResponse response) {
+            Snackbar.make(appContainer.bind(SignUpActivity.this),
+                R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
+            Timber.w("Submit login Error: %s",
+                response.getMessage() != null ? response.getMessage() : response.toString());
+          }
+
+          @Override public void onBadRequest(Call call, BaseResponse response) {
+
+          }
+
+          @Override public void onAuthError(Call call, BaseResponse response) {
+            login();
+          }
+
+          @Override public void onServerError(Call call, BaseResponse response) {
+            Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection,
+                Snackbar.LENGTH_LONG).show();
+          }
+
+          @Override public void onRequestTimeOut(Call call, Throwable t) {
+
+          }
+
+          @Override public void onNullResponse(Call call) {
+
+          }
+        });
   }
 
   /**
    * Reset.
    */
   public void reset() {
-//    removePhoto();
+    //    removePhoto();
     clearData();
     Intent intent = getIntent();
     finish();

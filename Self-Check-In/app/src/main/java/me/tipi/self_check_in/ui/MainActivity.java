@@ -46,18 +46,18 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.PrinterPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
-import me.tipi.self_check_in.data.api.AuthenticationService;
+import me.tipi.self_check_in.data.api.AppCallback;
+import me.tipi.self_check_in.data.api.NetworkRequestManager;
+import me.tipi.self_check_in.data.api.models.BaseResponse;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
 import me.tipi.self_check_in.data.api.models.LoginResponse;
 import me.tipi.self_check_in.ui.fragments.LoginFragment;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
-  @Inject AuthenticationService authenticationService;
   @Inject PrinterPreference printerPreference;
   @Inject
   @Named(ApiConstants.USER_NAME) Preference<String> username;
@@ -254,52 +254,76 @@ public class MainActivity extends AppCompatActivity {
    */
   public void login() {
     loading.show();
-    authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
-      @Override public void success(LoginResponse response, Response response2) {
-        loading.dismiss();
-        Timber.d("LoggedIn");
-        hostelName.set(response.data.name);
-        hostelKey.set(response.data.doc_key);
 
-        tracker.send(new HitBuilders.TimingBuilder("Login", "Logged In", System.currentTimeMillis()).build());
+    NetworkRequestManager.getInstance()
+        .callLoginApi(new LoginRequest(username.get(), password.get()), new AppCallback() {
+          @Override public void onRequestSuccess(Call call, Response response) {
 
-        startActivity(new Intent(MainActivity.this, SignUpActivity.class));
-        finish();
-      }
+            loading.dismiss();
 
-      @Override public void failure(RetrofitError error) {
-        loading.dismiss();
-        showLoginFragment();
+            LoginResponse loginResponse = (LoginResponse) response.body();
 
-        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-          Snackbar.make(appContainer.bind(MainActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-          return;
-        }
+            Timber.d("LoggedIn");
+            hostelName.set(loginResponse.data.name);
+            hostelKey.set(loginResponse.data.doc_key);
 
-        if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
-          Snackbar.make(appContainer.bind(MainActivity.this), R.string.enter_correct_email_password, Snackbar.LENGTH_LONG).show();
-          Timber.w("Error Logging in with user: %s and password %s", username.get(), password.get());
-          return;
-        }
+            tracker.send(new HitBuilders.TimingBuilder("Login", "Logged In", System.currentTimeMillis()).build());
 
-        Snackbar.make(appContainer.bind(MainActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
-        Timber.w(error.getMessage());
-        MainActivity.this.runOnUiThread(new Runnable() {
-          @Override public void run() {
+            startActivity(new Intent(MainActivity.this, SignUpActivity.class));
+            finish();
+          }
 
+          @Override public void onApiNotFound(Call call, BaseResponse response) {
+            loading.dismiss();
+            showLoginFragment();
+          }
+
+          @Override public void onRequestFail(Call call, BaseResponse response) {
+            loading.dismiss();
+            showLoginFragment();
+            Snackbar.make(appContainer.bind(MainActivity.this),
+                R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
+            Timber.w("ERROR: claim login error = %s",
+                response.getMessage() != null ? response.getMessage() : response.toString());
+
+            period = Math.round(period * 1.5);
+            new Handler().postDelayed(new Runnable() {
+              @Override public void run() {
+                Timber.w("trying to login again after %d millis", period);
+                login();
+              }
+            }, period);
+          }
+
+          @Override public void onBadRequest(Call call, BaseResponse response) {
+            loading.dismiss();
+            showLoginFragment();
+          }
+
+          @Override public void onAuthError(Call call, BaseResponse response) {
+            loading.dismiss();
+            showLoginFragment();
+            Snackbar.make(appContainer.bind(MainActivity.this), R.string.enter_correct_email_password, Snackbar.LENGTH_LONG).show();
+            Timber.w("Error Logging in with user: %s and password %s", username.get(), password.get());
+          }
+
+          @Override public void onServerError(Call call, BaseResponse response) {
+            loading.dismiss();
+            showLoginFragment();
+            Snackbar.make(appContainer.bind(MainActivity.this), R.string.no_connection,
+                Snackbar.LENGTH_LONG).show();
+          }
+
+          @Override public void onRequestTimeOut(Call call, Throwable t) {
+            loading.dismiss();
+            showLoginFragment();
+          }
+
+          @Override public void onNullResponse(Call call) {
+            loading.dismiss();
+            showLoginFragment();
           }
         });
-
-
-        period = Math.round(period * 1.5);
-        new Handler().postDelayed(new Runnable() {
-          @Override public void run() {
-            Timber.w("trying to login again after %d millis", period);
-            login();
-          }
-        }, period);
-      }
-    });
   }
 
   public void forgetPassword(View view) {

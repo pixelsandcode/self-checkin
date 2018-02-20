@@ -8,7 +8,7 @@
 
 package me.tipi.self_check_in.data.api.models;
 
-public class LoginResponse {
+public class LoginResponse extends BaseResponse {
 
   public final Hostel data;
 

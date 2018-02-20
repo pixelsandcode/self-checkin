@@ -22,7 +22,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.HitBuilders;
@@ -30,16 +32,13 @@ import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
-
 import javax.inject.Inject;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
-import me.tipi.self_check_in.data.api.AuthenticationService;
+import me.tipi.self_check_in.data.api.AppCallback;
+import me.tipi.self_check_in.data.api.NetworkRequestManager;
+import me.tipi.self_check_in.data.api.models.BaseResponse;
 import me.tipi.self_check_in.data.api.models.FindResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.User;
@@ -53,9 +52,8 @@ import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
 import me.tipi.self_check_in.ui.transform.CircleStrokeTransformation;
 import me.tipi.self_check_in.util.Strings;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -65,7 +63,6 @@ public class FindUserFragment extends Fragment {
 
   @Inject Picasso picasso;
   @Inject Bus bus;
-  @Inject AuthenticationService authenticationService;
   @Inject Guest guest;
   @Inject Tracker tracker;
   @Inject TypefaceHelper typeface;
@@ -107,8 +104,8 @@ public class FindUserFragment extends Fragment {
     return fragment;
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
     // Inflate the layout for this fragment// Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_find_user, container, false);
     ButterKnife.bind(this, rootView);
@@ -117,8 +114,7 @@ public class FindUserFragment extends Fragment {
       typeface.setTypeface(container, getResources().getString(R.string.font_regular));
     }
 
-    loading = new MaterialDialog.Builder(getActivity())
-        .content("Please wait")
+    loading = new MaterialDialog.Builder(getActivity()).content("Please wait")
         .cancelable(false)
         .progress(true, 0)
         .build();
@@ -129,7 +125,7 @@ public class FindUserFragment extends Fragment {
       }
     });
 
-    return  rootView;
+    return rootView;
   }
 
   @Override public void onResume() {
@@ -167,8 +163,7 @@ public class FindUserFragment extends Fragment {
    *
    * @param event the event
    */
-  @Subscribe
-  public void onAuthPassed(AuthenticationPassedEvent event) {
+  @Subscribe public void onAuthPassed(AuthenticationPassedEvent event) {
     find();
     Timber.d("finding again after login");
   }
@@ -176,17 +171,19 @@ public class FindUserFragment extends Fragment {
   /**
    * Find.
    */
-  @OnClick(R.id.find_btn)
-  public void find() {
+  @OnClick(R.id.find_btn) public void find() {
     if (!isError()) {
       guest.user_key = "";
       guest.name = "";
       matchedUserContainer.setVisibility(View.GONE);
       tryAgainView.setVisibility(View.GONE);
       loading.show();
-      authenticationService.findUser(enteredEmail, new Callback<FindResponse>() {
-        @Override public void success(FindResponse findResponse, Response response) {
+
+      NetworkRequestManager.getInstance().callFindUserApi(enteredEmail, new AppCallback() {
+        @Override public void onRequestSuccess(Call call, Response response) {
           loading.dismiss();
+
+          FindResponse findResponse = (FindResponse) response.body();
           User matchedUser = findResponse.data;
           Timber.d("Found user: %s", matchedUser.toString());
 
@@ -196,9 +193,11 @@ public class FindUserFragment extends Fragment {
 
           // Filling user info
           picasso.load(Strings.makeAvatarUrl(matchedUser.doc_key))
-              .resize(200, 200).centerCrop()
+              .resize(200, 200)
+              .centerCrop()
               .transform(new CircleStrokeTransformation(getActivity(), 0, 0))
-              .placeholder(R.drawable.avatar_placeholder).into(avatarView);
+              .placeholder(R.drawable.avatar_placeholder)
+              .into(avatarView);
           userNameView.setText(matchedUser.name);
           guest.name = matchedUser.name;
           guest.user_key = matchedUser.doc_key;
@@ -207,30 +206,43 @@ public class FindUserFragment extends Fragment {
           tracker.send(new HitBuilders.EventBuilder("Matched User", "User found").build());
         }
 
-        @Override public void failure(RetrofitError error) {
-
+        @Override public void onRequestFail(Call call, BaseResponse response) {
           loading.dismiss();
-          if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-            Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-            return;
-          }
+          Snackbar.make(appContainer.bind(getActivity()), R.string.something_wrong_try_again,
+              Snackbar.LENGTH_LONG).show();
+          Timber.w("Error: %s",
+              response.getMessage() != null ? response.getMessage() : response.toString());
+        }
 
-          if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
-            Timber.w("authentication failed");
-            bus.post(new AuthenticationFailedEvent());
-            return;
-          }
+        @Override public void onBadRequest(Call call, BaseResponse response) {
+          loading.dismiss();
+        }
 
-          if (error.getResponse() != null && error.getResponse().getStatus() == 404){
-            // Handling show/hide views
-            tryAgainView.setVisibility(View.VISIBLE);
-            matchedUserContainer.setVisibility(View.GONE);
-            Timber.d("Error finding: %s", error.toString());
-            return;
-          }
+        @Override public void onApiNotFound(Call call, BaseResponse response) {
+          loading.dismiss();
+          tryAgainView.setVisibility(View.VISIBLE);
+          matchedUserContainer.setVisibility(View.GONE);
+          Timber.d("Error finding: %s", response.toString());
+        }
 
-          Snackbar.make(appContainer.bind(getActivity()), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
-          Timber.w("Error: %s",error.getMessage() != null ? error.getMessage() : error.toString());
+        @Override public void onAuthError(Call call, BaseResponse response) {
+          loading.dismiss();
+          Timber.w("authentication failed");
+          bus.post(new AuthenticationFailedEvent());
+        }
+
+        @Override public void onServerError(Call call, BaseResponse response) {
+          loading.dismiss();
+          Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection,
+              Snackbar.LENGTH_LONG).show();
+        }
+
+        @Override public void onRequestTimeOut(Call call, Throwable t) {
+          loading.dismiss();
+        }
+
+        @Override public void onNullResponse(Call call) {
+          loading.dismiss();
         }
       });
     }
@@ -275,10 +287,9 @@ public class FindUserFragment extends Fragment {
 
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
-      ((SignUpActivity)getActivity()).reset();
-    } else if (getActivity() != null){
-      ((FindUserActivity)getActivity()).reset();
+      ((SignUpActivity) getActivity()).reset();
+    } else if (getActivity() != null) {
+      ((FindUserActivity) getActivity()).reset();
     }
   }
-
 }

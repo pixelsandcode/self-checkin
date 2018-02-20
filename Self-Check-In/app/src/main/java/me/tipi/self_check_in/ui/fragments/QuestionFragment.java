@@ -1,6 +1,5 @@
 package me.tipi.self_check_in.ui.fragments;
 
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,23 +12,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
-
 import javax.inject.Inject;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
-import me.tipi.self_check_in.data.api.AuthenticationService;
-import me.tipi.self_check_in.data.api.models.ApiResponse;
+import me.tipi.self_check_in.data.api.AppCallback;
+import me.tipi.self_check_in.data.api.NetworkRequestManager;
+import me.tipi.self_check_in.data.api.models.BaseResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.NoteRequest;
 import me.tipi.self_check_in.ui.AppContainer;
@@ -39,9 +36,8 @@ import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.events.RefreshShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -53,7 +49,6 @@ public class QuestionFragment extends Fragment {
 
   @Inject Bus bus;
   @Inject Tracker tracker;
-  @Inject AuthenticationService authenticationService;
   @Inject Guest guest;
   @Inject AppContainer appContainer;
 
@@ -86,8 +81,8 @@ public class QuestionFragment extends Fragment {
     return fragment;
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View rootView = inflater.inflate(R.layout.fragment_question, container, false);
     ButterKnife.bind(this, rootView);
@@ -96,8 +91,7 @@ public class QuestionFragment extends Fragment {
     forthQuestionView.setInputType(InputType.TYPE_NULL);
     fifthQuestionView.setInputType(InputType.TYPE_NULL);
 
-    thirdDialog = new MaterialDialog.Builder(getActivity())
-        .positiveText(R.string.yes)
+    thirdDialog = new MaterialDialog.Builder(getActivity()).positiveText(R.string.yes)
         .negativeText(R.string.no)
         .content(R.string.visit_farser)
         .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -111,10 +105,10 @@ public class QuestionFragment extends Fragment {
           public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
             thirdQuestionView.setText(R.string.no);
           }
-        }).build();
+        })
+        .build();
 
-    fourthDialog = new MaterialDialog.Builder(getActivity())
-        .positiveText(R.string.yes)
+    fourthDialog = new MaterialDialog.Builder(getActivity()).positiveText(R.string.yes)
         .negativeText(R.string.no)
         .content(R.string.need_job)
         .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -128,10 +122,10 @@ public class QuestionFragment extends Fragment {
           public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
             forthQuestionView.setText(R.string.no);
           }
-        }).build();
+        })
+        .build();
 
-    fifthDialog = new MaterialDialog.Builder(getActivity())
-        .positiveText(R.string.yes)
+    fifthDialog = new MaterialDialog.Builder(getActivity()).positiveText(R.string.yes)
         .negativeText(R.string.no)
         .content(R.string.do_you_want_to_learn_how_to_surf)
         .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -145,7 +139,8 @@ public class QuestionFragment extends Fragment {
           public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
             fifthQuestionView.setText(R.string.no);
           }
-        }).build();
+        })
+        .build();
 
     thirdQuestionView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
@@ -189,8 +184,7 @@ public class QuestionFragment extends Fragment {
       }
     });
 
-    loading = new MaterialDialog.Builder(getActivity())
-        .content("Loading")
+    loading = new MaterialDialog.Builder(getActivity()).content("Loading")
         .cancelable(false)
         .progress(true, 0)
         .build();
@@ -240,8 +234,7 @@ public class QuestionFragment extends Fragment {
     }
   }
 
-  @OnClick(R.id.continue_btn)
-  public void sendNote() {
+  @OnClick(R.id.continue_btn) public void sendNote() {
     String note = "";
     String enteredFirst = firstQuestionView.getText().toString().trim();
     String enteredSecond = secondQuestionView.getText().toString().trim();
@@ -284,47 +277,68 @@ public class QuestionFragment extends Fragment {
       navigateToSuccessPage();
     } else {
       loading.show();
-      authenticationService.sendNote(guestKey, new NoteRequest(note), new Callback<ApiResponse>() {
-        @Override public void success(ApiResponse apiResponse, Response response) {
-          Timber.d("note sent");
-          loading.dismiss();
-          navigateToSuccessPage();
-        }
+      NetworkRequestManager.getInstance()
+          .callSendNoteApi(guestKey, new NoteRequest(note), new AppCallback() {
+            @Override public void onRequestSuccess(Call call, Response response) {
+              loading.dismiss();
+              Timber.d("note sent");
+              navigateToSuccessPage();
+            }
 
-        @Override public void failure(RetrofitError error) {
-          loading.dismiss();
+            @Override public void onRequestFail(Call call, BaseResponse response) {
+              loading.dismiss();
+              Timber.w("Error note - guest_key is: %s", guestKey);
+              Timber.w("ERROR: %s",
+                  response.getMessage() != null ? response.getMessage() : response.toString());
+              navigateToSuccessPage();
+            }
 
-          if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-            Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-            return;
-          }
+            @Override public void onBadRequest(Call call, BaseResponse response) {
+              loading.dismiss();
+            }
 
+            @Override public void onApiNotFound(Call call, BaseResponse response) {
+              loading.dismiss();
+            }
 
-          Timber.w("Error note - guest_key is: %s", guestKey);
-          Timber.w("ERROR: %s", error.getMessage() != null ? error.getMessage() : error.toString());
-          navigateToSuccessPage();
-        }
-      });
+            @Override public void onAuthError(Call call, BaseResponse response) {
+              loading.dismiss();
+            }
+
+            @Override public void onServerError(Call call, BaseResponse response) {
+              loading.dismiss();
+              Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection,
+                  Snackbar.LENGTH_LONG).show();
+            }
+
+            @Override public void onRequestTimeOut(Call call, Throwable t) {
+              loading.dismiss();
+            }
+
+            @Override public void onNullResponse(Call call) {
+              loading.dismiss();
+            }
+          });
     }
   }
 
   private void navigateToSuccessPage() {
     if (guest.guest_key != null && !TextUtils.isEmpty(guest.guest_key)) {
       if (getActivity() instanceof SignUpActivity) {
-        ((SignUpActivity)getActivity()).showSuccessFragment();
+        ((SignUpActivity) getActivity()).showSuccessFragment();
       } else {
         bus.post(new PagerChangeEvent(4));
       }
     } else {
-      ((SignUpActivity)getActivity()).showSuccessFragment();
+      ((SignUpActivity) getActivity()).showSuccessFragment();
     }
   }
 
   private void startOver() {
     if (getActivity() != null && getActivity() instanceof SignUpActivity) {
-      ((SignUpActivity)getActivity()).reset();
-    } else if (getActivity() != null){
-      ((FindUserActivity)getActivity()).reset();
+      ((SignUpActivity) getActivity()).reset();
+    } else if (getActivity() != null) {
+      ((FindUserActivity) getActivity()).reset();
     }
   }
 }

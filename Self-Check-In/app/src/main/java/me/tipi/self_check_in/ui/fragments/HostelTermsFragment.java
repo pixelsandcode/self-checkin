@@ -21,16 +21,17 @@ import javax.inject.Named;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
-import me.tipi.self_check_in.data.api.AuthenticationService;
+import me.tipi.self_check_in.data.api.AppCallback;
+import me.tipi.self_check_in.data.api.NetworkRequestManager;
+import me.tipi.self_check_in.data.api.models.BaseResponse;
 import me.tipi.self_check_in.data.api.models.LoginResponse;
 import me.tipi.self_check_in.ui.AppContainer;
 import me.tipi.self_check_in.ui.FindUserActivity;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -42,7 +43,6 @@ public class HostelTermsFragment extends Fragment {
 
   @Inject Bus bus;
   @Inject Tracker tracker;
-  @Inject AuthenticationService authenticationService;
   @Inject
   @Named(ApiConstants.HOSTEL_KEY) Preference<String> hostelKey;
   @Inject AppContainer appContainer;
@@ -76,24 +76,41 @@ public class HostelTermsFragment extends Fragment {
   }
 
   private void loadTerms() {
-    authenticationService.getTerms(hostelKey.get(), new Callback<LoginResponse>() {
-      @Override public void success(LoginResponse loginResponse, Response response) {
+
+    NetworkRequestManager.getInstance().callGetTermsApi(hostelKey.get(), new AppCallback() {
+      @Override public void onRequestSuccess(Call call, Response response) {
+
+        LoginResponse loginResponse = (LoginResponse) response.body();
         termsTextView.setText(loginResponse.data.terms);
       }
 
-      @Override public void failure(RetrofitError error) {
-        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-          Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-          return;
-        }
-
-        if (error.getResponse() != null && error.getResponse().getStatus() == 404) {
-          termsTextView.setText(R.string.no_terms);
-          Timber.w("Sorry this hostel's Terms & Conditions isn't available! - hostel_key : %s", hostelKey.get());
-          return;
-        }
-
+      @Override public void onRequestFail(Call call, BaseResponse response) {
         loadTerms();
+      }
+
+      @Override public void onApiNotFound(Call call, BaseResponse response) {
+        termsTextView.setText(R.string.no_terms);
+        Timber.w("Sorry this hostel's Terms & Conditions isn't available! - hostel_key : %s", hostelKey.get());
+      }
+
+      @Override public void onBadRequest(Call call, BaseResponse response) {
+
+      }
+
+      @Override public void onAuthError(Call call, BaseResponse response) {
+
+      }
+
+      @Override public void onServerError(Call call, BaseResponse response) {
+        Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+      }
+
+      @Override public void onRequestTimeOut(Call call, Throwable t) {
+
+      }
+
+      @Override public void onNullResponse(Call call) {
+
       }
     });
   }

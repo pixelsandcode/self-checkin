@@ -42,16 +42,15 @@ import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.PrinterPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
-import me.tipi.self_check_in.data.api.AuthenticationService;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-import retrofit.mime.TypedFile;
+import me.tipi.self_check_in.data.api.AppCallback;
+import me.tipi.self_check_in.data.api.NetworkRequestManager;
+import me.tipi.self_check_in.data.api.models.BaseResponse;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class SettingActivity extends AppCompatActivity {
 
-  @Inject AuthenticationService authenticationService;
   @Inject AppContainer appContainer;
   @Inject Tracker tracker;
   @Inject PrinterPreference printerPreference;
@@ -122,39 +121,61 @@ public class SettingActivity extends AppCompatActivity {
   }
 
   public void sendLog(View view) {
-    TypedFile logFile = new TypedFile("log/txt", new File("/storage/emulated/0/Download/kiosk.txt"));
+    File logFile = new File("/storage/emulated/0/Download/kiosk.txt");
+
     String kioskName = (kioskNamePref != null && kioskNamePref.get() != null) ? kioskNamePref.get() : null;
     if (kioskName != null) {
-      if (logFile != null) {
+      if (logFile.exists()) {
         loading.show();
-        authenticationService.sendLog(kioskName, logFile, new Callback<Response>() {
-          @Override public void success(Response response, Response response2) {
-            loading.dismiss();
-            new MaterialDialog.Builder(SettingActivity.this)
-                .title("Thank you!")
-                .content("Log file sent successfully")
-                .cancelable(true)
-                .positiveText("OK")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                  @Override
-                  public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    dialog.dismiss();
-                  }
-                })
-                .build().show();
-          }
+        NetworkRequestManager.getInstance().callSendLogApi(kioskName, logFile,
+            new AppCallback() {
+              @Override public void onRequestSuccess(Call call, Response response) {
+                loading.dismiss();
+                new MaterialDialog.Builder(SettingActivity.this)
+                    .title("Thank you!")
+                    .content("Log file sent successfully")
+                    .cancelable(true)
+                    .positiveText("OK")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                      @Override
+                      public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                      }
+                    })
+                    .build().show();
+              }
 
-          @Override public void failure(RetrofitError error) {
-            loading.dismiss();
-            if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-              Snackbar.make(appContainer.bind(SettingActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-              return;
-            }
+              @Override public void onRequestFail(Call call, BaseResponse response) {
+                loading.dismiss();
+                Timber.w("ERROR %s", response.getMessage() != null ? response.getMessage() : response.toString());
+                Toast.makeText(SettingActivity.this, R.string.something_wrong_try_again + response.getMessage(), Toast.LENGTH_SHORT).show();
+              }
 
-            Timber.w("ERROR %s", error.getMessage() != null ? error.getMessage() : error.toString());
-            Toast.makeText(SettingActivity.this, R.string.something_wrong_try_again + error.getMessage(), Toast.LENGTH_SHORT).show();
-          }
-        });
+              @Override public void onApiNotFound(Call call, BaseResponse response) {
+                loading.dismiss();
+              }
+
+              @Override public void onBadRequest(Call call, BaseResponse response) {
+                loading.dismiss();
+              }
+
+              @Override public void onAuthError(Call call, BaseResponse response) {
+                loading.dismiss();
+              }
+
+              @Override public void onServerError(Call call, BaseResponse response) {
+                loading.dismiss();
+                Snackbar.make(appContainer.bind(SettingActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+              }
+
+              @Override public void onRequestTimeOut(Call call, Throwable t) {
+                loading.dismiss();
+              }
+
+              @Override public void onNullResponse(Call call) {
+                loading.dismiss();
+              }
+            });
       } else {
         Timber.w("logFile is null");
       }

@@ -9,22 +9,17 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.squareup.otto.Bus;
-
-import java.util.Locale;
-
-import javax.inject.Inject;
-
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.squareup.otto.Bus;
+import java.util.Locale;
+import javax.inject.Inject;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.LanguagePreference;
 import me.tipi.self_check_in.ui.SignUpActivity;
 import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.SettingShouldShowEvent;
-
 
 public class LanguageFragment extends Fragment {
 
@@ -39,9 +34,8 @@ public class LanguageFragment extends Fragment {
     return fragment;
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                           Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_language, container, false);
     ButterKnife.bind(this, view);
     return view;
@@ -61,8 +55,10 @@ public class LanguageFragment extends Fragment {
     ButterKnife.unbind(this);
   }
 
-  @OnClick({R.id.english_btn, R.id.french_btn, R.id.german_btn, R.id.spanish_btn, R.id.mandarin_btn, R.id.korean_btn})
-  public void onClick(View view) {
+  @OnClick({
+      R.id.english_btn, R.id.french_btn, R.id.german_btn, R.id.spanish_btn, R.id.mandarin_btn,
+      R.id.korean_btn
+  }) public void onClick(View view) {
     switch (view.getId()) {
       case R.id.english_btn:
         setLanguage("en");
@@ -84,6 +80,7 @@ public class LanguageFragment extends Fragment {
         break;
     }
   }
+
   public void setLanguage(String language) {
     languagePreference.set(language);
     Locale locale = new Locale(languagePreference.get());
@@ -92,7 +89,6 @@ public class LanguageFragment extends Fragment {
     Configuration configuration = res.getConfiguration();
     configuration.locale = locale;
     res.updateConfiguration(configuration, displayMetrics);
-    ((SignUpActivity)getActivity()).showLandingFragment();
+    ((SignUpActivity) getActivity()).showLandingFragment();
   }
-
 }

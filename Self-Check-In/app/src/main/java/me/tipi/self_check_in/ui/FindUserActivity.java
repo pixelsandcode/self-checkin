@@ -39,13 +39,14 @@ import javax.inject.Named;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.ApiConstants;
-import me.tipi.self_check_in.data.api.AuthenticationService;
+import me.tipi.self_check_in.data.api.AppCallback;
+import me.tipi.self_check_in.data.api.NetworkRequestManager;
+import me.tipi.self_check_in.data.api.models.BaseResponse;
 import me.tipi.self_check_in.data.api.models.Booking;
 import me.tipi.self_check_in.data.api.models.ClaimRequest;
 import me.tipi.self_check_in.data.api.models.ClaimResponse;
 import me.tipi.self_check_in.data.api.models.Guest;
 import me.tipi.self_check_in.data.api.models.LoginRequest;
-import me.tipi.self_check_in.data.api.models.LoginResponse;
 import me.tipi.self_check_in.ui.adapters.LoginAdapter;
 import me.tipi.self_check_in.ui.events.AuthenticationFailedEvent;
 import me.tipi.self_check_in.ui.events.AuthenticationPassedEvent;
@@ -53,9 +54,8 @@ import me.tipi.self_check_in.ui.events.BackShouldShowEvent;
 import me.tipi.self_check_in.ui.events.ClaimEvent;
 import me.tipi.self_check_in.ui.events.PagerChangeEvent;
 import me.tipi.self_check_in.ui.misc.ChangeSwipeViewPager;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class FindUserActivity extends AppCompatActivity {
@@ -63,7 +63,6 @@ public class FindUserActivity extends AppCompatActivity {
   @Inject Bus bus;
   @Inject Guest guest;
   @Inject AppContainer appContainer;
-  @Inject AuthenticationService authenticationService;
   @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
   @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
   @Inject Tracker tracker;
@@ -75,8 +74,7 @@ public class FindUserActivity extends AppCompatActivity {
   private MaterialDialog loading;
   private int loginCount = 0;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_find_user);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -86,8 +84,7 @@ public class FindUserActivity extends AppCompatActivity {
 
     typeface.setTypeface(this, getResources().getString(R.string.font_medium));
 
-    loading = new MaterialDialog.Builder(this)
-        .content("Please wait")
+    loading = new MaterialDialog.Builder(this).content("Please wait")
         .cancelable(false)
         .progress(true, 0)
         .build();
@@ -95,7 +92,6 @@ public class FindUserActivity extends AppCompatActivity {
     LoginAdapter adapter = new LoginAdapter(getSupportFragmentManager(), this);
     viewPager.setAdapter(adapter);
     viewPager.setSwipingEnabled(false);
-
   }
 
   @Override protected void onResume() {
@@ -116,13 +112,12 @@ public class FindUserActivity extends AppCompatActivity {
     }
   }
 
-  @Override
-  public void onBackPressed() {
+  @Override public void onBackPressed() {
     if (viewPager.getCurrentItem() == 0) {
       // If the user is currently looking at the first step, allow the system to handle the
       // Back button. This calls finish() on this activity and pops the back stack.
       super.onBackPressed();
-    } else if(viewPager.getCurrentItem() == 4 || viewPager.getCurrentItem() == 3) {
+    } else if (viewPager.getCurrentItem() == 4 || viewPager.getCurrentItem() == 3) {
       reset();
     } else {
       // Otherwise, select the previous step.
@@ -136,14 +131,14 @@ public class FindUserActivity extends AppCompatActivity {
     int x = (int) ev.getX();
     int y = (int) ev.getY();
 
-    if(view instanceof EditText){
+    if (view instanceof EditText) {
       EditText innerView = (EditText) getCurrentFocus();
 
-      if (ev.getAction() == MotionEvent.ACTION_UP &&
-          !getLocationOnScreen(innerView).contains(x, y)) {
+      if (ev.getAction() == MotionEvent.ACTION_UP && !getLocationOnScreen(innerView).contains(x,
+          y)) {
 
-        InputMethodManager input = (InputMethodManager)
-            getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager input =
+            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         input.hideSoftInputFromWindow(view.getWindowToken(), 0);
       }
     }
@@ -169,31 +164,28 @@ public class FindUserActivity extends AppCompatActivity {
    *
    * @param event the event
    */
-  @Subscribe
-  public void onPagerChange(PagerChangeEvent event) {
+  @Subscribe public void onPagerChange(PagerChangeEvent event) {
     viewPager.setCurrentItem(event.page, true);
   }
 
-  @Subscribe
-  public void onAuthFailed(AuthenticationFailedEvent event) {
-    login();
+  @Subscribe public void onAuthFailed(AuthenticationFailedEvent event) {
+    login(false);
   }
 
-  @Subscribe
-  public void onClaimEvent(ClaimEvent event) {
+  @Subscribe public void onClaimEvent(ClaimEvent event) {
     loading.show();
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     Timber.i("Entered claim event");
     Timber.w("Claiming with data: Guest key = %s - Email = %s", guest.user_key, guest.email);
-    authenticationService.claim(guest.user_key, new ClaimRequest(
-            guest.email,
-            new Booking(
-                guest.referenceCode != null ? guest.referenceCode : null,
-                dateFormat.format(guest.checkInDate),
-                dateFormat.format(guest.checkOutDate))),
-        new Callback<ClaimResponse>() {
-          @Override public void success(ClaimResponse apiResponse, Response response) {
+
+    NetworkRequestManager.getInstance().callClaimApi(guest.user_key, new ClaimRequest(guest.email,
+            new Booking(guest.referenceCode != null ? guest.referenceCode : null, dateFormat.format(guest.checkInDate), dateFormat.format(guest.checkOutDate))),
+        new AppCallback() {
+          @Override public void onRequestSuccess(Call call, Response response) {
+
             loading.dismiss();
+
+            ClaimResponse apiResponse = (ClaimResponse) response.body();
             Timber.d("Claimed");
             guest.guest_key = apiResponse.data.guest_key;
             guest.name = apiResponse.data.name;
@@ -203,61 +195,56 @@ public class FindUserActivity extends AppCompatActivity {
             // Send overall success time
             long elapsed = Math.abs(guest.time - System.currentTimeMillis());
             long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
-            tracker.send(new HitBuilders.EventBuilder()
-                .setCategory(getString(R.string.overall_time))
-                .setAction("Check-In")
-                .setLabel("Claim")
-                .setValue(diffSeconds).build());
+            tracker.send(
+                new HitBuilders.EventBuilder().setCategory(getString(R.string.overall_time))
+                    .setAction("Check-In")
+                    .setLabel("Claim")
+                    .setValue(diffSeconds)
+                    .build());
           }
 
-          @Override public void failure(RetrofitError error) {
+          @Override public void onRequestFail(Call call, BaseResponse response) {
             loading.dismiss();
+            Timber.w("Claim error : %s",
+                response.getMessage() != null ? response.getMessage() : response.toString());
+            Snackbar.make(appContainer.bind(FindUserActivity.this),
+                R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT).show();
+          }
 
-            if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-              Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-              return;
-            }
+          @Override public void onApiNotFound(Call call, BaseResponse response) {
+            loading.dismiss();
+          }
 
-            if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
-              Timber.w("Login as username: %s password: %s", username.get(), password.get());
-              authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
-                @Override public void success(LoginResponse response, Response response2) {
-                  Timber.d("LoggedIn");
-                  bus.post(new ClaimEvent());
-                }
-
-                @Override public void failure(RetrofitError error) {
-
-                  if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-                    Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-                    return;
-                  }
-
-                  if (error.getResponse().getStatus() == 401) {
-                    Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
-                    return;
-                  }
-
-                  Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
-                  Timber.w("login on find claim error : %s", error.getMessage() != null ? error.getMessage() : error.toString());
-                }
-              });
-            }
-
-            if (error.getResponse() != null && error.getResponse().getStatus() == 400) {
-              Timber.e("ERROR %s", error.getMessage());
-              new MaterialDialog.Builder(FindUserActivity.this)
-                  .cancelable(true)
-                  .autoDismiss(true)
-                  .title("Bad info")
-                  .content("Please check your check-in date again and retry")
-                  .positiveText("OK").build().show();
-              return;
-            }
-
-            Timber.w("Claim error : %s", error.getMessage() != null ? error.getMessage() : error.toString());
-            Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT)
+          @Override public void onBadRequest(Call call, BaseResponse response) {
+            loading.dismiss();
+            Timber.e("ERROR %s", response.getMessage());
+            new MaterialDialog.Builder(FindUserActivity.this).cancelable(true)
+                .autoDismiss(true)
+                .title("Bad info")
+                .content("Please check your check-in date again and retry")
+                .positiveText("OK")
+                .build()
                 .show();
+          }
+
+          @Override public void onAuthError(Call call, BaseResponse response) {
+            loading.dismiss();
+            Timber.w("Login as username: %s password: %s", username.get(), password.get());
+            loginForClaim();
+          }
+
+          @Override public void onServerError(Call call, BaseResponse response) {
+            loading.dismiss();
+            Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.no_connection,
+                Snackbar.LENGTH_LONG).show();
+          }
+
+          @Override public void onRequestTimeOut(Call call, Throwable t) {
+            loading.dismiss();
+          }
+
+          @Override public void onNullResponse(Call call) {
+            loading.dismiss();
           }
         });
   }
@@ -265,16 +252,14 @@ public class FindUserActivity extends AppCompatActivity {
   /**
    * Start over.
    */
-  @OnClick(R.id.resetBtn)
-  public void startOver() {
+  @OnClick(R.id.resetBtn) public void startOver() {
     reset();
   }
 
   /**
    * Back clicked.
    */
-  @OnClick(R.id.backBtn)
-  public void backClicked() {
+  @OnClick(R.id.backBtn) public void backClicked() {
     View view = this.getCurrentFocus();
     if (view != null) {
       InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -285,7 +270,7 @@ public class FindUserActivity extends AppCompatActivity {
       // If the user is currently looking at the first step, allow the system to handle the
       // Back button. This calls finish() on this activity and pops the back stack.
       super.onBackPressed();
-    } else if(viewPager.getCurrentItem() == 4 || viewPager.getCurrentItem() == 3) {
+    } else if (viewPager.getCurrentItem() == 4 || viewPager.getCurrentItem() == 3) {
       reset();
     } else {
       // Otherwise, select the previous step.
@@ -298,8 +283,7 @@ public class FindUserActivity extends AppCompatActivity {
    *
    * @param event the event
    */
-  @Subscribe
-  public void onBackShown(BackShouldShowEvent event) {
+  @Subscribe public void onBackShown(BackShouldShowEvent event) {
     backButtonView.setVisibility(event.show ? View.VISIBLE : View.GONE);
   }
 
@@ -331,34 +315,56 @@ public class FindUserActivity extends AppCompatActivity {
   /**
    * Login.
    */
-  private void login() {
-    if (loginCount >= 2) {
-      Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.ask_staff_login, Snackbar.LENGTH_LONG).show();
+  private void loginForClaim() {
+    login(true);
+  }
+  private void login(final boolean claimLogin) {
+    if (!claimLogin && loginCount >= 2) {
+      Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.ask_staff_login,
+          Snackbar.LENGTH_LONG).show();
       return;
     }
 
     loginCount++;
-    authenticationService.login(new LoginRequest(username.get(), password.get()), new Callback<LoginResponse>() {
-      @Override public void success(LoginResponse response, Response response2) {
-        Timber.d("LoggedIn");
-        bus.post(new AuthenticationPassedEvent());
-      }
 
-      @Override public void failure(RetrofitError error) {
+    NetworkRequestManager.getInstance()
+        .callLoginApi(new LoginRequest(username.get(), password.get()), new AppCallback() {
+          @Override public void onRequestSuccess(Call call, Response response) {
+            Timber.d("LoggedIn");
+            bus.post(new AuthenticationPassedEvent());
+          }
 
-        if (error.getResponse() != null && error.getResponse().getStatus() == 504) {
-          Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-          return;
-        }
+          @Override public void onRequestFail(Call call, BaseResponse response) {
+            Snackbar.make(appContainer.bind(FindUserActivity.this),
+                R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
+            Timber.w("ERROR: claim login error = %s",
+                response.getMessage() != null ? response.getMessage() : response.toString());
+          }
 
-        if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
-          login();
-          return;
-        }
+          @Override public void onApiNotFound(Call call, BaseResponse response) {
 
-        Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
-        Timber.w("ERROR: claim login error = %s", error.getMessage() != null ? error.getMessage() : error.toString());
-      }
-    });
+          }
+
+          @Override public void onBadRequest(Call call, BaseResponse response) {
+
+          }
+
+          @Override public void onAuthError(Call call, BaseResponse response) {
+            login(claimLogin);
+          }
+
+          @Override public void onServerError(Call call, BaseResponse response) {
+            Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.no_connection,
+                Snackbar.LENGTH_LONG).show();
+          }
+
+          @Override public void onRequestTimeOut(Call call, Throwable t) {
+
+          }
+
+          @Override public void onNullResponse(Call call) {
+
+          }
+        });
   }
 }

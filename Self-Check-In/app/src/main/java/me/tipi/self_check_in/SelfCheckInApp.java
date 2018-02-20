@@ -38,11 +38,13 @@ public final class SelfCheckInApp extends Application {
   private Tracker analyticTracker;
   private PowerManager.WakeLock wakeLock;
   private OnScreenOffReceiver onScreenOffReceiver;
+  private static Context appContext;
 
   @Override public void onCreate() {
     super.onCreate();
 
     AndroidThreeTen.init(this);
+    appContext = getApplicationContext();
     Timber.plant(new FileLogger());
     if (BuildConfig.DEBUG || BuildConfig.STG) {
       Timber.plant(new Timber.DebugTree());
@@ -96,8 +98,13 @@ public final class SelfCheckInApp extends Application {
    * @param context the context
    * @return the self check in app
    */
+
   public static SelfCheckInApp get(Context context) {
     return (SelfCheckInApp) context.getApplicationContext();
+  }
+
+  public static SelfCheckInApp get() {
+    return (SelfCheckInApp) appContext;
   }
 
   private void startKioskService() { // ... and this method

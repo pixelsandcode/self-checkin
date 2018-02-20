@@ -8,20 +8,10 @@
 
 package me.tipi.self_check_in.data.api;
 
-import com.squareup.okhttp.OkHttpClient;
-
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
-import me.tipi.self_check_in.BuildConfig;
+import javax.inject.Singleton;
 import me.tipi.self_check_in.data.api.models.Guest;
-import retrofit.Endpoint;
-import retrofit.Endpoints;
-import retrofit.RestAdapter;
-import retrofit.android.AndroidLog;
-import retrofit.client.Client;
-import retrofit.client.OkClient;
 
 @Module(
     complete = false,
@@ -34,10 +24,10 @@ public final class ApiModule {
    *
    * @return the http url
    */
-  @Provides @Singleton
-  Endpoint provideEndpoint() {
-    return Endpoints.newFixedEndpoint(ApiConstants.getApiBaseUrl());
-  }
+  //@Provides @Singleton
+  //Endpoint provideEndpoint() {
+  //  return Endpoints.newFixedEndpoint(ApiConstants.getApiBaseUrl());
+  //}
 
   /**
    * Provide client client.
@@ -45,9 +35,9 @@ public final class ApiModule {
    * @param client the client
    * @return the client
    */
-  @Provides @Singleton Client provideClient(OkHttpClient client) {
-    return new OkClient(client);
-  }
+  //@Provides @Singleton Client provideClient(OkHttpClient client) {
+  //  return new OkClient(client);
+  //}
 
   /**
    * Provide main rest adapter rest adapter.
@@ -57,16 +47,16 @@ public final class ApiModule {
    * @param headers  the headers
    * @return the rest adapter
    */
-  @Provides @Singleton
-  RestAdapter provideMainRestAdapter(Endpoint endpoint, Client client, ApiHeaders headers) {
-    return new RestAdapter.Builder() //
-        .setClient(client) //
-        .setEndpoint(endpoint)
-        .setRequestInterceptor(headers)
-        .setLogLevel(BuildConfig.STG ? RestAdapter.LogLevel.FULL :RestAdapter.LogLevel.NONE)
-        .setLog(new AndroidLog("TipiRetrofit"))
-        .build();
-  }
+  //@Provides @Singleton
+  //RestAdapter provideMainRestAdapter(Endpoint endpoint, Client client, ApiHeaders headers) {
+  //  return new RestAdapter.Builder() //
+  //      .setClient(client) //
+  //      .setEndpoint(endpoint)
+  //      .setRequestInterceptor(headers)
+  //      .setLogLevel(BuildConfig.STG ? RestAdapter.LogLevel.FULL :RestAdapter.LogLevel.NONE)
+  //      .setLog(new AndroidLog("TipiRetrofit"))
+  //      .build();
+  //}
 
   /**
    * Provide authentication service authentication service.
@@ -74,10 +64,10 @@ public final class ApiModule {
    * @param restAdapter the restAdapter
    * @return the authentication service
    */
-  @Provides @Singleton
-  AuthenticationService provideAuthenticationService(RestAdapter restAdapter) {
-    return restAdapter.create(AuthenticationService.class);
-  }
+  //@Provides @Singleton
+  //AuthenticationService provideAuthenticationService(RestAdapter restAdapter) {
+  //  return restAdapter.create(AuthenticationService.class);
+  //}
 
   /**
    * Provide guest guest.
