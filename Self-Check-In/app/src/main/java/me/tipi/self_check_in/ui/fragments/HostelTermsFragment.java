@@ -41,6 +41,7 @@ public class HostelTermsFragment extends Fragment {
 
   public static final String TAG = HostelTermsFragment.class.getSimpleName();
 
+  @Inject NetworkRequestManager networkRequestManager;
   @Inject Bus bus;
   @Inject Tracker tracker;
   @Inject
@@ -62,7 +63,7 @@ public class HostelTermsFragment extends Fragment {
 
   public static HostelTermsFragment newInstance(Context context) {
     HostelTermsFragment fragment = new HostelTermsFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 
@@ -77,7 +78,7 @@ public class HostelTermsFragment extends Fragment {
 
   private void loadTerms() {
 
-    NetworkRequestManager.getInstance().callGetTermsApi(hostelKey.get(), new AppCallback() {
+    networkRequestManager.callGetTermsApi(hostelKey.get(), new AppCallback() {
       @Override public void onRequestSuccess(Call call, Response response) {
 
         LoginResponse loginResponse = (LoginResponse) response.body();

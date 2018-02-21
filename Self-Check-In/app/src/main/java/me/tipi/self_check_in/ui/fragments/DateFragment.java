@@ -97,7 +97,7 @@ public class DateFragment extends Fragment implements CalendarDatePickerDialogFr
    */
   public static DateFragment newInstance(Context context) {
     DateFragment fragment = new DateFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 

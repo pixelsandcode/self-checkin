@@ -19,12 +19,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.inject.Inject;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.NetworkRequestManager;
 import me.tipi.self_check_in.data.api.models.Country;
 
 public class HomeTownAutoCompleteAdapter extends BaseAdapter implements Filterable {
 
+  @Inject NetworkRequestManager networkRequestManager;
   private LayoutInflater mInflater;
   private List<String> countries = new ArrayList<>();
   List<Country> data = Collections.emptyList();
@@ -35,7 +37,7 @@ public class HomeTownAutoCompleteAdapter extends BaseAdapter implements Filterab
    * @param context the context
    */
   public HomeTownAutoCompleteAdapter(final Context context) {
-    SelfCheckInApp.get(context).inject(this);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(this);
     mInflater = LayoutInflater.from(context);
   }
 
@@ -71,7 +73,7 @@ public class HomeTownAutoCompleteAdapter extends BaseAdapter implements Filterab
       protected FilterResults performFiltering(final CharSequence constraint) {
         final FilterResults filterResults = new FilterResults();
         if (constraint != null) {
-          List<Country> countries = NetworkRequestManager.getInstance().callGetCountriesApi(constraint.toString());
+          List<Country> countries = networkRequestManager.callGetCountriesApi(constraint.toString());
 
           filterResults.values = countries;
           filterResults.count = countries.size();

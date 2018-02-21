@@ -14,6 +14,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
@@ -26,6 +28,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,12 +41,14 @@ import com.drivemode.android.typeface.TypefaceHelper;
 import com.f2prateek.rx.preferences2.Preference;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import java.util.Locale;
 import java.util.Random;
 import javax.inject.Inject;
 import javax.inject.Named;
 import me.tipi.self_check_in.KioskService;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
+import me.tipi.self_check_in.data.LanguagePreference;
 import me.tipi.self_check_in.data.PrinterPreference;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AppCallback;
@@ -58,21 +63,14 @@ import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
+  @Inject NetworkRequestManager networkRequestManager;
+  @Inject LanguagePreference languagePreference;
   @Inject PrinterPreference printerPreference;
-  @Inject
-  @Named(ApiConstants.USER_NAME) Preference<String> username;
-  @Inject
-  @Named(ApiConstants.PASSWORD)
-  Preference<String> password;
-  @Inject
-  @Named(ApiConstants.HOSTEL_NAME)
-  Preference<String> hostelName;
-  @Inject
-  @Named(ApiConstants.HOSTEL_KEY)
-  Preference<String> hostelKey;
-  @Inject
-  @Named(ApiConstants.KIOSK_NAME)
-  Preference<String> kioskNamePref;
+  @Inject @Named(ApiConstants.USER_NAME) Preference<String> username;
+  @Inject @Named(ApiConstants.PASSWORD) Preference<String> password;
+  @Inject @Named(ApiConstants.HOSTEL_NAME) Preference<String> hostelName;
+  @Inject @Named(ApiConstants.HOSTEL_KEY) Preference<String> hostelKey;
+  @Inject @Named(ApiConstants.KIOSK_NAME) Preference<String> kioskNamePref;
 
   @Inject AppContainer appContainer;
   @Inject Tracker tracker;
@@ -85,17 +83,16 @@ public class MainActivity extends AppCompatActivity {
   long oneMinute = 60000;
   long period = 5 * oneMinute;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    SelfCheckInApp.get(this).getSelfCheckInComponent().inject(this);
+    setLanguage();
     ButterKnife.bind(this);
-    SelfCheckInApp.get(this).inject(this);
     typeface.setTypeface(this, "SF-UI-Text-Regular.otf");
     printerPreference.set(false);
-    loading = new MaterialDialog.Builder(this)
-        .content("Loading")
+    loading = new MaterialDialog.Builder(this).content("Loading")
         .cancelable(false)
         .progress(true, 0)
         .build();
@@ -140,20 +137,22 @@ public class MainActivity extends AppCompatActivity {
     Timber.d("Paused");
   }
 
-  @TargetApi(Build.VERSION_CODES.M)
-  private boolean checkWriteStoragePermission() {
-    return ContextCompat.checkSelfPermission(this,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+  @TargetApi(Build.VERSION_CODES.M) private boolean checkWriteStoragePermission() {
+    return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        == PackageManager.PERMISSION_GRANTED;
   }
 
   private void requestWriteStoragePermission() {
-    if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+    if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+      ActivityCompat.requestPermissions(this,
+          new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, PERMISSION_REQUEST_CODE);
     }
   }
 
   @Override
-  public void onRequestPermissionsResult(int permsRequestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+  public void onRequestPermissionsResult(int permsRequestCode, @NonNull String[] permissions,
+      @NonNull int[] grantResults) {
     switch (permsRequestCode) {
       case 8000:
         boolean writeAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
@@ -163,25 +162,26 @@ public class MainActivity extends AppCompatActivity {
 
     // Make sure it's our original READ_CONTACTS request
     if (permsRequestCode == CAMERA_GALLERY_PERMISSIONS_REQUEST) {
-      if (grantResults.length == 2 &&
-          grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+      if (grantResults.length == 2
+          &&
+          grantResults[0] == PackageManager.PERMISSION_GRANTED
+          && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
         Timber.v("Camera Permission Granted");
       } else {
-        Toast.makeText(MainActivity.this, "Sorry you can't use this app without permission", Toast.LENGTH_LONG).show();
+        Toast.makeText(MainActivity.this, "Sorry you can't use this app without permission",
+            Toast.LENGTH_LONG).show();
         Timber.w("Camera permission denied");
       }
     } else {
       super.onRequestPermissionsResult(permsRequestCode, permissions, grantResults);
     }
-
   }
 
   /**
    * Gets permission to open camera and galley.
    */
-// Called when the user is performing an action which requires the app to show camera
-  @TargetApi(Build.VERSION_CODES.M)
-  public void getPermissionToOpenCameraAndGalley() {
+  // Called when the user is performing an action which requires the app to show camera
+  @TargetApi(Build.VERSION_CODES.M) public void getPermissionToOpenCameraAndGalley() {
     // 1) Use the support library version ContextCompat.checkSelfPermission(...) to avoid
     // checking the build version since Context.checkSelfPermission(...) is only available
     // in Marshmallow
@@ -193,8 +193,7 @@ public class MainActivity extends AppCompatActivity {
       // The permission is NOT already granted.
       // Check if the user has been asked about this permission already and denied
       // it. If so, we want to give more explanation about why the permission is needed.
-      if (shouldShowRequestPermissionRationale(
-          Manifest.permission.CAMERA)) {
+      if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
         // Show our own UI to explain to the user why we need to read the contacts
         // before actually requesting the permission and showing the default UI
         Timber.d("Should ask again for permission");
@@ -202,7 +201,8 @@ public class MainActivity extends AppCompatActivity {
 
       // Fire off an async request to actually get the permission
       // This will show the standard permission request dialog UI
-      requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
+      requestPermissions(
+          new String[] { Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE },
           CAMERA_GALLERY_PERMISSIONS_REQUEST);
     }
   }
@@ -216,11 +216,11 @@ public class MainActivity extends AppCompatActivity {
     if (view instanceof EditText) {
       EditText innerView = (EditText) getCurrentFocus();
 
-      if (ev.getAction() == MotionEvent.ACTION_UP &&
-          !getLocationOnScreen(innerView).contains(x, y)) {
+      if (ev.getAction() == MotionEvent.ACTION_UP && !getLocationOnScreen(innerView).contains(x,
+          y)) {
 
-        InputMethodManager input = (InputMethodManager)
-            getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager input =
+            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         input.hideSoftInputFromWindow(view.getWindowToken(), 0);
       }
     }
@@ -246,7 +246,8 @@ public class MainActivity extends AppCompatActivity {
    */
   private void showLoginFragment() {
     getFragmentManager().beginTransaction()
-        .replace(R.id.container, LoginFragment.newInstance(this)).commit();
+        .replace(R.id.container, LoginFragment.newInstance(this))
+        .commit();
   }
 
   /**
@@ -255,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
   public void login() {
     loading.show();
 
-    NetworkRequestManager.getInstance()
+    networkRequestManager
         .callLoginApi(new LoginRequest(username.get(), password.get()), new AppCallback() {
           @Override public void onRequestSuccess(Call call, Response response) {
 
@@ -267,7 +268,8 @@ public class MainActivity extends AppCompatActivity {
             hostelName.set(loginResponse.data.name);
             hostelKey.set(loginResponse.data.doc_key);
 
-            tracker.send(new HitBuilders.TimingBuilder("Login", "Logged In", System.currentTimeMillis()).build());
+            tracker.send(new HitBuilders.TimingBuilder("Login", "Logged In",
+                System.currentTimeMillis()).build());
 
             startActivity(new Intent(MainActivity.this, SignUpActivity.class));
             finish();
@@ -281,8 +283,8 @@ public class MainActivity extends AppCompatActivity {
           @Override public void onRequestFail(Call call, BaseResponse response) {
             loading.dismiss();
             showLoginFragment();
-            Snackbar.make(appContainer.bind(MainActivity.this),
-                R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(appContainer.bind(MainActivity.this), R.string.something_wrong_try_again,
+                Snackbar.LENGTH_LONG).show();
             Timber.w("ERROR: claim login error = %s",
                 response.getMessage() != null ? response.getMessage() : response.toString());
 
@@ -303,8 +305,10 @@ public class MainActivity extends AppCompatActivity {
           @Override public void onAuthError(Call call, BaseResponse response) {
             loading.dismiss();
             showLoginFragment();
-            Snackbar.make(appContainer.bind(MainActivity.this), R.string.enter_correct_email_password, Snackbar.LENGTH_LONG).show();
-            Timber.w("Error Logging in with user: %s and password %s", username.get(), password.get());
+            Snackbar.make(appContainer.bind(MainActivity.this),
+                R.string.enter_correct_email_password, Snackbar.LENGTH_LONG).show();
+            Timber.w("Error Logging in with user: %s and password %s", username.get(),
+                password.get());
           }
 
           @Override public void onServerError(Call call, BaseResponse response) {
@@ -327,7 +331,17 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void forgetPassword(View view) {
-    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://dashboard.tipi.me/#/forgot"));
+    Intent browserIntent =
+        new Intent(Intent.ACTION_VIEW, Uri.parse("http://dashboard.tipi.me/#/forgot"));
     startActivity(browserIntent);
+  }
+
+  public void setLanguage() {
+    Locale locale = new Locale(languagePreference.get());
+    Resources res = getResources();
+    DisplayMetrics displayMetrics = res.getDisplayMetrics();
+    Configuration configuration = res.getConfiguration();
+    configuration.locale = locale;
+    res.updateConfiguration(configuration, displayMetrics);
   }
 }

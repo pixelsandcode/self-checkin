@@ -47,6 +47,7 @@ public class QuestionFragment extends Fragment {
 
   public static final String TAG = QuestionFragment.class.getSimpleName();
 
+  @Inject NetworkRequestManager networkRequestManager;
   @Inject Bus bus;
   @Inject Tracker tracker;
   @Inject Guest guest;
@@ -77,7 +78,7 @@ public class QuestionFragment extends Fragment {
 
   public static QuestionFragment newInstance(Context context) {
     QuestionFragment fragment = new QuestionFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 
@@ -277,48 +278,47 @@ public class QuestionFragment extends Fragment {
       navigateToSuccessPage();
     } else {
       loading.show();
-      NetworkRequestManager.getInstance()
-          .callSendNoteApi(guestKey, new NoteRequest(note), new AppCallback() {
-            @Override public void onRequestSuccess(Call call, Response response) {
-              loading.dismiss();
-              Timber.d("note sent");
-              navigateToSuccessPage();
-            }
+      networkRequestManager.callSendNoteApi(guestKey, new NoteRequest(note), new AppCallback() {
+        @Override public void onRequestSuccess(Call call, Response response) {
+          loading.dismiss();
+          Timber.d("note sent");
+          navigateToSuccessPage();
+        }
 
-            @Override public void onRequestFail(Call call, BaseResponse response) {
-              loading.dismiss();
-              Timber.w("Error note - guest_key is: %s", guestKey);
-              Timber.w("ERROR: %s",
-                  response.getMessage() != null ? response.getMessage() : response.toString());
-              navigateToSuccessPage();
-            }
+        @Override public void onRequestFail(Call call, BaseResponse response) {
+          loading.dismiss();
+          Timber.w("Error note - guest_key is: %s", guestKey);
+          Timber.w("ERROR: %s",
+              response.getMessage() != null ? response.getMessage() : response.toString());
+          navigateToSuccessPage();
+        }
 
-            @Override public void onBadRequest(Call call, BaseResponse response) {
-              loading.dismiss();
-            }
+        @Override public void onBadRequest(Call call, BaseResponse response) {
+          loading.dismiss();
+        }
 
-            @Override public void onApiNotFound(Call call, BaseResponse response) {
-              loading.dismiss();
-            }
+        @Override public void onApiNotFound(Call call, BaseResponse response) {
+          loading.dismiss();
+        }
 
-            @Override public void onAuthError(Call call, BaseResponse response) {
-              loading.dismiss();
-            }
+        @Override public void onAuthError(Call call, BaseResponse response) {
+          loading.dismiss();
+        }
 
-            @Override public void onServerError(Call call, BaseResponse response) {
-              loading.dismiss();
-              Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection,
-                  Snackbar.LENGTH_LONG).show();
-            }
+        @Override public void onServerError(Call call, BaseResponse response) {
+          loading.dismiss();
+          Snackbar.make(appContainer.bind(getActivity()), R.string.no_connection,
+              Snackbar.LENGTH_LONG).show();
+        }
 
-            @Override public void onRequestTimeOut(Call call, Throwable t) {
-              loading.dismiss();
-            }
+        @Override public void onRequestTimeOut(Call call, Throwable t) {
+          loading.dismiss();
+        }
 
-            @Override public void onNullResponse(Call call) {
-              loading.dismiss();
-            }
-          });
+        @Override public void onNullResponse(Call call) {
+          loading.dismiss();
+        }
+      });
     }
   }
 

@@ -133,7 +133,7 @@ public class IdentityFragment extends Fragment {
       fragment.setArguments(args);
     }
 
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 

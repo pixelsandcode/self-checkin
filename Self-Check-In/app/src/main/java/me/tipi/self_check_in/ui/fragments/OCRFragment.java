@@ -100,7 +100,7 @@ public class OCRFragment extends Fragment implements ScanResultListener, CameraE
 
   public static OCRFragment newInstance(Context context) {
     OCRFragment fragment = new OCRFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 

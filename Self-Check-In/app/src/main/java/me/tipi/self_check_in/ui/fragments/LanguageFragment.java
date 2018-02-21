@@ -30,7 +30,7 @@ public class LanguageFragment extends Fragment {
 
   public static LanguageFragment newInstance(Context context) {
     LanguageFragment fragment = new LanguageFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 

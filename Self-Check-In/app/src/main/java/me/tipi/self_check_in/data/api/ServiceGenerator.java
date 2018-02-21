@@ -27,22 +27,12 @@ public class ServiceGenerator {
 
   static final int DISK_CACHE_SIZE = (int) MEGABYTES.toBytes(50);
 
-  private static ServiceGenerator instance;
-
   private Retrofit retrofit;
   private OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
   private Retrofit.Builder builder;
 
-  private ServiceGenerator() {
+  public ServiceGenerator() {
     init();
-  }
-
-  public static ServiceGenerator getInstance() {
-
-    if (instance == null) {
-      instance = new ServiceGenerator();
-    }
-    return instance;
   }
 
   private void init() {

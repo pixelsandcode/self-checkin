@@ -52,10 +52,10 @@ import me.tipi.self_check_in.KioskService;
 import me.tipi.self_check_in.R;
 import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.LanguagePreference;
+import me.tipi.self_check_in.data.api.AddGuestCallback;
 import me.tipi.self_check_in.data.api.ApiConstants;
 import me.tipi.self_check_in.data.api.AppCallback;
 import me.tipi.self_check_in.data.api.NetworkRequestManager;
-import me.tipi.self_check_in.data.api.AddGuestCallback;
 import me.tipi.self_check_in.data.api.models.BaseResponse;
 import me.tipi.self_check_in.data.api.models.Booking;
 import me.tipi.self_check_in.data.api.models.ClaimRequest;
@@ -86,6 +86,8 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class SignUpActivity extends AppCompatActivity {
+
+  @Inject NetworkRequestManager networkRequestManager;
   @Inject Bus bus;
   @Inject Guest guest;
   @Inject AppContainer appContainer;
@@ -105,7 +107,7 @@ public class SignUpActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_sign_up);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    SelfCheckInApp.get(this).inject(this);
+    SelfCheckInApp.get(this).getSelfCheckInComponent().inject(this);
     ButterKnife.bind(this);
 
     loading = new MaterialDialog.Builder(this).content("Please wait...")
@@ -446,88 +448,88 @@ public class SignUpActivity extends AppCompatActivity {
     loading.show();
     Timber.w("sending data with values  %s", guest.toString());
 
-    NetworkRequestManager.getInstance()
-        .callAddGuestApi(new File(guest.avatarPath), new File(guest.passportPath), guest.email,
-            fullName, (guest.city == null || TextUtils.isEmpty(guest.city)) ? null : guest.city,
-            (guest.country == null || TextUtils.isEmpty(guest.country)) ? null : guest.country,
-            guest.passportNumber, guest.dob == null ? null : dateFormat.format(guest.dob),
-            guest.referenceCode != null ? guest.referenceCode : null,
-            dateFormat.format(guest.checkInDate), dateFormat.format(guest.checkOutDate),
-            guest.gender, new AddGuestCallback() {
-              @Override public void onRequestSuccess(Call call, Response response) {
+    networkRequestManager.callAddGuestApi(new File(guest.avatarPath), new File(guest.passportPath),
+        guest.email, fullName,
+        (guest.city == null || TextUtils.isEmpty(guest.city)) ? null : guest.city,
+        (guest.country == null || TextUtils.isEmpty(guest.country)) ? null : guest.country,
+        guest.passportNumber, guest.dob == null ? null : dateFormat.format(guest.dob),
+        guest.referenceCode != null ? guest.referenceCode : null,
+        dateFormat.format(guest.checkInDate), dateFormat.format(guest.checkOutDate), guest.gender,
+        new AddGuestCallback() {
+          @Override public void onRequestSuccess(Call call, Response response) {
 
-                loading.dismiss();
+            loading.dismiss();
 
-                ClaimResponse claimResponse = (ClaimResponse) response.body();
-                Timber.w("--------PROCESS FINISHED------- with guest_key: %s",
-                    claimResponse.data.guest_key);
-                guest.guest_key = claimResponse.data.guest_key;
-                guest.name = claimResponse.data.name;
-                Timber.w("Got name from server with value: %s. name stored with value: %s",
-                    claimResponse.data.name, guest.name);
-                // Send overall success time
-                long elapsed = Math.abs(guest.time - System.currentTimeMillis());
-                long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
-                tracker.send(
-                    new HitBuilders.EventBuilder().setCategory(getString(R.string.overall_time))
-                        .setAction("Check-In")
-                        .setLabel("Sign Up")
-                        .setValue(diffSeconds)
-                        .build());
-                tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
-                showQuestionFragment();
-              }
+            ClaimResponse claimResponse = (ClaimResponse) response.body();
+            Timber.w("--------PROCESS FINISHED------- with guest_key: %s",
+                claimResponse.data.guest_key);
+            guest.guest_key = claimResponse.data.guest_key;
+            guest.name = claimResponse.data.name;
+            Timber.w("Got name from server with value: %s. name stored with value: %s",
+                claimResponse.data.name, guest.name);
+            // Send overall success time
+            long elapsed = Math.abs(guest.time - System.currentTimeMillis());
+            long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(elapsed);
+            tracker.send(
+                new HitBuilders.EventBuilder().setCategory(getString(R.string.overall_time))
+                    .setAction("Check-In")
+                    .setLabel("Sign Up")
+                    .setValue(diffSeconds)
+                    .build());
+            tracker.send(new HitBuilders.EventBuilder("Check-in", "Create").build());
+            showQuestionFragment();
+          }
 
-              @Override public void onRequestFail(Call call, BaseResponse response) {
-                loading.dismiss();
-                Toast.makeText(SignUpActivity.this,
-                    "Cannot contact server, please check your wifi connection!", Toast.LENGTH_LONG)
-                    .show();
-              }
+          @Override public void onRequestFail(Call call, BaseResponse response) {
+            loading.dismiss();
+            Toast.makeText(SignUpActivity.this,
+                "Cannot contact server, please check your wifi connection!", Toast.LENGTH_LONG)
+                .show();
+          }
 
-              @Override public void onConflict(Call call, BaseResponse response) {
-                loading.dismiss();
-                Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
-                    response.getStatusCode(), "");
-                showSuccessFragment();
-              }
+          @Override public void onConflict(Call call, BaseResponse response) {
+            loading.dismiss();
+            Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
+                response.getStatusCode(), "");
+            showSuccessFragment();
+          }
 
-              @Override public void onBadRequest(Call call, BaseResponse response) {
-                loading.dismiss();
-                Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
-                    response.getStatusCode(), "");
-                new MaterialDialog.Builder(SignUpActivity.this).cancelable(true)
-                    .autoDismiss(true)
-                    .title("Bad info")
-                    .content("Please check your check-in date again and retry")
-                    .positiveText("OK")
-                    .build()
-                    .show();
-              }
+          @Override public void onBadRequest(Call call, BaseResponse response) {
+            loading.dismiss();
+            Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
+                response.getStatusCode(), "");
+            new MaterialDialog.Builder(SignUpActivity.this).cancelable(true)
+                .autoDismiss(true)
+                .title("Bad info")
+                .content("Please check your check-in date again and retry")
+                .positiveText("OK")
+                .build()
+                .show();
+          }
 
-              @Override public void onAuthError(Call call, BaseResponse response) {
-                loading.dismiss();
-                Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
-                    response.getStatusCode(), "");
-                login();
-              }
+          @Override public void onAuthError(Call call, BaseResponse response) {
+            loading.dismiss();
+            Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
+                response.getStatusCode(), "");
+            login();
+          }
 
-              @Override public void onServerError(Call call, BaseResponse response) {
-                loading.dismiss();
-                Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection,
-                    Snackbar.LENGTH_LONG).show();
-                Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
-                    response.getStatusCode(), "");
-              }
+          @Override public void onServerError(Call call, BaseResponse response) {
+            loading.dismiss();
+            Snackbar.make(appContainer.bind(SignUpActivity.this), R.string.no_connection,
+                Snackbar.LENGTH_LONG).show();
+            Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
+                response.getStatusCode(), "");
+          }
 
-              @Override public void onRequestTimeOut(Call call, Throwable t) {
-                loading.dismiss();
-              }
+          @Override public void onRequestTimeOut(Call call, Throwable t) {
+            loading.dismiss();
+          }
 
-              @Override public void onNullResponse(Call call) {
-                loading.dismiss();
-              }
-            });
+          @Override public void onNullResponse(Call call) {
+            loading.dismiss();
+          }
+        });
   }
 
   @Subscribe public void onClaimEvent(ClaimEvent event) {
@@ -536,8 +538,9 @@ public class SignUpActivity extends AppCompatActivity {
     loading.show();
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
-    NetworkRequestManager.getInstance().callClaimApi(guest.user_key, new ClaimRequest(guest.email,
-            new Booking(guest.referenceCode != null ? guest.referenceCode : null, dateFormat.format(guest.checkInDate), dateFormat.format(guest.checkOutDate))),
+    networkRequestManager.callClaimApi(guest.user_key, new ClaimRequest(guest.email,
+            new Booking(guest.referenceCode != null ? guest.referenceCode : null,
+                dateFormat.format(guest.checkInDate), dateFormat.format(guest.checkOutDate))),
         new AppCallback() {
           @Override public void onRequestSuccess(Call call, Response response) {
             loading.dismiss();
@@ -575,8 +578,7 @@ public class SignUpActivity extends AppCompatActivity {
 
           @Override public void onBadRequest(Call call, BaseResponse response) {
             loading.dismiss();
-            Timber.w("ERROR %s - status: %s", response.getMessage(),
-                response.getStatusCode());
+            Timber.w("ERROR %s - status: %s", response.getMessage(), response.getStatusCode());
             new MaterialDialog.Builder(SignUpActivity.this).cancelable(true)
                 .autoDismiss(true)
                 .title("Bad info")
@@ -644,8 +646,8 @@ public class SignUpActivity extends AppCompatActivity {
 
   public void firstLogin() {
 
-    NetworkRequestManager.getInstance()
-        .callLoginApi(new LoginRequest(username.get(), password.get()), new AppCallback() {
+    networkRequestManager.callLoginApi(new LoginRequest(username.get(), password.get()),
+        new AppCallback() {
           @Override public void onRequestSuccess(Call call, Response response) {
 
             loading.dismiss();
@@ -707,8 +709,8 @@ public class SignUpActivity extends AppCompatActivity {
 
     loginCount++;
 
-    NetworkRequestManager.getInstance()
-        .callLoginApi(new LoginRequest(username.get(), password.get()), new AppCallback() {
+    networkRequestManager.callLoginApi(new LoginRequest(username.get(), password.get()),
+        new AppCallback() {
           @Override public void onRequestSuccess(Call call, Response response) {
             Timber.d("LoggedIn");
             submit();

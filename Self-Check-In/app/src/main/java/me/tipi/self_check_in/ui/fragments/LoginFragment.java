@@ -57,7 +57,7 @@ public class LoginFragment extends Fragment {
    */
   public static LoginFragment newInstance(Context context) {
     LoginFragment fragment = new LoginFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 

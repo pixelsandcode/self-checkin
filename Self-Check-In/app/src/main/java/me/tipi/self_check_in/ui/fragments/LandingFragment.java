@@ -56,7 +56,7 @@ public class LandingFragment extends Fragment {
 
   public static LandingFragment newInstance(Context context) {
     LandingFragment fragment = new LandingFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 

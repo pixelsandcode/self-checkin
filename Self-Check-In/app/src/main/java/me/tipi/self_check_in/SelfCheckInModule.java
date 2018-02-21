@@ -9,29 +9,15 @@
 package me.tipi.self_check_in;
 
 import android.app.Application;
-
 import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
-
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
-import me.tipi.self_check_in.data.DataModule;
-import me.tipi.self_check_in.ui.UiModule;
+import javax.inject.Singleton;
 
-@Module(
-    includes = {
-        UiModule.class,
-        DataModule.class
-    },
-    injects = {
-        SelfCheckInApp.class
-    }
-)
-
+@Module
 public final class SelfCheckInModule {
   private final SelfCheckInApp app;
 

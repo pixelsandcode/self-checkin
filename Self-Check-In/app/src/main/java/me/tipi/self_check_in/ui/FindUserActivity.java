@@ -60,6 +60,7 @@ import timber.log.Timber;
 
 public class FindUserActivity extends AppCompatActivity {
 
+  @Inject NetworkRequestManager networkRequestManager;
   @Inject Bus bus;
   @Inject Guest guest;
   @Inject AppContainer appContainer;
@@ -78,7 +79,7 @@ public class FindUserActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_find_user);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    SelfCheckInApp.get(this).inject(this);
+    SelfCheckInApp.get(this).getSelfCheckInComponent().inject(this);
     ButterKnife.bind(this);
     Timber.d("Created");
 
@@ -178,8 +179,9 @@ public class FindUserActivity extends AppCompatActivity {
     Timber.i("Entered claim event");
     Timber.w("Claiming with data: Guest key = %s - Email = %s", guest.user_key, guest.email);
 
-    NetworkRequestManager.getInstance().callClaimApi(guest.user_key, new ClaimRequest(guest.email,
-            new Booking(guest.referenceCode != null ? guest.referenceCode : null, dateFormat.format(guest.checkInDate), dateFormat.format(guest.checkOutDate))),
+    networkRequestManager.callClaimApi(guest.user_key, new ClaimRequest(guest.email,
+            new Booking(guest.referenceCode != null ? guest.referenceCode : null,
+                dateFormat.format(guest.checkInDate), dateFormat.format(guest.checkOutDate))),
         new AppCallback() {
           @Override public void onRequestSuccess(Call call, Response response) {
 
@@ -318,6 +320,7 @@ public class FindUserActivity extends AppCompatActivity {
   private void loginForClaim() {
     login(true);
   }
+
   private void login(final boolean claimLogin) {
     if (!claimLogin && loginCount >= 2) {
       Snackbar.make(appContainer.bind(FindUserActivity.this), R.string.ask_staff_login,
@@ -327,8 +330,8 @@ public class FindUserActivity extends AppCompatActivity {
 
     loginCount++;
 
-    NetworkRequestManager.getInstance()
-        .callLoginApi(new LoginRequest(username.get(), password.get()), new AppCallback() {
+    networkRequestManager.callLoginApi(new LoginRequest(username.get(), password.get()),
+        new AppCallback() {
           @Override public void onRequestSuccess(Call call, Response response) {
             Timber.d("LoggedIn");
             bus.post(new AuthenticationPassedEvent());

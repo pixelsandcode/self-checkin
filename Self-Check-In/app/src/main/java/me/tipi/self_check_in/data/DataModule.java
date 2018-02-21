@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import me.tipi.self_check_in.data.api.ApiConstants;
-import me.tipi.self_check_in.data.api.ApiModule;
 import okhttp3.Cache;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
@@ -26,10 +25,7 @@ import timber.log.Timber;
 import static android.content.Context.MODE_PRIVATE;
 import static com.jakewharton.byteunits.DecimalByteUnit.MEGABYTES;
 
-@Module(
-    includes = ApiModule.class,
-    complete = false,
-    library = true) public final class DataModule {
+@Module public final class DataModule {
   static final int DISK_CACHE_SIZE = (int) MEGABYTES.toBytes(50);
   private static final String PREF_USER_AVATAR = "UserAvatar";
   private static final String PREF_PRINTER = "printer";

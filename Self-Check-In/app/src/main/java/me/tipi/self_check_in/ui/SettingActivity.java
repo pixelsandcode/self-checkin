@@ -51,6 +51,7 @@ import timber.log.Timber;
 
 public class SettingActivity extends AppCompatActivity {
 
+  @Inject NetworkRequestManager networkRequestManager;
   @Inject AppContainer appContainer;
   @Inject Tracker tracker;
   @Inject PrinterPreference printerPreference;
@@ -71,7 +72,7 @@ public class SettingActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_setting);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    SelfCheckInApp.get(this).inject(this);
+    SelfCheckInApp.get(this).getSelfCheckInComponent().inject(this);
     ButterKnife.bind(this);
 
     typeface.setTypeface(this, getResources().getString(R.string.font_regular));
@@ -127,7 +128,7 @@ public class SettingActivity extends AppCompatActivity {
     if (kioskName != null) {
       if (logFile.exists()) {
         loading.show();
-        NetworkRequestManager.getInstance().callSendLogApi(kioskName, logFile,
+        networkRequestManager.callSendLogApi(kioskName, logFile,
             new AppCallback() {
               @Override public void onRequestSuccess(Call call, Response response) {
                 loading.dismiss();

@@ -52,6 +52,7 @@ public class EmailFragment extends Fragment {
 
   public static final String TAG = EmailFragment.class.getSimpleName();
 
+  @Inject NetworkRequestManager networkRequestManager;
   @Inject Picasso picasso;
   @Inject Bus bus;
   @Inject Guest guest;
@@ -80,7 +81,7 @@ public class EmailFragment extends Fragment {
 
   public static EmailFragment newInstance(Context context) {
     EmailFragment fragment = new EmailFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 
@@ -206,7 +207,7 @@ public class EmailFragment extends Fragment {
   private void findUserWithEmail(final String enteredEmail) {
     loading.show();
 
-    NetworkRequestManager.getInstance().callFindUserApi(enteredEmail, new AppCallback() {
+    networkRequestManager.callFindUserApi(enteredEmail, new AppCallback() {
       @Override public void onRequestSuccess(Call call, Response response) {
         loading.dismiss();
 

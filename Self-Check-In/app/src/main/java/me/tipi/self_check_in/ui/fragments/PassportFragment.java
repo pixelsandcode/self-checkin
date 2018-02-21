@@ -127,7 +127,7 @@ public class PassportFragment extends Fragment implements SurfaceHolder.Callback
    */
   public static PassportFragment newInstance(Context context) {
     PassportFragment fragment = new PassportFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 

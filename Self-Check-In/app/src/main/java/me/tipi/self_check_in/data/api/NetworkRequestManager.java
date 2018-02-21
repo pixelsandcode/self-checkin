@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
+import me.tipi.self_check_in.SelfCheckInApp;
 import me.tipi.self_check_in.data.api.models.ApiResponse;
 import me.tipi.self_check_in.data.api.models.BaseResponse;
 import me.tipi.self_check_in.data.api.models.ClaimRequest;
@@ -26,24 +28,12 @@ import retrofit2.Callback;
 
 public class NetworkRequestManager {
 
+  @Inject AuthenticationService authenticationService;
+
   private static final String IMG_JPEG = "image/jpeg";
 
-  private static NetworkRequestManager instance;
-
-  private AuthenticationService authenticationService;
-
-  private NetworkRequestManager() {
-    authenticationService =
-        ServiceGenerator.getInstance().createService(AuthenticationService.class);
-  }
-
-  public static NetworkRequestManager getInstance() {
-
-    if (instance == null) {
-      instance = new NetworkRequestManager();
-    }
-
-    return instance;
+  public NetworkRequestManager() {
+    SelfCheckInApp.get().getSelfCheckInComponent().inject(this);
   }
 
   public void callLoginApi(LoginRequest loginRequest, AppCallback callback) {

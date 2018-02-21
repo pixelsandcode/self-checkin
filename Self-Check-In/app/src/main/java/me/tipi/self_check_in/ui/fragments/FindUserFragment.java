@@ -61,6 +61,7 @@ import timber.log.Timber;
  */
 public class FindUserFragment extends Fragment {
 
+  @Inject NetworkRequestManager networkRequestManager;
   @Inject Picasso picasso;
   @Inject Bus bus;
   @Inject Guest guest;
@@ -100,7 +101,7 @@ public class FindUserFragment extends Fragment {
    */
   public static FindUserFragment newInstance(Context context) {
     FindUserFragment fragment = new FindUserFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 
@@ -179,7 +180,7 @@ public class FindUserFragment extends Fragment {
       tryAgainView.setVisibility(View.GONE);
       loading.show();
 
-      NetworkRequestManager.getInstance().callFindUserApi(enteredEmail, new AppCallback() {
+      networkRequestManager.callFindUserApi(enteredEmail, new AppCallback() {
         @Override public void onRequestSuccess(Call call, Response response) {
           loading.dismiss();
 

@@ -121,7 +121,7 @@ public class AvatarFragment extends Fragment implements SurfaceHolder.Callback, 
    */
   public static AvatarFragment newInstance(Context context) {
     AvatarFragment fragment = new AvatarFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 

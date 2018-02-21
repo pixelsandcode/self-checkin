@@ -10,9 +10,6 @@ package me.tipi.self_check_in.data.api.models;
 
 import java.util.Date;
 
-import javax.inject.Singleton;
-
-@Singleton
 public final class Guest {
   public String user_key = "";
   public String firstName;

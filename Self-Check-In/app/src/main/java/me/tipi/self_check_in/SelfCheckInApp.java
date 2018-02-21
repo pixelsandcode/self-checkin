@@ -12,29 +12,20 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.PowerManager;
-import android.util.DisplayMetrics;
-
 import com.drivemode.android.typeface.TypefaceHelper;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.jakewharton.threetenabp.AndroidThreeTen;
-
-import java.util.Locale;
-
-import javax.inject.Inject;
-
-import dagger.ObjectGraph;
-import me.tipi.self_check_in.data.LanguagePreference;
+import me.tipi.self_check_in.di.DaggerSelfCheckInComponent;
+import me.tipi.self_check_in.di.SelfCheckInComponent;
 import me.tipi.self_check_in.util.FileLogger;
 import timber.log.Timber;
 
 public final class SelfCheckInApp extends Application {
-  @Inject LanguagePreference languagePreference;
-  private ObjectGraph objectGraph;
+
+  private SelfCheckInComponent selfCheckInComponent;
   private Tracker analyticTracker;
   private PowerManager.WakeLock wakeLock;
   private OnScreenOffReceiver onScreenOffReceiver;
@@ -43,8 +34,11 @@ public final class SelfCheckInApp extends Application {
   @Override public void onCreate() {
     super.onCreate();
 
-    AndroidThreeTen.init(this);
     appContext = getApplicationContext();
+
+    selfCheckInComponent =
+        DaggerSelfCheckInComponent.builder().selfCheckInModule(new SelfCheckInModule(this)).build();
+    AndroidThreeTen.init(this);
     Timber.plant(new FileLogger());
     if (BuildConfig.DEBUG || BuildConfig.STG) {
       Timber.plant(new Timber.DebugTree());
@@ -53,12 +47,8 @@ public final class SelfCheckInApp extends Application {
       // TODO Timber.plant(new CrashlyticsTree());
     }*/
 
-    objectGraph = ObjectGraph.create(new SelfCheckInModule(this));
-    objectGraph.inject(this);
-
     TypefaceHelper.initialize(this);
     startKioskService();
-    setLanguage();
     //registerKioskModeScreenOffReceiver();
   }
 
@@ -72,8 +62,7 @@ public final class SelfCheckInApp extends Application {
       GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
       if (BuildConfig.DEBUG || BuildConfig.STG) {
         analytics.setDryRun(true);
-        analytics.getLogger()
-            .setLogLevel(Logger.LogLevel.VERBOSE);
+        analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
       }
 
       // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
@@ -81,15 +70,6 @@ public final class SelfCheckInApp extends Application {
     }
 
     return analyticTracker;
-  }
-
-  /**
-   * Inject.
-   *
-   * @param o the o
-   */
-  public void inject(Object o) {
-    objectGraph.inject(o);
   }
 
   /**
@@ -107,6 +87,10 @@ public final class SelfCheckInApp extends Application {
     return (SelfCheckInApp) appContext;
   }
 
+  public SelfCheckInComponent getSelfCheckInComponent() {
+    return selfCheckInComponent;
+  }
+
   private void startKioskService() { // ... and this method
     startService(new Intent(this, KioskService.class));
   }
@@ -122,17 +106,9 @@ public final class SelfCheckInApp extends Application {
     if (wakeLock == null) {
       // lazy loading: first call, create wakeLock via PowerManager.
       PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-      wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "wakeup");
+      wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
+          "wakeup");
     }
     return wakeLock;
-  }
-
-  public void setLanguage() {
-    Locale locale = new Locale(languagePreference.get());
-    Resources res = getResources();
-    DisplayMetrics displayMetrics = res.getDisplayMetrics();
-    Configuration configuration = res.getConfiguration();
-    configuration.locale = locale;
-    res.updateConfiguration(configuration, displayMetrics);
   }
 }

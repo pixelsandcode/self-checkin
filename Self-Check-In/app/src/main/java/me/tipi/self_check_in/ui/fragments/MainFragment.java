@@ -34,8 +34,7 @@ public class MainFragment extends Fragment {
 
   public static MainFragment newInstance(Context context) {
     MainFragment fragment = new MainFragment();
-    SelfCheckInApp.get(context).inject(fragment);
-
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 

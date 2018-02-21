@@ -50,7 +50,7 @@ public class ScanIDFragment extends Fragment {
 
   public static ScanIDFragment newInstance(Context context) {
     ScanIDFragment fragment = new ScanIDFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 

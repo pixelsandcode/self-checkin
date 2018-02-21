@@ -108,7 +108,7 @@ public class SuccessSignUpFragment extends Fragment {
    */
   public static SuccessSignUpFragment newInstance(Context context) {
     SuccessSignUpFragment fragment = new SuccessSignUpFragment();
-    SelfCheckInApp.get(context).inject(fragment);
+    SelfCheckInApp.get(context).getSelfCheckInComponent().inject(fragment);
     return fragment;
   }
 
