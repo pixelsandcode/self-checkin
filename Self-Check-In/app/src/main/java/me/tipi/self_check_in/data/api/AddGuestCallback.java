@@ -60,7 +60,7 @@ public abstract class AddGuestCallback<T> implements Callback<T> {
   }
 
   private BaseResponse parseError(ResponseBody errorBody) {
-    Converter<ResponseBody, BaseResponse> converter = ServiceGenerator.getInstance()
+    Converter<ResponseBody, BaseResponse> converter = new ServiceGenerator()
         .getRetrofit()
         .responseBodyConverter(BaseResponse.class, new Annotation[0]);
 

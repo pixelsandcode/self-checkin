@@ -27,13 +27,13 @@ public abstract class AppCallback<T> implements Callback<T> {
 
       baseResponse = parseError(response.errorBody());
 
-      if (baseResponse.getStatusCode() == 400){
-        onBadRequest(call,baseResponse);
+      if (baseResponse.getStatusCode() == 400) {
+        onBadRequest(call, baseResponse);
         return;
       }
 
-      if (baseResponse.getStatusCode() == 401){
-        onAuthError(call,baseResponse);
+      if (baseResponse.getStatusCode() == 401) {
+        onAuthError(call, baseResponse);
         return;
       }
 
@@ -60,8 +60,7 @@ public abstract class AppCallback<T> implements Callback<T> {
   }
 
   private BaseResponse parseError(ResponseBody errorBody) {
-    Converter<ResponseBody, BaseResponse> converter = ServiceGenerator.getInstance()
-        .getRetrofit()
+    Converter<ResponseBody, BaseResponse> converter = new ServiceGenerator().getRetrofit()
         .responseBodyConverter(BaseResponse.class, new Annotation[0]);
 
     BaseResponse error;

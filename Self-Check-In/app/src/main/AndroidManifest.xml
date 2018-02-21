@@ -1,106 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="me.tipi.self_check_in">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="me.tipi.self_check_in">
 
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+  <uses-permission android:name="android.permission.BLUETOOTH"/>
+  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-    <!-- Request permission to use a device camera -->
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.GET_TASKS"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <!-- Request permission to use a device camera -->
+  <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+  <uses-permission android:name="android.permission.GET_TASKS"/>
+  <uses-permission android:name="android.permission.WAKE_LOCK"/>
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
-        android:required="false"/>
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="false"/>
+  <uses-feature
+      android:name="android.hardware.camera.autofocus"
+      android:required="false"/>
+  <uses-feature
+      android:glEsVersion="0x00020000"
+      android:required="false"/>
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  <supports-screens
+      android:anyDensity="true"
+      android:largeScreens="true"
+      android:normalScreens="true"
+      android:smallScreens="false"
+      android:xlargeScreens="true"
+      tools:replace="android:smallScreens"/>
 
-    <supports-screens
-        android:anyDensity="true"
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:smallScreens="false"
-        android:xlargeScreens="true"
-        tools:replace="android:smallScreens"/>
+  <application
+      android:name=".SelfCheckInApp"
+      android:allowBackup="true"
+      android:icon="@mipmap/ic_launcher"
+      android:label="@string/app_name"
+      android:theme="@style/Theme.Tipi">
+    <activity
+        android:name=".ui.MainActivity"
+        android:configChanges="screenSize|orientation"
+        android:windowSoftInputMode="adjustPan">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
 
-    <application
-        android:name=".SelfCheckInApp"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/Theme.Tipi">
-        <activity
-            android:name=".ui.MainActivity"
-            android:configChanges="screenSize|orientation"
-            android:windowSoftInputMode="adjustPan">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+    <activity
+        android:name=".ui.SignUpActivity"
+        android:configChanges="screenSize|orientation"
+        android:windowSoftInputMode="adjustPan">
+    </activity>
+    <activity
+        android:name=".ui.FindUserActivity"
+        android:configChanges="screenSize|orientation"
+        android:parentActivityName=".ui.SignUpActivity"
+        android:windowSoftInputMode="adjustPan">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.SignUpActivity"/>
+    </activity>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.SignUpActivity"
-            android:configChanges="screenSize|orientation"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
-        <activity
-            android:name=".ui.FindUserActivity"
-            android:configChanges="screenSize|orientation"
-            android:parentActivityName=".ui.SignUpActivity"
-            android:windowSoftInputMode="adjustPan">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.SignUpActivity"/>
-        </activity>
+    <receiver
+        android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+        android:enabled="true">
+      <intent-filter>
+        <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH"/>
+      </intent-filter>
+    </receiver>
 
-        <receiver
-            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH"/>
-            </intent-filter>
-        </receiver>
+    <service
+        android:name="com.google.android.gms.analytics.AnalyticsService"
+        android:enabled="true"
+        android:exported="false"/>
 
-        <service
-            android:name="com.google.android.gms.analytics.AnalyticsService"
-            android:enabled="true"
-            android:exported="false"/>
+    <receiver android:name=".BootReceiver">
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED"/>
+      </intent-filter>
+    </receiver>
 
-        <receiver android:name=".BootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            </intent-filter>
-        </receiver>
+    <service
+        android:name=".KioskService"
+        android:exported="false"/>
 
-        <service
-            android:name=".KioskService"
-            android:exported="false"/>
+    <activity
+        android:name=".ui.SettingActivity"
+        android:configChanges="screenSize|orientation"
+        android:label="@string/title_activity_setting"
+        android:windowSoftInputMode="adjustPan">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value="me.tipi.self_check_in.ui.SignUpActivity"/>
+    </activity>
 
-        <activity
-            android:name=".ui.SettingActivity"
-            android:configChanges="screenSize|orientation"
-            android:label="@string/title_activity_setting"
-            android:windowSoftInputMode="adjustPan">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="me.tipi.self_check_in.ui.SignUpActivity"/>
-        </activity>
+    <meta-data
+        android:name="net.hockeyapp.android.appIdentifier"
+        android:value="${HOCKEYAPP_APP_ID}"/>
 
-        <meta-data
-            android:name="net.hockeyapp.android.appIdentifier"
-            android:value="${HOCKEYAPP_APP_ID}"/>
-
-    </application>
+  </application>
 
 </manifest>
