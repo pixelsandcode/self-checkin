@@ -4,16 +4,13 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import java.io.File;
-import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.concurrent.TimeUnit;
 import me.tipi.self_check_in.SelfCheckInApp;
 import okhttp3.Cache;
-import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -59,27 +56,28 @@ public class ServiceGenerator {
         .readTimeout(1000, TimeUnit.SECONDS)
         .writeTimeout(1000, TimeUnit.SECONDS);
 
-    httpClient.addInterceptor(new Interceptor() {
-      @Override public okhttp3.Response intercept(Chain chain) throws IOException {
-
-        Request request = chain.request();
-        Request newRequest;
-
-        Request.Builder builder = request.newBuilder();
-
-        builder.addHeader("Accept", "application/json;versions=1");
-
-        if (isNetworkAvailable()) {
-          int maxAge = 1; // read from cache for 1 minute
-          builder.addHeader("Cache-Control", "public, max-age=" + maxAge);
-        } else {
-          int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
-          builder.addHeader("Cache-Control", "public, only-if-cached, max-stale=" + maxStale);
-        }
-        newRequest = builder.build();
-        return chain.proceed(newRequest);
-      }
-    });
+    httpClient.addInterceptor(new HeaderInterceptor());
+    //httpClient.addInterceptor(new Interceptor() {
+    //  @Override public Response intercept(Chain chain) throws IOException {
+    //
+    //    Request request = chain.request();
+    //    Request newRequest;
+    //
+    //    Request.Builder builder = request.newBuilder();
+    //
+    //    builder.addHeader("Accept", "application/json;versions=1");
+    //
+    //    if (isNetworkAvailable()) {
+    //      int maxAge = 1; // read from cache for 1 minute
+    //      builder.addHeader("Cache-Control", "public, max-age=" + maxAge);
+    //    } else {
+    //      int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
+    //      builder.addHeader("Cache-Control", "public, only-if-cached, max-stale=" + maxStale);
+    //    }
+    //    newRequest = builder.build();
+    //    return chain.proceed(newRequest);
+    //  }
+    //});
 
     OkHttpClient client = httpClient.build();
     retrofit = builder.client(client).build();
