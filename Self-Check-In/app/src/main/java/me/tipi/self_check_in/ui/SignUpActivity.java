@@ -487,6 +487,10 @@ public class SignUpActivity extends AppCompatActivity {
                 .show();
           }
 
+          @Override public void onRequestFail(Call call, Throwable t) {
+            Timber.e(t);
+          }
+
           @Override public void onConflict(Call call, BaseResponse response) {
             loading.dismiss();
             Timber.w("ERROR %s, status: %s, kind: %s", response.getMessage(),
@@ -574,6 +578,10 @@ public class SignUpActivity extends AppCompatActivity {
                 response.getMessage() != null ? response.getMessage() : response.toString());
             Snackbar.make(appContainer.bind(SignUpActivity.this),
                 R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT).show();
+          }
+
+          @Override public void onRequestFail(Call call, Throwable t) {
+            Timber.e(t);
           }
 
           @Override public void onBadRequest(Call call, BaseResponse response) {
@@ -672,6 +680,10 @@ public class SignUpActivity extends AppCompatActivity {
                 response.getMessage() != null ? response.getMessage() : response.toString());
           }
 
+          @Override public void onRequestFail(Call call, Throwable t) {
+            Timber.e(t);
+          }
+
           @Override public void onBadRequest(Call call, BaseResponse response) {
 
           }
@@ -725,6 +737,10 @@ public class SignUpActivity extends AppCompatActivity {
                 R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
             Timber.w("Submit login Error: %s",
                 response.getMessage() != null ? response.getMessage() : response.toString());
+          }
+
+          @Override public void onRequestFail(Call call, Throwable t) {
+            Timber.e(t);
           }
 
           @Override public void onBadRequest(Call call, BaseResponse response) {

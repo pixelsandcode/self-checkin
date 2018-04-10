@@ -89,6 +89,10 @@ public class HostelTermsFragment extends Fragment {
         loadTerms();
       }
 
+      @Override public void onRequestFail(Call call, Throwable t) {
+        Timber.e(t);
+      }
+
       @Override public void onApiNotFound(Call call, BaseResponse response) {
         termsTextView.setText(R.string.no_terms);
         Timber.w("Sorry this hostel's Terms & Conditions isn't available! - hostel_key : %s", hostelKey.get());

@@ -1,6 +1,7 @@
 package me.tipi.self_check_in.data.api;
 
 import java.lang.annotation.Annotation;
+import java.net.SocketTimeoutException;
 import me.tipi.self_check_in.data.api.models.BaseResponse;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -56,7 +57,11 @@ public abstract class AppCallback<T> implements Callback<T> {
   }
 
   @Override public void onFailure(Call<T> call, Throwable t) {
-    onRequestTimeOut(call, t);
+    if (t instanceof SocketTimeoutException) {
+      onRequestTimeOut(call, t);
+    } else {
+      onRequestFail(call, t);
+    }
   }
 
   private BaseResponse parseError(ResponseBody errorBody) {
@@ -77,6 +82,8 @@ public abstract class AppCallback<T> implements Callback<T> {
   public abstract void onRequestSuccess(Call<T> call, Response<T> response);
 
   public abstract void onRequestFail(Call<T> call, BaseResponse response);
+
+  public abstract void onRequestFail(Call<T> call, Throwable t);
 
   public abstract void onBadRequest(Call<T> call, BaseResponse response);
 

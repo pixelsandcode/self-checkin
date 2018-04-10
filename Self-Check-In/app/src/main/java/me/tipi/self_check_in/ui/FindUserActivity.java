@@ -213,6 +213,10 @@ public class FindUserActivity extends AppCompatActivity {
                 R.string.something_wrong_try_again, Snackbar.LENGTH_SHORT).show();
           }
 
+          @Override public void onRequestFail(Call call, Throwable t) {
+            Timber.e(t);
+          }
+
           @Override public void onApiNotFound(Call call, BaseResponse response) {
             loading.dismiss();
           }
@@ -342,6 +346,10 @@ public class FindUserActivity extends AppCompatActivity {
                 R.string.something_wrong_try_again, Snackbar.LENGTH_LONG).show();
             Timber.w("ERROR: claim login error = %s",
                 response.getMessage() != null ? response.getMessage() : response.toString());
+          }
+
+          @Override public void onRequestFail(Call call, Throwable t) {
+            Timber.e(t);
           }
 
           @Override public void onApiNotFound(Call call, BaseResponse response) {

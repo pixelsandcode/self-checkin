@@ -241,6 +241,10 @@ public class EmailFragment extends Fragment {
         Timber.e("Error finding: %s", response.toString());
       }
 
+      @Override public void onRequestFail(Call call, Throwable t) {
+        Timber.e(t);
+      }
+
       @Override public void onBadRequest(Call call, BaseResponse response) {
         loading.dismiss();
       }

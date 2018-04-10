@@ -293,6 +293,10 @@ public class QuestionFragment extends Fragment {
           navigateToSuccessPage();
         }
 
+        @Override public void onRequestFail(Call call, Throwable t) {
+          Timber.e(t);
+        }
+
         @Override public void onBadRequest(Call call, BaseResponse response) {
           loading.dismiss();
         }

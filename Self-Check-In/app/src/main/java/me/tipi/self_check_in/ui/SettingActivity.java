@@ -152,6 +152,10 @@ public class SettingActivity extends AppCompatActivity {
                 Toast.makeText(SettingActivity.this, R.string.something_wrong_try_again + response.getMessage(), Toast.LENGTH_SHORT).show();
               }
 
+              @Override public void onRequestFail(Call call, Throwable t) {
+                Timber.e(t);
+              }
+
               @Override public void onApiNotFound(Call call, BaseResponse response) {
                 loading.dismiss();
               }
